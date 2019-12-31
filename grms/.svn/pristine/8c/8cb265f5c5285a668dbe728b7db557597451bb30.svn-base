@@ -1,0 +1,19 @@
+/**
+ * 
+ */
+package com.hori.grms.service.impl;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.hori.grms.dao.CustomerMapper;
+import com.hori.grms.service.CustomerService;
+
+/** 
+ * @date 2018年8月14日 下午3:53:26 
+ */
+@Service("customerService")
+public class CustomerServiceImpl implements CustomerService{
+	@Autowired
+	private CustomerMapper customerMapper;
+}

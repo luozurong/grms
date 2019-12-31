@@ -1,0 +1,22 @@
+/**
+ * 
+ */
+package com.hori.grms.service.impl;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.hori.grms.dao.ProjectActionMapper;
+import com.hori.grms.service.ProjectActionService;
+
+/** 
+ * @ClassName: ProjectActionServiceImpl 
+ * @Description:项目执行清单
+ * @author zhuqiang
+ * @date 2018年8月8日 下午6:55:24 
+ */
+@Service("projectActionService")
+public class ProjectActionServiceImpl implements ProjectActionService{
+	@Autowired
+	private ProjectActionMapper projectActionMapper;
+}

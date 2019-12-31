@@ -1,0 +1,23 @@
+/**
+ * 
+ */
+package com.hori.grms.service.impl;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.alibaba.druid.filter.AutoLoad;
+import com.hori.grms.dao.ProjectRoleMapper;
+import com.hori.grms.service.ProjectRoleService;
+
+/** 
+ * @ClassName: ProjectRoleServiceImpl 
+ * @Description: 项目角色
+ * @author zhuqiang
+ * @date 2018年8月8日 下午7:17:58 
+ */
+@Service("projectRoleService")
+public class ProjectRoleServiceImpl implements ProjectRoleService {
+	@Autowired
+	private ProjectRoleMapper projectRoleMapper;
+}

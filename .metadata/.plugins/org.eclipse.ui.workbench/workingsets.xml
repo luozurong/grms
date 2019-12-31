@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workingSetManager>
+<workingSet editPageId="org.eclipse.mylyn.tasks.ui.workingSet" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1533781170992_1" label="grms" name="grms">
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/base" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/umsDao" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/umsUtil" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/umsService" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/sso" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/ums" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/umsbase" type="4"/>
+</workingSet>
+<workingSet aggregate="true" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1533775337113_0" label="Window Working Set" name="Aggregate for window 1533775337113"/>
+<mruList name="grms"/>
+</workingSetManager>

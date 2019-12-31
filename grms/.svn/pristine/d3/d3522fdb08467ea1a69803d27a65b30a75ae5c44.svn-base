@@ -1,0 +1,131 @@
+/**
+ * 
+ */
+package com.hori.grms.vo.project;
+
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+
+/** 
+ * @ClassName: Project1 
+ * @Description: 项目清单封装
+ * @author zhuqiang
+ * @date 2018年8月10日 下午8:10:34 
+ */
+public class ProjectMenuVo implements Serializable{
+	private static final long serialVersionUID = -770159470355962699L;
+	//id
+	private String id;	
+    //场次名称
+	private String fieldName;
+	//业务类型
+	private String businessType;
+	//业务名称
+	private String businessName;
+	//小区名称
+	private String areaName;
+	//小区机构编码
+	private String organizationSeq;
+	//产品清单信息
+	private List<ProductMenuVo> projectMenus;
+	/**
+	 * @return the id
+	 */
+	public String getId() {
+		return id;
+	}
+	
+	public String getAreaName() {
+		return areaName;
+	}
+	public void setAreaName(String areaName) {
+		this.areaName = areaName;
+	}
+	public String getOrganizationSeq() {
+		return organizationSeq;
+	}
+	public void setOrganizationSeq(String organizationSeq) {
+		this.organizationSeq = organizationSeq;
+	}
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(String id) {
+		this.id = id;
+	}
+	/**
+	 * @return the fieldName
+	 */
+	public String getFieldName() {
+		return fieldName;
+	}
+	/**
+	 * @param fieldName the fieldName to set
+	 */
+	public void setFieldName(String fieldName) {
+		this.fieldName = fieldName;
+	}
+	/**
+	 * @return the businessType
+	 */
+	public String getBusinessType() {
+		return businessType;
+	}
+	/**
+	 * @param businessType the businessType to set
+	 */
+	public void setBusinessType(String businessType) {
+		this.businessType = businessType;
+	}
+	/**
+	 * @return the businessName
+	 */
+	public String getBusinessName() {
+		return businessName;
+	}
+	/**
+	 * @param businessName the businessName to set
+	 */
+	public void setBusinessName(String businessName) {
+		this.businessName = businessName;
+	}
+	/**
+	 * @return the projectMenus
+	 */
+	public List<ProductMenuVo> getProjectMenus() {
+		return projectMenus;
+	}
+	/**
+	 * @param projectMenus the projectMenus to set
+	 */
+	public void setProjectMenus(List<ProductMenuVo> projectMenus) {
+		this.projectMenus = projectMenus;
+	}
+	/**
+	 * @param id
+	 * @param fieldName
+	 * @param businessType
+	 * @param businessName
+	 * @param projectMenus
+	 */
+	public ProjectMenuVo(String id, String fieldName, String businessType, String businessName,
+			List<ProductMenuVo> projectMenus) {
+		super();
+		this.id = id;
+		this.fieldName = fieldName;
+		this.businessType = businessType;
+		this.businessName = businessName;
+		this.projectMenus = projectMenus;
+	}
+	/**
+	 * 
+	 */
+	public ProjectMenuVo() {
+		super();		
+	}
+	
+	
+	
+	
+}

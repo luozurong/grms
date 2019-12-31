@@ -1,0 +1,75 @@
+/**
+ * 
+ */
+package com.hori.grms.service;
+
+import java.util.List;
+import java.util.Map;
+
+import com.github.pagehelper.PageInfo;
+import com.hori.grms.model.ProjectAction;
+import com.hori.grms.queryBean.ProjectActionQueryBean;
+import com.hori.grms.vo.CommunityProjectActionVo;
+
+/** 
+ * @ClassName: ProjectActionService 
+ * @Description: 项目执行清单
+ * @author zhuqiang
+ * @date 2018年8月8日 下午6:53:32 
+ */
+public interface ProjectActionService {
+
+	/**
+	 * 根据参数查询社区运营清单列表
+	 * @param queryBean
+	 * @return
+	 */
+	PageInfo<CommunityProjectActionVo> listCommunityAction(ProjectActionQueryBean queryBean);
+	/**
+	 * 获取项目执行清单
+	 * @param queryBean
+	 * @return
+	 */
+	PageInfo<Map<String, Object>> listProjectAction(ProjectActionQueryBean queryBean);
+
+	/**
+	 * 更新执行清单实体
+	 * @param projectAction 
+	 * @return
+	 */
+	int update(ProjectAction projectAction);
+	
+	/**
+	 * 根据主键获取实体
+	 * @param projectActionId
+	 * @return
+	 */
+	ProjectAction getById(String projectActionId);
+	
+	/**
+	 * 修改执行清单异常状态
+	 * @param actionCode 执行清单编码
+	 * @param exceptionStatus 异常状态(1正常，0异常)
+	 * @return
+	 */
+	int changeEStatusByActionCode(String actionCode, Integer exceptionStatus);
+	/**
+	 * 通过项目编码查询社区运营清单列表
+	 * @param projectCode
+	 * @return
+	 */
+	List<CommunityProjectActionVo> findCommunityProjectActionVoByProjectCode(String projectCode);
+	
+	/**
+	 * 查询用户运营/媒管/电商的执行清单列表
+	 * @param queryBean
+	 * @return
+	 */
+	PageInfo<Map<String, Object>> listYMDAction(ProjectActionQueryBean queryBean);
+	/**
+	 * 通过执行清单编号获取
+	 * @param code 执行清单编号
+	 * @return
+	 */
+	ProjectAction getByCode(String code);
+}

@@ -1,0 +1,665 @@
+package com.hori.grms.service.impl;
+
+import java.util.Date;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.hori.grms.dao.PendingEventMapper;
+import com.hori.grms.model.PendingEvent;
+import com.hori.grms.model.Project;
+import com.hori.grms.queryBean.PendingEventQueryBean;
+import com.hori.grms.service.PendingEventService;
+import com.hori.grms.service.ProjectService;
+import com.hori.grms.util.UUIDGenerator;
+
+/**
+ * 待办事项service实现类
+ * @author FWQ
+ *
+ */
+@Service("pendingEventService")
+public class PendingEventServiceImpl implements PendingEventService{
+	@Autowired
+	private PendingEventMapper pendingEventMapper;
+	
+	@Autowired
+	private ProjectService projectService;
+	
+	/**
+	 * 待办事件列表查询
+	 * @param pendingEventQueryBean
+	 * @return
+	 */
+	@Override
+	public List<PendingEvent> list(PendingEventQueryBean pendingEventQueryBean){
+		return pendingEventMapper.list(pendingEventQueryBean);
+	}
+	
+	/**
+	 * 新添项目模块的待办事件
+	 * @param projectName	项目名称
+	 * @param projectCode	项目编号
+	 * @param userAccount	业务员账号
+	 * @param userName		业务员名称
+	 */
+	@Override
+	public int createProjectPendingEvent(String projectName,String projectCode,
+			String userAccount,String userName){
+		PendingEvent pe = new PendingEvent();
+		pe.setId(UUIDGenerator.generate());
+		pe.setProjectName(projectName);
+		pe.setProjectCode(projectCode);
+		pe.setModelCode(projectCode);
+		pe.setModelName("项目管理");
+		pe.setStatus(0);
+		pe.setRoleType(1);
+		
+		pe.setCreateTime(new Date());
+		pe.setCreatorName(userName);
+		pe.setCreatorAccount(userAccount);
+		pe.setIsShow(1);
+		
+		return this.pendingEventMapper.insert(pe);
+	}
+	
+	/**
+	 * 修改“项目管理”待办事件状态
+	 * @param projectCode 项目编号
+	 * @param status      项目管理 0待审核 1审核通过 2审核不通过 3立项终止 4撤回
+	 * @return
+	 */
+	@Override
+	public void updateProjectPendingEvent(String projectCode,int status){
+		
+		PendingEvent pendingEvent = this.pendingEventMapper.selectByModelCodeAndName(projectCode, projectCode, "项目管理","");
+		if(pendingEvent != null){
+			if(status == 1 || status == 3 || status == 4){
+				pendingEvent.setIsShow(0);
+			}else if(status == 2){
+				pendingEvent.setRoleType(0);
+			}else if(status == 0){
+				pendingEvent.setRoleType(1);
+			}
+			
+			pendingEvent.setStatus(status);
+			pendingEvent.setUpdateTime(new Date());
+			
+			this.pendingEventMapper.updateByModelCode(pendingEvent);
+		}
+		
+	}
+	
+	/**
+	 * 新添合同模块的待办事件
+	 * @param projectName	项目名称
+	 * @param projectCode	项目编号
+	 * @param contractCode  合同编号
+	 * @param userAccount	业务员账号
+	 * @param userName		业务员名称
+	 */
+	@Override
+	public int createContractPendingEvent(String projectName,String projectCode,String contractCode,
+			String userAccount,String userName){
+		PendingEvent pe = new PendingEvent();
+		pe.setId(UUIDGenerator.generate());
+		pe.setProjectName(projectName);
+		pe.setProjectCode(projectCode);
+		pe.setModelCode(contractCode);
+		pe.setModelName("合同管理");
+		pe.setStatus(1);
+		pe.setRoleType(0);
+		
+		pe.setCreateTime(new Date());
+		pe.setCreatorName(userName);
+		pe.setCreatorAccount(userAccount);
+		pe.setIsShow(1);
+		
+		return this.pendingEventMapper.insert(pe);
+	}
+	
+	/**
+	 * 修改“合同管理”待办事件状态
+	 * @param projectName 项目名称
+	 * @param projectCode 合同编号
+	 * @param status      合同管理（1：未提交 2：待审批-业务管理 3:待审批-合同管理 4:待审批-财务管理 
+	 * 						5:审批通过 6:审批不通过 7:已完成 8：撤回-业务员 9：撤回-业务管理 10:撤回-合同管理 
+	 * 						11:撤回-财务管理 12:删除-业务员）
+	 * @return
+	 */
+	@Override
+	public void updateContractPendingEvent(String projectCode,String contractCode,int status){
+		
+		PendingEvent pendingEvent = this.pendingEventMapper.selectByModelCodeAndName(projectCode,contractCode,"合同管理","");
+		if(pendingEvent != null){
+			if(status == 12 || status == 7){
+				//删除已完成，所有人都不可以看到待办事件
+				pendingEvent.setIsShow(0);
+				pendingEvent.setStatus(status);
+			}else if(status == 2 || status == 9){
+				//这两状态只有业务管理员角色可看，并且对外显示“待审批-业务管理”状态
+				pendingEvent.setRoleType(1);
+				pendingEvent.setStatus(2);
+			}else if(status == 3 || status == 10){
+				pendingEvent.setRoleType(2);
+				pendingEvent.setStatus(3);
+			}else if(status == 4 || status == 11){
+				pendingEvent.setRoleType(3);
+				pendingEvent.setStatus(4);
+			}else if(status == 1 || status == 5 || status == 6 || status==8){
+				/**
+				 * 该4个状态业务员可看
+				 * 审核不通过后修改合同，状态为“未提交” ；业务管理员未处理，业务员返回，状态为“未提交”
+				 */
+				pendingEvent.setRoleType(0);
+				if(status==8){
+					pendingEvent.setStatus(1);
+				}else{
+					pendingEvent.setStatus(status);
+				}
+			}
+			
+			pendingEvent.setUpdateTime(new Date());
+			
+			this.pendingEventMapper.updateByModelCode(pendingEvent);
+		}
+		
+	}
+	
+	
+	
+	
+	/**
+	 * 新添项目执行模块的待办事件
+	 * @param projectName	项目名称
+	 * @param projectCode	项目编号
+	 * @param projectActionCode  执行编号
+	 * @param roleType	      执行角色 1为业务管理员，4为社区运营执行管理员，5为电商运营管理员，6为用户运营执行管理员，7为媒管执行管理员
+	 */
+	@Override
+	public int createProjectActionPendingEvent(String projectName,String projectCode,
+			String projectActionCode,int roleType){
+		PendingEvent pe = new PendingEvent();
+		pe.setId(UUIDGenerator.generate());
+		pe.setProjectName(projectName);
+		pe.setProjectCode(projectCode);
+		pe.setModelName("执行管理");
+		pe.setModelCode(projectActionCode);
+		//否则为：执行状态-待确认
+		pe.setStatus(7);
+		
+		pe.setRoleType(roleType);
+		pe.setCreateTime(new Date());
+		pe.setIsShow(1);
+		
+		return this.pendingEventMapper.insert(pe);
+	}
+	
+	/**
+	 * 新添项目执行异常模块的待办事件
+	 * @param projectName	项目名称
+	 * @param projectCode	项目编号
+	 * @param projectActionCode  执行编号
+	 * @param exceptionId  项目执行异常ID
+	 */
+	@Override
+	public int createProjectActionExceptionPendingEvent(String projectName,String projectCode,
+			String projectActionCode,String exceptionId){
+		PendingEvent pe = new PendingEvent();
+		pe.setId(UUIDGenerator.generate());
+		pe.setProjectName(projectName);
+		pe.setProjectCode(projectCode);
+		pe.setModelName("执行管理");
+		pe.setModelCode(projectActionCode);
+		pe.setStatus(13);
+		
+		pe.setRoleType(1);
+		pe.setCreateTime(new Date());
+		pe.setIsShow(1);
+		pe.setExceptionId(exceptionId);
+		
+		return this.pendingEventMapper.insert(pe);
+	}
+	
+	
+	/**
+	 * 修改“执行管理”待办事件状态
+	 * @param projectCode 项目编号
+	 * @param projectActionCode	 执行编号
+	 * @param exceptionId  项目执行异常ID (项目执行异常 才传，否则为空)
+	 * @param status      执行管理 1:置换场地 2:扣款 3:继续 4:暂停 5:恢复 6终止 7执行状态-待确认 8执行状态-策划中 
+	 * 						9执行状态-未执行 10执行状态-执行中 11执行状态-已完成 12项目异常-正常 13项目异常-异常
+	 *  					以下状态为执行部门的确认 14:置换场地确认 15:扣款确认 16:继续确认 17:暂停确认 18:恢复确认 19终止确认
+	 */
+	@Override
+	public void updateProjectActionPendingEvent(String projectCode,String projectActionCode,
+			String exceptionId,int status){
+		
+		PendingEvent pendingEvent = null;
+		if(exceptionId != null && !"".equals(exceptionId)){
+			//执行异常上报的流程
+			pendingEvent = this.pendingEventMapper.selectByExceptionId(exceptionId);
+			if(pendingEvent != null){
+				if(status == 1 || status == 2 || status == 3 || 
+						status == 4 || status == 5 || status == 6){
+					//这些状态为业务管理员处理后的状态，提醒对应的执行部门
+					pendingEvent.setStatus(status);
+					//异常对应的执行待办
+					PendingEvent pe = this.pendingEventMapper.
+							selectByModelCodeAndName(projectCode,projectActionCode,"执行管理","");
+					
+					pendingEvent.setRoleType(pe!=null?pe.getRoleType():-100);
+				}else if(status == 14 || status == 15 || status == 16 || 
+						status == 17 || status == 18){
+					//这些状态为执行部门确认的状态 关闭对应的执行异常待办
+					pendingEvent.setIsShow(0);
+					pendingEvent.setStatus(status);
+				}else if(status == 19){
+					//这些状态为执行部门确认的终止确认 关闭对应的执行异常待办及执行待办
+					pendingEvent.setIsShow(0);
+					pendingEvent.setStatus(status);
+					
+					//异常对应的执行待办
+					PendingEvent pe = this.pendingEventMapper.
+							selectByModelCodeAndName(projectCode,projectActionCode,"执行管理","");
+					pe.setIsShow(0);
+					pe.setStatus(status);
+					pe.setUpdateTime(new Date());
+					this.pendingEventMapper.updateByModelCode(pe);
+				}
+			}
+		}else{
+			//正常的执行流程
+			pendingEvent = this.pendingEventMapper.
+					selectByModelCodeAndName(projectCode,projectActionCode,"执行管理","");
+			
+			if(pendingEvent != null){
+				if(status == 11){
+					pendingEvent.setIsShow(0);
+					pendingEvent.setStatus(status);
+				}else if(status == 7 || status == 8 || status == 9  || status == 10){
+					pendingEvent.setStatus(status);
+				}
+				
+			}
+		}
+		
+		pendingEvent.setUpdateTime(new Date());
+		
+		this.pendingEventMapper.updateByModelCode(pendingEvent);
+		
+	}
+	
+	
+	/**
+	 * 新添收款模块的待办事件-审核逻辑
+	 * @param projectName	项目名称
+	 * @param projectCode	项目编号
+	 * @param backMoneyCode  收款编号
+	 * @param userAccount	业务员账号
+	 * @param userName		业务员名称
+	 */
+	@Override
+	public int createBackMoneyPendingEventByShenHe(String projectName,String projectCode,String backMoneyCode,
+			String userAccount,String userName){
+		PendingEvent pe = new PendingEvent();
+		pe.setId(UUIDGenerator.generate());
+		pe.setProjectName(projectName);
+		pe.setProjectCode(projectCode);
+		pe.setModelCode(backMoneyCode);
+		pe.setModelName("收款管理");
+		pe.setStatus(0);
+		pe.setRoleType(3);
+		
+		pe.setCreateTime(new Date());
+		pe.setCreatorName(userName);
+		pe.setCreatorAccount(userAccount);
+		pe.setIsShow(1);
+		pe.setExceptionId("shenHe");
+		
+		return this.pendingEventMapper.insert(pe);
+	}
+	
+	/**
+	 * 修改“收款管理”待办事件状态-审核逻辑
+	 * @param projectName 项目名称
+	 * @param backMoneyCode 收款编号
+	 * @param status      收款管理（0待审核 1已审核 2审核不通过  3登记中-代收款 5登记中-已付款 6扣款（执行发起的）7待新建收款计划）
+	 * @return
+	 */
+	@Override
+	public void updateBackMoneyPendingEventByShenHe(String projectCode,String backMoneyCode,int status){
+		
+		PendingEvent pendingEvent = this.pendingEventMapper.selectByProjectCodeAndRoleTypeExceptionId(projectCode,backMoneyCode,"收款管理","","shenHe");
+		if(pendingEvent != null){
+			if(status == 1){
+				pendingEvent.setIsShow(0);
+				pendingEvent.setStatus(status);
+			}else if(status == 2 || status == 6){
+				pendingEvent.setRoleType(0);
+				pendingEvent.setStatus(status);
+			}else if(status == 0){
+				//审核不通过后，业务员修改提交 状态为0待审核 
+				pendingEvent.setRoleType(3);
+				pendingEvent.setStatus(status);
+			}
+			
+			pendingEvent.setUpdateTime(new Date());
+			
+			this.pendingEventMapper.updateByModelCode(pendingEvent);
+		}
+		
+	}
+	
+	
+	/**
+	 * 新添收款模块的待办事件-定时提醒
+	 * @param projectName	项目名称
+	 * @param projectCode	项目编号
+	 * @param backMoneyPlanCode  收款计划编号
+	 */
+	@Override
+	public int createBackMoneyPendingEventByTask(String projectName,String projectCode
+			,String backMoneyPlanCode){
+		PendingEvent pe = new PendingEvent();
+		pe.setId(UUIDGenerator.generate());
+		pe.setProjectName(projectName);
+		pe.setProjectCode(projectCode);
+		pe.setModelCode(backMoneyPlanCode);
+		pe.setModelName("收款管理");
+		pe.setStatus(3);
+		
+		pe.setRoleType(3);
+		
+		pe.setCreateTime(new Date());
+		pe.setIsShow(1);
+		pe.setExceptionId("task");
+		
+		return this.pendingEventMapper.insert(pe);
+	}
+	
+	/**
+	 * 修改“收款管理”待办事件状态-定时提醒
+	 * @param projectName 项目名称
+	 * @param backMoneyPlanCode 收款计划编号
+	 * @param status      收款管理（0 已收款）
+	 * @return
+	 */
+	@Override
+	public void updateBackMoneyPendingEventByTask(String projectCode,String backMoneyPlanCode,int status){
+		
+		PendingEvent pendingEvent = this.pendingEventMapper.selectByProjectCodeAndRoleTypeExceptionId(projectCode,backMoneyPlanCode,"收款管理","3","task");
+		if(pendingEvent != null){
+			if(status == 0){
+				pendingEvent.setIsShow(0);
+				pendingEvent.setRoleType(3);
+				pendingEvent.setStatus(status);
+			}
+			
+			pendingEvent.setUpdateTime(new Date());
+			
+			this.pendingEventMapper.updateByModelCode(pendingEvent);
+		}
+		
+	}
+	
+	/**
+	 * 新添收款模块的待办事件-执行异常－扣款
+	 * @param projectName	项目名称
+	 * @param projectCode	项目编号
+	 * @param backMoneyPlanCode  收款计划编号
+	 */
+	@Override
+	public int createBackMoneyPendingEventByActionException(String projectName,String projectCode
+			,String backMoneyPlanCode){
+		PendingEvent pe = new PendingEvent();
+		pe.setId(UUIDGenerator.generate());
+		pe.setProjectName(projectName);
+		pe.setProjectCode(projectCode);
+		pe.setModelCode(backMoneyPlanCode);
+		pe.setModelName("收款管理");
+		pe.setStatus(6);
+		pe.setRoleType(3);
+		
+		pe.setCreateTime(new Date());
+		pe.setIsShow(1);
+		pe.setExceptionId("actionException");
+		
+		return this.pendingEventMapper.insert(pe);
+	}
+	
+	/**
+	 * 修改“收款管理”待办事件状态-执行异常－扣款
+	 * @param projectName 项目名称
+	 * @param backMoneyPlanCode 收款计划编号
+	 * @return
+	 */
+	@Override
+	public void updateBackMoneyPendingEventByActionException(String projectCode,String backMoneyPlanCode){
+		PendingEvent pendingEvent = null;
+		pendingEvent = this.pendingEventMapper.selectByProjectCodeAndRoleTypeExceptionId(projectCode, backMoneyPlanCode, "收款管理","","actionException");
+		pendingEvent.setIsShow(0);
+		pendingEvent.setUpdateTime(new Date());
+		
+		this.pendingEventMapper.updateByModelCode(pendingEvent);
+		
+	}
+	
+	
+	/**
+	 * 新添收款模块的待办事件-财务收款异常
+	 * @param projectName	项目名称
+	 * @param projectCode	项目编号
+	 * @param backMoneyPlanCode  收款计划编号
+	 */
+	@Override
+	public int createBackMoneyPendingEventByMoneyException(String projectName,String projectCode
+			,String backMoneyPlanCode){
+		PendingEvent pe = new PendingEvent();
+		pe.setId(UUIDGenerator.generate());
+		pe.setProjectName(projectName);
+		pe.setProjectCode(projectCode);
+		pe.setModelCode(backMoneyPlanCode);
+		pe.setModelName("执行管理");
+		pe.setStatus(20);
+		pe.setRoleType(1);
+		
+		pe.setCreateTime(new Date());
+		pe.setIsShow(1);
+		
+		return this.pendingEventMapper.insert(pe);
+	}
+	
+	/**
+	 * 修改“收款管理”待办事件状态-财务收款异常
+	 * @param projectName 项目名称
+	 * @param backMoneyPlanCode 收款计划编号
+	 * @param status      业务员操作状态  3:继续 4:暂停  6终止 16:继续确认 17:暂停确认 19终止确认
+	 * @param roleType	      执行角色 1为业务管理员，4为社区运营执行管理员，5为电商运营管理员，6为用户运营执行管理员，7为媒管执行管理员
+	 * @return
+	 */
+	@Override
+	public void updateBackMoneyPendingEventByMoneyException(String projectCode,String backMoneyPlanCode,int status,int roleType){
+		PendingEvent pendingEvent = null;
+		if(status == 3 || status == 4 || status == 6){
+			//业务部门确定的状态，需生成4个执行部门的待办,修改账务管理对应的收费计划的状态 为：已付款
+			Project Project = this.projectService.getByCode(projectCode);
+			
+			PendingEvent pe = new PendingEvent();
+			pe.setId(UUIDGenerator.generate());
+			pe.setProjectName(Project.getName());
+			pe.setProjectCode(projectCode);
+			pe.setModelCode(backMoneyPlanCode);
+			pe.setModelName("执行管理");
+			pe.setStatus(status);
+			pe.setRoleType(roleType);
+			pe.setCreateTime(new Date());
+			pe.setIsShow(1);
+			this.pendingEventMapper.insert(pe);
+		}else if(status == 16 || status == 17 || status == 19){
+			//某一种操作 执行部门已提交状态，要判断4个执行部门是否全为已提交，全为的话，删除执行部门对应的待办，删除业务管理员待办
+			List<PendingEvent> backSizes = this.pendingEventMapper.
+					selectByProjectCodeAndRoleType(projectCode, "4,5,6,7", "执行管理",backMoneyPlanCode);
+			if(backSizes.size() != 4){
+				pendingEvent = this.pendingEventMapper.selectByModelCodeAndName(projectCode, backMoneyPlanCode, "执行管理",roleType+"");
+				pendingEvent.setStatus(status);
+			}else{
+				for(PendingEvent p:backSizes){
+					//删除执行部门对应的待办
+					p.setIsShow(0);
+					p.setStatus(status);
+					p.setUpdateTime(new Date());
+					this.pendingEventMapper.updateByModelCode(p);
+				}
+				//删除业务管理员待办
+				pendingEvent = this.pendingEventMapper.selectByModelCodeAndName(projectCode, backMoneyPlanCode, "执行管理","1");
+				pendingEvent.setIsShow(0);
+				pendingEvent.setStatus(status);
+			}
+		}
+		
+		pendingEvent.setUpdateTime(new Date());
+		
+		this.pendingEventMapper.updateByModelCode(pendingEvent);
+		
+	}
+	
+	
+	/**
+	 * 新添结案模块的待办事件
+	 * @param projectName	项目名称
+	 * @param projectCode	项目编号
+	 * @param closeCaseCode 结案编号
+	 * @param roleType	            结案角色  0为业务员，4为社区运营执行管理员，5为电商运营管理员，6为用户运营执行管理员，7为媒管执行管理员
+	 */
+	@Override
+	public int createCloseCasePendingEvent(String projectName,String projectCode,
+			String closeCaseCode,int roleType){
+		PendingEvent pe = new PendingEvent();
+		pe.setId(UUIDGenerator.generate());
+		pe.setProjectName(projectName);
+		pe.setProjectCode(projectCode);
+		pe.setModelName("结案管理");
+		pe.setModelCode(closeCaseCode);
+		if(roleType == 4){
+			pe.setStatus(1);
+		}else if(roleType == 5){
+			pe.setStatus(2);
+		}else if(roleType == 6){
+			pe.setStatus(3);
+		}else if(roleType == 7){
+			pe.setStatus(4);
+		}else if(roleType == 0){
+			pe.setStatus(6);
+		}
+		
+		pe.setRoleType(roleType);
+		pe.setCreateTime(new Date());
+		pe.setIsShow(1);
+		
+		return this.pendingEventMapper.insert(pe);
+	}
+	
+	/**
+	 * 修改“结案管理”待办事件状态
+	 * @param projectCode 	项目编号
+	 * @param closeCaseCode 结案编号
+	 * @param status        结案管理（1：待提交社区运营 2：待提交用户运营 3：待提交电商运营 4：待提交媒管 5：已提交 
+	 * 							6：待处理 7：待结案 8：已结案  9：撤回-业务员 10：撤回-社区运营 11:撤回-用户运营 
+	 * 						12:撤回-电商运营 13:撤回-媒管）
+	 * @return
+	 */
+	@Override
+	public void updateCloseCasePendingEvent(String projectCode,String closeCaseCode,int status){
+		PendingEvent pendingEvent = null;
+		if(status == 5){
+			//执行部门已提交状态，要判断4个执行部门是否全为已提交，全为的话，删除执行部门对应的待办，生成业务员待办
+			List<PendingEvent> backSizes = this.pendingEventMapper.selectByProjectCodeAndRoleType(projectCode, "4,5,6,7", "结案管理",closeCaseCode);
+			if(backSizes.size() != 4){
+				pendingEvent = this.pendingEventMapper.selectByModelCodeAndName(projectCode, closeCaseCode, "结案管理","");
+				pendingEvent.setStatus(status);
+			}else{
+				//删除执行部门对应的待办，生成业务员待办
+				for(PendingEvent pe:backSizes){
+					pe.setIsShow(0);
+					pe.setStatus(status);
+					pe.setUpdateTime(new Date());
+					this.pendingEventMapper.updateByModelCode(pe);
+				}
+				
+				Project Project = this.projectService.getByCode(projectCode);
+				this.createCloseCasePendingEvent(Project.getName(), projectCode, "", 0);
+			}
+			
+		}else if(status == 10 || status == 11 || status == 12 || status == 13){
+			//这些状态为执行部门返回状态
+			pendingEvent = this.pendingEventMapper.selectByModelCodeAndName(projectCode, closeCaseCode, "结案管理","");
+			if(status == 10){
+				pendingEvent.setStatus(1);
+			}else if(status == 11){
+				pendingEvent.setStatus(2);
+			}else if(status == 12){
+				pendingEvent.setStatus(3);
+			}else if(status == 13){
+				pendingEvent.setStatus(4);
+			}
+		}else if(status == 7){
+			pendingEvent = this.pendingEventMapper.selectByModelCodeAndName(projectCode, "", "结案管理","");
+			pendingEvent.setStatus(status);
+			pendingEvent.setRoleType(3);
+		}else if(status == 9){
+			pendingEvent = this.pendingEventMapper.selectByModelCodeAndName(projectCode, "", "结案管理","");
+			pendingEvent.setStatus(6);
+		}else if(status == 8){
+			//这些状态为账务人员状态
+			pendingEvent = this.pendingEventMapper.selectByModelCodeAndName(projectCode, "", "结案管理","");
+			pendingEvent.setIsShow(0);
+			pendingEvent.setStatus(status);
+		}
+		
+		pendingEvent.setUpdateTime(new Date());
+		
+		this.pendingEventMapper.updateByModelCode(pendingEvent);
+		
+	}
+	
+	
+	/**
+	 * 新添收款模块的待办事件-合同结束后待新建收款计划
+	 * @param projectName	项目名称
+	 * @param projectCode	项目编号
+	 */
+	@Override
+	public int createBackMoneyPendingEventByContractEnd(String projectName,String projectCode){
+		PendingEvent pe = new PendingEvent();
+		pe.setId(UUIDGenerator.generate());
+		pe.setProjectName(projectName);
+		pe.setProjectCode(projectCode);
+		pe.setModelName("收款管理");
+		pe.setStatus(7);
+		pe.setRoleType(0);
+		
+		pe.setCreateTime(new Date());
+		pe.setIsShow(1);
+		pe.setExceptionId("createNew");
+		
+		return this.pendingEventMapper.insert(pe);
+	}
+	
+	/**
+	 * 修改“收款管理”待办事件状态-合同结束后待新建收款计划
+	 * @param projectName 项目名称
+	 * @return
+	 */
+	@Override
+	public void updateBackMoneyPendingEventByContractEnd(String projectCode){
+		PendingEvent pendingEvent = null;
+		pendingEvent = this.pendingEventMapper.selectByProjectCodeAndRoleTypeExceptionId(projectCode, "", "收款管理","","createNew");
+		pendingEvent.setIsShow(0);
+		pendingEvent.setUpdateTime(new Date());
+		
+		this.pendingEventMapper.updateByModelCode(pendingEvent);
+		
+	}
+}

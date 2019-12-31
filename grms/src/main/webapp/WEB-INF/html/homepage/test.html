@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html style="height: 100%;">
+	<head>
+	<meta charset="UTF-8">
+	<title>合立运维管理系统</title>
+	<meta http-equiv="X-UA-Compatible" content="edge" />
+	<link rel="stylesheet" type="text/css" href="../common/css/reset.css" />
+	<link rel="stylesheet" type="text/css" href="../common/easyui/themes/default/easyui.css" />
+	<link rel="stylesheet" type="text/css" href="../common/css/common.css">
+	<link rel="stylesheet" type="text/css" href="../common/css/reset.css">
+	<link rel="stylesheet" type="text/css" href="../common/css/default.css">
+	<style type="text/css">
+		#newStatistics{
+		    width:340px;
+		    height:160px;
+		    position: absolute;
+		    top:0;
+		    bottom:0;
+		    left:0;
+		    right:0;
+		    z-index: 10;
+		    margin:auto;
+		    background: #eee;
+		    border-radius: 5px;
+		}
+		#newStatistics div{
+		    margin:63px auto 0;
+		    width:270px;
+		    text-align: center;
+
+		}
+		#newStatistics span{
+		    color:#555;
+		    font-size: 20px;
+		    margin-left:5px;
+		    display: inline-block;
+		    margin-left: 10px;
+		}
+		#newStatistics img{
+		    display: inline-block;
+		}
+	</style>
+	</head>
+	<body>
+		<div>
+			<label class="checkbox-icon"><input type="checkbox" name="ds" value="就刷卡地方就">是第几发送到</label>
+			<label class="checkbox-icon"><input type="checkbox" name="ds" value="就刷卡地方就">法规的法规</label>
+		</div>
+		
+		<div>
+			<label class="radio-icon"><input type="radio" name="dss" value="就刷卡地方就">sd</label>
+			<label class="radio-icon"><input type="radio" name="dss" value="就刷卡地方就">法规的法规</label>
+		</div>
+		
+		<input  id="startTime"  type= "text" class= "easyui-datebox" required ="required">
+        <input  id="endTime"  type= "text" class= "easyui-datebox" required ="required"><br><br>
+
+		<div id="shDataid"></div>
+		<div onclick="delayWorkOrder()">对话框</div>
+		<div id="delayWorkOrder"></div>
+		<div id="dg"></div>
+		<div id="tip" onclick="tip()">提示框</div>
+
+		<script type="text/javascript"	src="../common/easyui/jquery.min.js"></script>
+		<script type="text/javascript"	src="../common/easyui/jquery.easyui.min.js"></script>
+        <script type="text/javascript"  src="../common/easyui/locale/easyui-lang-zh_CN.js" ></script>
+        <script type="text/javascript"	src="../common/plugin/common.js"></script>
+		<script type="text/javascript" src="js/test.js"></script>
+	</body>
+</html>

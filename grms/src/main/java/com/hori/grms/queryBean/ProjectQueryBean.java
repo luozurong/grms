@@ -1,0 +1,86 @@
+package com.hori.grms.queryBean;
+
+import java.util.List;
+
+/**
+ * 项目查询QueryBean
+ * @author Chenrw
+ * @date 2018年8月9日
+ */
+public class ProjectQueryBean extends BaseQueryBean{
+	
+	//项目编号
+	private String productCode;
+	//项目名称
+	private String name;
+	//合同编号
+	private String contractCode;
+	//客户名称
+	private String customerName;
+	//项目状态
+	private Integer status = -2;
+	//指定查询创建人账号
+	private String account;
+	//指定查询创建人账号
+	private String createrName;
+	//用户类型
+	private Byte roleType;
+	
+	private List<String> accounts;
+	
+	public String getProductCode() {
+		return productCode;
+	}
+	public void setProductCode(String productCode) {
+		this.productCode = productCode;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getContractCode() {
+		return contractCode;
+	}
+	public void setContractCode(String contractCode) {
+		this.contractCode = contractCode;
+	}
+	public String getCustomerName() {
+		return customerName;
+	}
+	public void setCustomerName(String customerName) {
+		this.customerName = customerName;
+	}
+	public Integer getStatus() {
+		return status;
+	}
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+	public List<String> getAccounts() {
+		return accounts;
+	}
+	public void setAccounts(List<String> accounts) {
+		this.accounts = accounts;
+	}
+	public String getAccount() {
+		return account;
+	}
+	public void setAccount(String account) {
+		this.account = account;
+	}
+	public String getCreaterName() {
+		return createrName;
+	}
+	public void setCreaterName(String createrName) {
+		this.createrName = createrName;
+	}
+	public Byte getRoleType() {
+		return roleType;
+	}
+	public void setRoleType(Byte roleType) {
+		this.roleType = roleType;
+	}
+	
+}

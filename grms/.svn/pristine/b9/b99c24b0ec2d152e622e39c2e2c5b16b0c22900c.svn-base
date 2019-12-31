@@ -1,0 +1,158 @@
+package com.hori.grms.service.impl;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.hori.grms.dao.CustomerMapper;
+import com.hori.grms.dao.CustomerTurnLogMapper;
+import com.hori.grms.dao.CustomerTypeMapper;
+import com.hori.grms.model.Customer;
+import com.hori.grms.model.CustomerTurnLog;
+import com.hori.grms.model.CustomerType;
+import com.hori.grms.service.CustomerManagementSerivce;
+import com.hori.grms.util.StringUtils;
+import com.hori.grms.util.UUIDGeneratorUtil;
+@Service("customerManagementSerivce")
+public class CustomerManagementSerivceImpl implements CustomerManagementSerivce {
+
+	@Autowired
+	private CustomerMapper customerMapper;
+
+	@Autowired
+	private CustomerTurnLogMapper customerTurnLogMapper;
+	
+	@Autowired
+	private CustomerTypeMapper customerTypeMapper;
+	
+	@Override
+	public List<Map<String, Object>> getAll(String condition, String userAccount) {
+		//admin账户展示所有，不区分是否负责的账户，其他账户则需要展示其负责的客户
+		if ("admin".equals(userAccount.trim())) {
+			userAccount = "";
+		}
+		
+		List<Map<String,Object>> list = customerMapper.getAll(condition,userAccount);
+		if (list != null && list.size() > 0) {
+			for (Map<String, Object> map : list) {
+				String province = (String) map.get("province");
+				String city = (String) map.get("city");
+				String district = (String) map.get("district");
+				String addr = (String) map.get("address");
+				map.put("address", province+city+district+addr);
+			}
+		}
+		return list;
+	}
+
+	@Override
+	public void save(Customer customer,String userAccount) {
+		if (StringUtils.isNotBlank(customer.getId())) {
+			//客户类型处理
+			List<CustomerType> types = customerTypeMapper.selectAll();
+			Customer c = customerMapper.selectByPrimaryKey(customer.getId());
+			StringBuilder flag = new StringBuilder();
+			if (types != null && types.size() > 0) {
+				for (CustomerType customerType : types) {
+					if (customer.getCustomerTypeId().trim().equals(customerType.getName())) {
+						customer.setCustomerTypeId(customerType.getId());
+						flag.append("1");
+						break;
+					}else{
+						flag.append("0");
+					}
+				}
+				if (!flag.toString().contains("1")) {
+					customer.setCustomerTypeId(c.getCustomerTypeId());
+				}
+			}
+			c.setUpdateTime(new Date());
+			customerMapper.updateByPrimaryKeySelective(customer);
+		}else{
+			//创建新的客户时，创建者的账户和拥有者的账户一致,客户可能会转移给其他拥有者
+			customer.setCreatorAccount(userAccount);
+			customer.setId(UUIDGeneratorUtil.generateUUID());
+			customer.setCreatorName(customer.getOwnerName());
+			customer.setCreateTime(new Date());
+			customer.setOwnerAccount(userAccount);
+			customerMapper.insert(customer);
+		}
+	}
+
+	@Override
+	public void deleteById(List<String> idList) {
+		customerMapper.deleteById(idList);
+	}
+
+	@Override
+	public Map<String, Object> fetchCustomerById(String id) {
+		Map<String, Object> map = customerMapper.fetchCustomerById(id);
+		String province = (String) map.get("province");
+		String city = (String) map.get("city");
+		String district = (String) map.get("district");
+		String addr = (String) map.get("address");
+		map.put("addressDetail", province+city+district+addr);
+		return map;
+	}
+
+	@Override
+	public List<Map<String, Object>> getExport(String condition, String userAccount) {
+		//admin账户展示所有，不区分是否负责的账户，其他账户则需要展示其负责的客户
+		if ("admin".equals(userAccount.trim())) {
+			userAccount = "";
+		}
+		List<Map<String, Object>> exportList = customerMapper.getExport(condition,userAccount);
+		if (exportList != null && exportList.size() > 0) {
+			for (Map<String, Object> map : exportList) {
+				String province = (String) map.get("province");
+				String city = (String) map.get("city");
+				String district = (String) map.get("district");
+				String addr = (String) map.get("address");
+				map.put("address", province+city+district+addr);
+			}
+		}
+		return exportList;
+	}
+
+	@Override
+	public List<Map<String, Object>> getAllByName(String condition) {
+		if (StringUtils.isBlank(condition)) {
+			return new ArrayList<>();
+		}
+		return customerMapper.fetchCompanyByName(condition);
+	}
+
+	@Override
+	public List<Map<String, Object>> transferInfoById(String id) {
+		return customerMapper.transferInfoById(id);
+	}
+	@Override
+	public void transferCustomer(String custId, String acceptAccount, String acceptName, String operAccount, String operName){
+		Customer customer = customerMapper.selectByPrimaryKey(custId);
+		//向customer_turn_log表插入一条记录
+		CustomerTurnLog ctl = new CustomerTurnLog();
+		ctl.setId(UUIDGeneratorUtil.generateUUID());
+		ctl.setCustomerId(customer.getId());
+		ctl.setAccepterName(acceptName);
+		ctl.setAccepterAccount(acceptAccount);
+		ctl.setFormerName(customer.getOwnerName());
+		ctl.setFormerAccount(customer.getOwnerAccount());
+		ctl.setCreateTime(new Date());
+		ctl.setCreaterName(operName);
+		ctl.setCreaterAccount(operAccount);
+		customerTurnLogMapper.insert(ctl);
+		//更新客户信息
+		customer.setOwnerName(acceptName);
+		customer.setOwnerAccount(acceptAccount);
+		customer.setUpdateTime(new Date());
+		customerMapper.updateByPrimaryKeySelective(customer);
+	}
+	
+}

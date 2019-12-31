@@ -1,0 +1,42 @@
+/**
+ * 
+ */
+package com.hori.grms.service;
+
+import java.util.List;
+
+import com.hori.grms.model.ProjectProduct;
+import com.hori.grms.vo.project.ProjectMenuVo;
+
+/** 
+ * @ClassName: ProjectProductService 
+ * @Description:项目清单表
+ * @author zhuqiang
+ * @date 2018年8月8日 下午7:05:15 
+ */
+public interface ProjectProductService {
+	/**
+	 * 通过项目编码查询资料清单VO
+	 * @return
+	 */
+	List<ProjectMenuVo> findVoByProjectCode(String projectCode);
+
+	/**
+	 * 根据主键获取实体
+	 * @param projectProductId
+	 * @return
+	 */
+	ProjectProduct getById(String projectProductId);
+	/**
+	 * 根据项目编码查询
+	 * @param projectCode
+	 * @return
+	 */
+	List<ProjectProduct> getListByProject(String projectCode);
+	/**
+	 * 更新项目清单信息
+	 * @param projectProduct
+	 */
+	void update(ProjectProduct projectProduct);
+
+}

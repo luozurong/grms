@@ -1,0 +1,510 @@
+html,body {
+    background-color: #f8f8f8;
+}
+/*路径导航样式*/
+.topTitle {
+    height: 50px;
+    background-color: #f8f8f8;
+}
+.path1,.path2 {
+    padding-left: 28px;
+    min-width: 60px;
+    height: 50px;
+    line-height: 50px;
+    font-size: 14px;
+    color:#666;
+}
+.path1 {
+    margin-left: 24px;
+    background: url("../images/ic_location.png") no-repeat left 15px;
+}
+.path2 {
+    margin-left: 15px;
+    background: url("../images/arrow.png") no-repeat left 20px;
+}
+
+/*条件选择、操作、搜索区域样式*/
+.conditions-select {
+    position: relative;
+    margin:0 25px 20px 24px;
+    padding-left: 25px;
+    min-height: 75px;
+    background-color:#ffffff;
+}
+.to-line,.time,.account,.create, .search {
+    margin-top: 20px;
+    height: 36px;
+    line-height: 36px;
+    font-size: 14px;
+    color:#666;
+}
+
+.time {
+    /*width: 60px;*/
+}
+.account {
+    margin-left: 16px;
+    /*width: 60px;*/
+}
+.account1 {
+    margin-top: 20px;
+    width: 330px;
+    height: 34px;
+}
+.account1>input {
+    width: 114px;
+    height: 32px;
+    border: 1px solid #c2c2c2;
+}
+.to-line {
+    width: 42px;
+    text-align: center;
+}
+
+.create, .search,.delete {
+    margin-top: 20px;
+    width: 88px;
+    height:32px;
+    line-height: 32px;
+    font-size: 14px;
+    color:#97e4d3;
+    text-align: center;
+    border: 1px solid #97e4d3;
+    background-color: #FFFFFF;
+    border-radius: 3px;
+    cursor: pointer;
+}
+.create {
+    margin-left: 16px;
+}
+.search {
+    margin-left: 50px;
+}
+.delete {
+    margin-left: 12px;
+    color:#ffffff;
+    border: 1px solid #e65e4e;
+    background-color: #e65e4e;
+}
+.time-star,.time-end {
+    margin-top: 20px;
+    width: 116px;
+    height: 34px;
+}
+.datebox-1,.datebox-2 {
+    width: 116px;
+    height: 34px;
+}
+.datebox {
+    height: 32px;;
+}
+/*取消，确定按钮*/
+.quxiao,.comfirm {
+    margin-top: 20px;
+    display: block;
+    width:118px;
+    height:38px;
+    line-height: 38px;
+    text-align: center;
+    font-size: 14px;
+    box-sizing: content-box;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.quxiao {
+    margin-left: 144px;
+    background-color: #FFFFFF;
+    color: #666666;
+    border:1px solid #999999;
+}
+.comfirm {
+    margin-left: 50px;
+    background-color: #51d2b6;
+    color: #FFFFFF;
+    border:1px solid #51d2b6;
+}
+/*数据表格，分页样式*/
+.content-wrap {
+    margin-left:24px;
+    margin-right:25px;
+}
+
+.body-wrap .content-wrap {
+    margin-left:0;
+    margin-right:0;
+}
+
+td input[type='checkbox']{
+    opacity: 1 !important;
+}
+.datagrid-header-row td{
+    background: #4d525a;
+}
+.datagrid-header td, .datagrid-body td, .datagrid-footer td{
+    border-width: 0;
+}
+.datagrid-btable{
+    border-left:1px solid transparent !important;
+    border-right:1px solid transparent;
+    border-bottom:1px solid transparent;
+}
+.datagrid-cell>a{
+    padding:0 14px;
+    border-right:1px solid #ccc;
+    color:#51d2b6;
+}
+.datagrid-cell>a:first-child{
+    padding-left: 0;
+}
+.datagrid-cell>a:last-child{
+    border-right:none;
+}
+.datagrid-btable tbody tr:nth-child(even){
+    background:#f8f8f8;
+}
+.datagrid-htable, .datagrid-btable, .datagrid-ftable{
+    color:#666;
+}
+.datagrid-htable tbody td{
+    color:#fff;
+}
+/*.window .window-header .panel-tool{
+    display: none;
+}*/
+.datagrid-header td.datagrid-header-over{
+    background:#4d525a;
+    color:#fff;
+}
+
+.l-btn{
+    -webkit-border-radius: 0;
+    border-radius: 0;
+}
+.l-btn-plain-selected{
+    border:1px solid #51d2b6;
+}
+.l-btn-plain-selected{
+    border:1px solid #51d2b6;
+}
+.pagination-link:hover{
+    border:1px solid #51d2b6;
+}
+
+.pagination td:first-child{
+    position: absolute;
+    left: 0;
+    top: 10px;
+}
+.pagination table {
+    float: right;
+}
+
+
+
+.content-wrap .l-btn{
+    -webkit-border-radius: 0;
+    border-radius: 0;
+}
+.content-wrap .l-btn-plain-selected{
+    border:1px solid #51d2b6;
+}
+.content-wrap .l-btn-plain-selected{
+    border:1px solid #51d2b6;
+}
+.content-wrap .pagination-link:hover{
+    border:1px solid #51d2b6;
+}
+
+.content-wrap .pagination td:first-child{
+    position: absolute;
+    left: 0;
+    top: 10px;
+}
+.content-wrap .pagination table {
+    float: right;
+}
+#pp{
+    margin-top:20px;
+}
+
+/*左边树，右边表格样式*/
+
+html,body {
+    height: 100%;
+}
+body{
+    min-width: 1100px;
+    box-sizing: border-box;
+    /*background-color: #f8f8f8;*/
+}
+
+.body-wrap{
+    position: relative;
+    margin-left: 24px;
+    margin-right: 24px;
+    min-height: calc(100% - 123px);
+    border: 1px solid #e1e1e1;
+    background-color: #FFFFFF;
+}
+.menuL{
+    position: absolute;
+    left: 0;
+    top: 0;
+    box-sizing: border-box;
+    height: 100%;
+    width: 230px;
+    border-right: 1px solid #e1e1e1;
+    overflow: auto;
+    background-color: #ffffff;
+}
+
+.tree-wrap{
+    margin-left:26px;
+    margin-top:30px;
+}
+
+.content{
+    margin-left: 230px;
+    background-color: #ffffff;
+}
+
+.content-body{
+    padding-bottom: 40px;
+}
+
+/*大弹窗*/
+.roleWin-wrap {
+    position: relative;
+    height: 200px;
+    overflow: auto;
+}
+.detail-wrap {
+    height: 150px;
+    overflow: auto;
+}
+
+.cl1-1{
+    display: inline-block;
+    height: 26px;
+    line-height: 26px;
+    font-size: 14px;
+    width: 10px;
+    color: #eb6663;
+    text-align: center;
+}
+.cl1 {
+    min-width:80px;
+    height: 34px;
+    line-height: 34px;
+    font-size: 14px;
+    color: #222222;
+    text-align: left;
+}
+.the-bottom {
+    position: absolute;
+    width:100%;
+    left:0;
+    bottom: 0;
+    z-index: 999;
+    height:80px;
+    border-top: 1px solid #f1f1f1;
+}
+/*角色名称*/
+.role-name {
+    margin-top: 20px;
+    margin-left: 30px;
+}
+
+.role-name .cl2>input {
+    padding-left: 2px;
+    width: 416px;
+    height: 32px;
+    line-height: 32px;
+    border: 1px solid #c9c9c9;
+    border-radius: 4px;
+    text-align: left;
+
+}
+/*角色描述*/
+.role-detail {
+    margin-left: 30px;
+    margin-top: 10px;
+}
+
+.textarea-1 {
+    padding-left: 2px;
+    width: 416px;
+    height: 78px;
+    max-height: 78px;
+    border: 1px solid #c9c9c9;
+    border-radius: 4px;
+    resize: none;
+}
+.combo {
+    height: 34px;
+    line-height: 34px;
+}
+.infoTips {
+    margin: 6px 0 6px 110px;
+    height: 20px;
+    line-height: 20px;
+    font-size: 14px;
+    color: #999999;
+    text-align: left;
+}
+
+.area{
+    margin-left: 32px;
+    margin-top: 14px;
+    margin-bottom: 10px;
+}
+.left-name,.right-name {
+    padding-left: 10px;
+    padding-top: 14px;
+    padding-bottom: 10px;
+    width:218px;
+    height: 228px;
+    border:1px solid #cccccc;
+	overflow: auto;
+}
+.list {
+    position: relative;
+    height:26px;
+    line-height: 26px;
+    text-align: left;
+    font-size: 14px;
+    color: #666666;
+}
+.list-delete {
+    position: absolute;
+    right:0;
+    top: 2px;
+    width: 22px;
+    height: 22px;
+}
+.to-right {
+    width:50px;
+    height: 238px;
+    background: url("../images/to_right.png") 20px center no-repeat;
+}
+.textbox-text {
+    line-height: 30px;
+    height: 34px !important;
+}
+
+.cl1-1{
+    display: inline-block;
+    height: 26px;
+    line-height: 26px;
+    font-size: 14px;
+    width: 10px;
+    color: #eb6663;
+    text-align: center;
+}
+.cl1 {
+    min-width:80px;
+    height: 34px;
+    line-height: 34px;
+    font-size: 14px;
+    color: #222222;
+    text-align: left;
+}
+.cl2 {
+    min-width:60px;
+    height: 34px;
+    line-height: 34px;
+    font-size: 14px;
+    color: #222222;
+    text-align: left;
+}
+.cl3 {
+    margin-left: 40px;
+    min-width:60px;
+    height: 34px;
+    line-height: 34px;
+    font-size: 14px;
+    color: #222222;
+    text-align: left;
+}
+.textbox.combo {
+    width: 130px !important;
+}
+
+.yunwei .textbox-text {
+    width: 130px !important;
+}
+.the-bottom {
+    position: absolute;
+    width:100%;
+    left:0;
+    bottom: 0;
+    z-index: 999;
+    height:80px;
+    border-top: 1px solid #f1f1f1;
+}
+/*角色名称*/
+.role-name {
+    margin-top: 20px;
+    margin-left: 30px;
+}
+
+.role-name .cl2>input {
+    padding-left: 2px;
+    width: 416px;
+    height: 32px;
+    line-height: 32px;
+    border: 1px solid #c9c9c9;
+    border-radius: 4px;
+    text-align: left;
+
+}
+/*角色描述*/
+.role-detail {
+    margin-left: 30px;
+    margin-top: 10px;
+}
+
+.textarea-1 {
+    line-height: 32px;
+    padding-left: 2px;
+    width: 416px;
+    height: 32px;
+    max-height: 32px;
+    border: 1px solid #c9c9c9;
+    border-radius: 4px;
+    resize: none;
+}
+/*运维*/
+.yunwei {
+    margin-left: 30px;
+    margin-top: 6px;
+}
+.choice {
+    margin-left: 20px;
+    width:40px;
+    height: 34px;
+    line-height: 34px;
+    font-size: 14px;
+    color: #222222;
+    text-align: right;
+    background: url("../images/circle.png") 2px 10px no-repeat;
+}
+.choiceActive {
+    background: url("../images/ic-choice.png") 2px 10px no-repeat;
+}
+
+/*树*/
+.tree-wrap {
+    margin-left: 202px;
+    margin-top: 6px;
+}
+#roleWin .tree-node-selected .tree-title{
+    background: #FFFFFF;
+    color: #222222;
+}
+.datagrid-btable{
+    border-left:1px solid transparent !important;
+    border-right:1px solid transparent;
+    border-bottom:1px solid transparent;
+}

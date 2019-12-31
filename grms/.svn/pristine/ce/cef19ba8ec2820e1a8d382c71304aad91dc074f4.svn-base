@@ -1,0 +1,43 @@
+/*
+ * ProjectProductMenuArea.java
+ * Copyright(C) 20xx-2015 xxxxxx公司
+ * All rights reserved.
+ * -----------------------------------------------
+ * 2018-08-08 Created
+ */
+package com.hori.grms.model;
+
+/**
+ * 项目产品明细小区关联表
+ * 
+ * @author 
+ * @version 1.0 2018-08-08
+ */
+public class ProjectProductMenuArea {
+
+    //id
+    private String id;
+    //小区机构编号
+    private String organizationSeq;
+    //项目产品明细id
+    private String projectProductMenuId;
+
+    public String getId() {
+        return id;
+    }
+    public void setId(String id) {
+        this.id = id;
+    }
+    public String getOrganizationSeq() {
+        return organizationSeq;
+    }
+    public void setOrganizationSeq(String organizationSeq) {
+        this.organizationSeq = organizationSeq;
+    }
+    public String getProjectProductMenuId() {
+        return projectProductMenuId;
+    }
+    public void setProjectProductMenuId(String projectProductMenuId) {
+        this.projectProductMenuId = projectProductMenuId;
+    }
+}

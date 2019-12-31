@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hori.grms.dao.ContractApproveLogMapper" >
+  <resultMap id="BaseResultMap" type="com.hori.grms.model.ContractApproveLog" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="contract_code" property="contractCode" jdbcType="VARCHAR" />
+    <result column="approve_role_name" property="approveRoleName" jdbcType="VARCHAR" />
+    <result column="approve_account" property="approveAccount" jdbcType="VARCHAR" />
+    <result column="approve_name" property="approveName" jdbcType="VARCHAR" />
+    <result column="approve_time" property="approveTime" jdbcType="TIMESTAMP" />
+    <result column="approve_desc" property="approveDesc" jdbcType="VARCHAR" />
+    <result column="approve_status" property="approveStatus" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, contract_code, approve_role_name, approve_account, approve_name, approve_time, 
+    approve_desc, approve_status
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from contract_approve_log
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <select id="selectByContractCode" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from contract_approve_log
+    where contract_code= #{contractCode,jdbcType=VARCHAR} AND approve_status in ('2','3','4')
+    order by approve_time desc
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from contract_approve_log
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.hori.grms.model.ContractApproveLog" >
+    insert into contract_approve_log (id, contract_code, approve_role_name, 
+      approve_account, approve_name, approve_time, 
+      approve_desc, approve_status)
+    values (#{id,jdbcType=VARCHAR}, #{contractCode,jdbcType=VARCHAR}, #{approveRoleName,jdbcType=VARCHAR}, 
+      #{approveAccount,jdbcType=VARCHAR}, #{approveName,jdbcType=VARCHAR}, #{approveTime,jdbcType=TIMESTAMP}, 
+      #{approveDesc,jdbcType=VARCHAR}, #{approveStatus,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.hori.grms.model.ContractApproveLog" >
+    insert into contract_approve_log
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="contractCode != null" >
+        contract_code,
+      </if>
+      <if test="approveRoleName != null" >
+        approve_role_name,
+      </if>
+      <if test="approveAccount != null" >
+        approve_account,
+      </if>
+      <if test="approveName != null" >
+        approve_name,
+      </if>
+      <if test="approveTime != null" >
+        approve_time,
+      </if>
+      <if test="approveDesc != null" >
+        approve_desc,
+      </if>
+      <if test="approveStatus != null" >
+        approve_status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="contractCode != null" >
+        #{contractCode,jdbcType=VARCHAR},
+      </if>
+      <if test="approveRoleName != null" >
+        #{approveRoleName,jdbcType=VARCHAR},
+      </if>
+      <if test="approveAccount != null" >
+        #{approveAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="approveName != null" >
+        #{approveName,jdbcType=VARCHAR},
+      </if>
+      <if test="approveTime != null" >
+        #{approveTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="approveDesc != null" >
+        #{approveDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="approveStatus != null" >
+        #{approveStatus,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.hori.grms.model.ContractApproveLog" >
+    update contract_approve_log
+    <set >
+      <if test="contractCode != null" >
+        contract_code = #{contractCode,jdbcType=VARCHAR},
+      </if>
+      <if test="approveRoleName != null" >
+        approve_role_name = #{approveRoleName,jdbcType=VARCHAR},
+      </if>
+      <if test="approveAccount != null" >
+        approve_account = #{approveAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="approveName != null" >
+        approve_name = #{approveName,jdbcType=VARCHAR},
+      </if>
+      <if test="approveTime != null" >
+        approve_time = #{approveTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="approveDesc != null" >
+        approve_desc = #{approveDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="approveStatus != null" >
+        approve_status = #{approveStatus,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.hori.grms.model.ContractApproveLog" >
+    update contract_approve_log
+    set contract_code = #{contractCode,jdbcType=VARCHAR},
+      approve_role_name = #{approveRoleName,jdbcType=VARCHAR},
+      approve_account = #{approveAccount,jdbcType=VARCHAR},
+      approve_name = #{approveName,jdbcType=VARCHAR},
+      approve_time = #{approveTime,jdbcType=TIMESTAMP},
+      approve_desc = #{approveDesc,jdbcType=VARCHAR},
+      approve_status = #{approveStatus,jdbcType=INTEGER}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

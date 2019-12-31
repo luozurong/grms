@@ -1,0 +1,59 @@
+/**
+ * 
+ */
+package com.hori.grms.service.impl;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.hori.grms.dao.ProjectActionMapper;
+import com.hori.grms.queryBean.ProjectActionQueryBean;
+import com.hori.grms.service.ProjectActionService;
+import com.hori.grms.vo.CommunityProjectActionVo;
+
+/** 
+ * @ClassName: ProjectActionServiceImpl 
+ * @Description:项目执行清单
+ * @author zhuqiang
+ * @date 2018年8月8日 下午6:55:24 
+ */
+@Service("projectActionService")
+public class ProjectActionServiceImpl implements ProjectActionService{
+	@Autowired
+	private ProjectActionMapper projectActionMapper;
+
+	@Override
+	public PageInfo<CommunityProjectActionVo> listCommunityAction(ProjectActionQueryBean queryBean) {
+		if (queryBean == null) {
+			return null;
+		}
+		PageHelper.startPage(queryBean.getPageNumber(), queryBean.getPageSize());
+		List<CommunityProjectActionVo> list = projectActionMapper.listCommunityAction(queryBean);
+		
+		PageInfo<CommunityProjectActionVo> pageInfo = new PageInfo<CommunityProjectActionVo>(list);
+		
+		return pageInfo;
+	}
+
+	@Override
+	public PageInfo<Map<String, Object>> listProjectAction(ProjectActionQueryBean queryBean) {
+		
+		if (queryBean == null) {
+			return null;
+		}
+		PageHelper.startPage(queryBean.getPageNumber(), queryBean.getPageSize());
+		
+		List<Map<String, Object>> list = projectActionMapper.listProjectAction(queryBean);
+		
+		PageInfo<Map<String, Object>> pageInfo = new PageInfo<Map<String, Object>>(list);
+		
+		
+		
+		return pageInfo;
+	}
+}

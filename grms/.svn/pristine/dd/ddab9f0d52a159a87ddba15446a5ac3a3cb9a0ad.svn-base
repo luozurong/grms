@@ -1,0 +1,89 @@
+/*
+ * ProductMenuMapper.java
+ * Copyright(C) 20xx-2015 xxxxxx公司
+ * All rights reserved.
+ * -----------------------------------------------
+ * 2018-08-17 Created
+ */
+package com.hori.grms.dao;
+
+import com.hori.grms.model.ProductMenu;
+import com.hori.grms.model.ProductMenuExample;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.annotations.Param;
+
+public interface ProductMenuMapper {
+    int countByExample(ProductMenuExample example);
+
+    int deleteByExample(ProductMenuExample example);
+
+    int deleteByPrimaryKey(String id);
+
+    int insert(ProductMenu record);
+
+    int insertSelective(ProductMenu record);
+
+    List<ProductMenu> selectByExample(ProductMenuExample example);
+
+    ProductMenu selectByPrimaryKey(String id);
+
+    int updateByExampleSelective(@Param("record") ProductMenu record, @Param("example") ProductMenuExample example);
+
+    int updateByExample(@Param("record") ProductMenu record, @Param("example") ProductMenuExample example);
+
+    int updateByPrimaryKeySelective(ProductMenu record);
+
+    int updateByPrimaryKey(ProductMenu record);
+
+	/**
+	 * 查看限制次数不为0 的指定类型 的清单表
+	 * @param numLimitType 1按总数限制 2按月限制
+	 * @param numLimit 限制次数，0不限制
+	 * @return
+	 */
+	List<ProductMenu> findProductMenuList(@Param("numLimitType") Short numLimitType,@Param("businessType") String businessType);
+
+	/**
+	 * 
+	 * @param pmg
+	 * @return
+	 */
+	List<ProductMenu> findListByProductMenu(ProductMenu pmg);
+
+	/**
+	 * 根据组织机构编号，小区时间，结束时间获取煤管清单在该时间内被占用的小区数量
+	 * @param oStrings
+	 * @param beginTime
+	 * @param endTime
+	 * @return
+	 */
+	List<Map<String, Object>> filterMeauByorganizationSeqs(@Param("oStrings")String[] oStrings,@Param("beginTime") Date beginTime,@Param("endTime") Date endTime);
+
+	/**
+	 * 煤管： 查看指定清单 的小区 在 指定时间段是否可用
+	 * @param id
+	 * @param orGList
+	 * @param beginTime
+	 * @param endTime
+	 * @return 
+	 */
+	List<Map<String, Object>> findAreaByTimeMeanId(@Param("meauId")String meauId,@Param("orGList") List<String> orGList,@Param("beginTime") Date beginTime,@Param("endTime") Date endTime);
+
+	/**
+	 * 3,4:根据清单id,开始时间查看每月已创建活动的剩余次数
+	 * @param id
+	 * @param beginTime
+	 * @return
+	 */
+	Integer findNumsByMeanIdAndBeginTime(@Param("meauId")String meauId,@Param("beginTime") Date beginTime);
+}
+
+
+
+
+
+

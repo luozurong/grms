@@ -1,0 +1,124 @@
+package com.hori.grms.service.impl;
+
+import java.io.File;
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.hori.grms.dao.CloseCaseMapper;
+import com.hori.grms.model.CloseCaseInfo;
+import com.hori.grms.queryBean.CloseCaseQueryBean;
+import com.hori.grms.service.CloseCaseService;
+
+@Service
+public class CloseCaseServiceImpl implements CloseCaseService {
+
+	@Autowired
+	private CloseCaseMapper closeCaseMapper;
+	
+	@Override
+	public List<CloseCaseInfo> getCloseCases(CloseCaseQueryBean queryBean) {
+		if(queryBean != null) {
+			queryBean.setPageIndex((queryBean.getPageNumber() - 1) * queryBean.getPageSize());
+			if(StringUtils.isNotBlank(queryBean.getKeyword())) {
+				queryBean.setKeyword("%" + queryBean.getKeyword() + "%");
+			}
+			if(StringUtils.isNotBlank(queryBean.getCreateTimeEnd())) {
+				queryBean.setCreateTimeEnd(queryBean.getCreateTimeEnd().trim() + " 23:59:59");
+			}
+			if(StringUtils.isNotBlank(queryBean.getActionTimeEnd())) {
+				queryBean.setActionTimeEnd(queryBean.getActionTimeEnd().trim() + " 23:59:59");
+			}
+		}
+		List<CloseCaseInfo> ccis = closeCaseMapper.getCloseCases(queryBean);
+		if(ccis != null && !ccis.isEmpty()) {
+			for(CloseCaseInfo cc : ccis) {
+				if(StringUtils.isNotBlank(cc.getUrl())) {
+					cc.setUrl(cc.getUrl().substring(cc.getUrl().lastIndexOf(File.separator) + 1));
+				}
+				if(queryBean.getUserType() == 1) {
+					//通过项目编号获取各个执行部门的执行结案
+					List<CloseCaseInfo> cinfos = closeCaseMapper.getCloseCaseByProjectCode(cc.getProjectCode());
+					for(CloseCaseInfo cinfo : cinfos) {
+						//如果其中有一个是未提交状态，则结案状态（项目维度）为不能处理状态，这里用0标识
+						if(cinfo.getStatus() != null && cinfo.getStatus() <= 4) {
+							cc.setStatus(0);
+							break;
+						}
+					}
+				}
+			}
+		}
+		return ccis;
+	}
+
+	@Override
+	public int getCloseCaseCount(CloseCaseQueryBean queryBean) {
+		if(queryBean != null) {
+			if(StringUtils.isNotBlank(queryBean.getKeyword())) {
+				queryBean.setKeyword("%" + queryBean.getKeyword() + "%");
+			}
+			if(StringUtils.isNotBlank(queryBean.getCreateTimeEnd())) {
+				queryBean.setCreateTimeEnd(queryBean.getCreateTimeEnd().trim() + " 23:59:59");
+			}
+			if(StringUtils.isNotBlank(queryBean.getActionTimeEnd())) {
+				queryBean.setActionTimeEnd(queryBean.getActionTimeEnd().trim() + " 23:59:59");
+			}
+		}
+		return closeCaseMapper.getCloseCaseCount(queryBean);
+	}
+	
+	@Override
+	public CloseCaseInfo getCloseCaseById(String id) {
+		return closeCaseMapper.getCloseCaseById(id);
+	}
+	
+	@Override
+	public int updateStatusForAction(List<String> ids, Integer status) {
+		int count = 0;
+		if(ids != null && !ids.isEmpty()) {
+			for(String id : ids) {
+				count += closeCaseMapper.commit(id, status);
+			}
+		}
+		return count;
+	}
+	
+	@Override
+	public int updateStatusForBusiness(List<String> closeCaseCodes, Integer status) {
+		int count = 0;
+		if(closeCaseCodes != null && !closeCaseCodes.isEmpty()) {
+			for(String closeCaseCode : closeCaseCodes) {
+				count += closeCaseMapper.commit(closeCaseCode, status);
+			}
+		}
+		return count;
+	}
+
+	@Override
+	public int uploadAttachment(List<String> ids, String url, String urlName) {
+		int count = 0;
+		if(ids != null && !ids.isEmpty()) {
+			for(String id : ids) {
+				count += closeCaseMapper.uploadAttachment(id, url, urlName);
+			}
+		}
+		return count;
+	}
+	
+	@Override
+	public int deleteAttachment(String id) {
+		int count = 0;
+		if(StringUtils.isNotBlank(id)) {
+			count = closeCaseMapper.deleteAttachment(id);
+		}
+		return count;
+	}
+	
+	@Override
+	public int save(CloseCaseInfo closeCaseInfo) {
+		return closeCaseMapper.save(closeCaseInfo);
+	}
+}

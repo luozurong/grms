@@ -1,0 +1,13 @@
+package com.hori.grms.service;
+
+import java.util.List;
+
+import com.hori.grms.model.DepartmentBusinessType;
+
+
+public interface DepartmentBusinessService {
+	//产品资源配置列表
+	List<DepartmentBusinessType> getBusinessTypeList(String condition);
+	//删除产品资源配置
+	void delDepartmentBusiness(String id);
+}

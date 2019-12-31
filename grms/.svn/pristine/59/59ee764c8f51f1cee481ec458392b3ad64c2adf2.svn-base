@@ -1,0 +1,139 @@
+/*添加区域*/
+#window{
+	overflow: hidden;
+}
+.add_Area{
+	width: 702px;
+	height: 450px;
+}
+.add_left{
+	width: 211px;
+	height: 100%;
+	/*background-color: #6495ED;*/
+	box-sizing: border-box;
+	border-right: 1px solid #E4E4E4;
+}
+.search{
+	padding: 12px 0 7px 15px;
+}
+.dataTree{
+	height: 393px;
+	padding: 0 20px;
+	box-sizing: border-box;
+	overflow: auto;
+}
+.add_right{
+	width: 491px;
+	height: 100%;
+	box-sizing: border-box;
+}
+.add_top{
+	height: 360px;
+	padding: 15px;
+	box-sizing: border-box;
+    overflow: auto;
+}
+.add_area{
+	display: inline-block;
+	font-size: 14px;
+	color: #666666;
+	margin-right: 20px;	
+}
+.area{
+	display: inline-block;
+	height: 20px;
+	min-width: 20px;
+	padding-right: 3px;
+}
+.delPic{
+	display: inline-block;
+	width: 20px;
+	height: 20px;
+	cursor: pointer;
+	background: url(../../images/btn_ic_delete_grey.png) center center no-repeat;
+}
+.delPic:hover{
+	background: url(../../images/btn_ic_delete_red.png) center center no-repeat;
+}
+.add_bottom{
+	text-align: center;
+	height: 90px;
+	padding-top: 22px;
+	border-top: 1px solid #E4E4E4;
+	box-sizing: border-box;
+}
+/*添加小区*/
+.add_community .checkBorder{
+	margin-left: -8px !important;
+}
+.add_community .dataTable .datagrid-header td{
+	border-color: #EEEEEE;
+    border-style: solid;
+    border-width: 0 0 1px 0;
+}
+.add_body{
+	height: 442px;
+	padding: 0 24px;
+	box-sizing: border-box;
+}
+.filter{
+	height: 44px;
+	padding-top: 10px;
+	box-sizing: border-box;
+}
+.dataTable{
+	padding-top: 10px;
+	box-sizing: border-box;
+}
+.dataTotal{
+	height: 34px;
+	font-size: 14px;
+	color: #666666;
+	line-height: 30px;
+}
+.add_footer{
+	text-align: center;
+	border-top: 1px solid #E4E4E4;
+	height: 60px;
+	padding-top: 8px;
+	box-sizing: border-box;
+}
+#my-btn{
+	margin-right:64px ;
+}
+#my-btn .l-btn-text{
+	font-size: 14px;
+}
+
+.searchbox .textbox-text{
+	/*color: #222222;*/
+}
+.textbox{
+	margin-right: 15px;
+}
+.searchbox{
+	margin-right: 0;
+}
+
+@media screen and (max-height:499px) {
+	#areaWindow{
+		overflow: hidden;
+	}
+	.add_Area{
+		width: 602px;
+		height: 350px;
+	}
+	.dataTree{
+		height: 293px;
+	}
+	.add_right{
+		width: 391px;
+	}
+	.add_top{
+		height: 260px;
+	}
+	
+	.add_body{
+		height: 342px;
+	}
+}

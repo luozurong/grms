@@ -1,0 +1,27 @@
+*{
+	color: #333;
+}
+.addCustomerMessager{
+	margin: 20px;
+	background: #fff;
+}
+.addCustomer-item{
+	min-height: 50px;
+	line-height: 50px;
+}
+.addCustomer-item-name{
+	display: inline-block;
+	width: 200px;
+	text-align: right;
+}
+.addCustomer-item-select{
+	width: 100px;
+	height: 32px;
+	line-height: 32px;
+}
+.addCustomer-item-input{
+	width: 290px;
+	height: 28px;
+	line-height: 28px;
+	padding-left: 10px;
+}

@@ -1,0 +1,105 @@
+package com.hori.grms.model;
+
+import java.util.Date;
+
+public class BackMoneyPlanPeriods {
+    private String id;
+
+    private String backMoneyPlanCode;
+
+    private Short type;
+
+    private Date planBackTime;
+
+    private Long planBackMoney;
+
+    private String remark;
+
+    private Long realBackMoney;
+
+    private Date realBackTime;
+
+    private String realBackRemark;
+
+    private Short status;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getBackMoneyPlanCode() {
+        return backMoneyPlanCode;
+    }
+
+    public void setBackMoneyPlanCode(String backMoneyPlanCode) {
+        this.backMoneyPlanCode = backMoneyPlanCode;
+    }
+
+    public Short getType() {
+        return type;
+    }
+
+    public void setType(Short type) {
+        this.type = type;
+    }
+
+    public Date getPlanBackTime() {
+        return planBackTime;
+    }
+
+    public void setPlanBackTime(Date planBackTime) {
+        this.planBackTime = planBackTime;
+    }
+
+    public Long getPlanBackMoney() {
+        return planBackMoney;
+    }
+
+    public void setPlanBackMoney(Long planBackMoney) {
+        this.planBackMoney = planBackMoney;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
+    public Long getRealBackMoney() {
+        return realBackMoney;
+    }
+
+    public void setRealBackMoney(Long realBackMoney) {
+        this.realBackMoney = realBackMoney;
+    }
+
+    public Date getRealBackTime() {
+        return realBackTime;
+    }
+
+    public void setRealBackTime(Date realBackTime) {
+        this.realBackTime = realBackTime;
+    }
+
+    public String getRealBackRemark() {
+        return realBackRemark;
+    }
+
+    public void setRealBackRemark(String realBackRemark) {
+        this.realBackRemark = realBackRemark;
+    }
+
+    public Short getStatus() {
+        return status;
+    }
+
+    public void setStatus(Short status) {
+        this.status = status;
+    }
+}

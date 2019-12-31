@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd 
+        http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context.xsd
+                 http://www.springframework.org/schema/util 
+         http://www.springframework.org/schema/util/spring-util-2.0.xsd">
+        
+	<!-- redis单节点数据库连接配置 -->
+	<!-- <bean id="redisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
+		<property name="hostName" value="${redis.ip}" />
+		<property name="port" value="${redis.port}" />
+		<property name="password" value="${redis.pass}" />
+		<property name="poolConfig" ref="jedisPoolConfig" />
+		 <property name="database" value="${redis.database}" /> 
+	</bean>  -->
+
+	
+		<!-- 将session放入redis -->
+	<bean id="redisHttpSessionConfiguration"
+	class="org.springframework.session.data.redis.config.annotation.web.http.RedisHttpSessionConfiguration">
+	    <property name="maxInactiveIntervalInSeconds" value="1800" />
+	    <property name="cookieSerializer" ref="defaultCookieSerializer"/>
+	</bean>
+	
+		<!-- 设置Cookie domain 和 名称 -->
+    <bean id="defaultCookieSerializer" class="org.springframework.session.web.http.DefaultCookieSerializer">
+    	<!-- 服务器域名，需配置外网地址域名或集群代理服务器域名 ,这样可以保证总域名和子域名下的服务session可以共享 -->
+        <property name="domainName" value="${server_domain_name}"/>
+        <property name="cookieName" value="KINGLIANESSIONID"/>
+        <!-- 配上/;解决相同域名下不同webapp session不能共享问题 -->
+        <property name="cookiePath" value="/"></property>
+        <!-- <property name="domainName" value="example.com"></property> -->
+        <!--  <property name="domainNamePattern" value="^.+?\.(\w+\.[a-z]+)$"></property> -->
+    </bean>
+		
+		
+</beans>

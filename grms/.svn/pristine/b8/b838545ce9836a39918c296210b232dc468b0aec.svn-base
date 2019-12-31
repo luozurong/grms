@@ -1,0 +1,59 @@
+package com.hori.grms.queryBean;
+
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
+public class ContractTemplateQueryBean {
+	private String contractOrAccount;
+	
+	private Integer pageSize;
+	
+	private Integer pageNumber;
+	
+		
+	private String startTime;
+	
+	private String endTime;
+
+	public String getContractOrAccount() {
+		return contractOrAccount;
+	}
+
+	public void setContractOrAccount(String contractOrAccount) {
+		this.contractOrAccount = contractOrAccount;
+	}
+
+
+	public Integer getPageSize() {
+		return pageSize;
+	}
+
+	public void setPageSize(Integer pageSize) {
+		this.pageSize = pageSize;
+	}
+
+	public Integer getPageNumber() {
+		return pageNumber;
+	}
+
+	public void setPageNumber(Integer pageNumber) {
+		this.pageNumber = pageNumber;
+	}
+
+	public String getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(String startTime) {
+		this.startTime = startTime;
+	}
+
+	public String getEndTime() {
+		return endTime;
+	}
+
+	public void setEndTime(String endTime) {
+		this.endTime = endTime;
+	}
+	
+
+}

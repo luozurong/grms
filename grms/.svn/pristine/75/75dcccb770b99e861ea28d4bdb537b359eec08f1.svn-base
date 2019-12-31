@@ -1,0 +1,209 @@
+var i = 2;
+var addSure =true;
+//初始化按钮
+$(function(){
+	
+});
+
+
+//提交
+function submit(){
+	var param = packageFrom();
+	var flag = false;
+	$(".newTemplate").each(function(index,element){
+		type=$(element).find("label input:checked").val();
+		if(type==2){
+			flag = true;
+		}
+	});
+	if(flag){
+		var contractCode = $("#contractCode").val();
+		$.ajax({  
+	        type : "POST",  //提交方式  
+	        url : "/grms/backMoneyPlan/saveBackMoneyPlan?contractCode="+contractCode,//路径  
+	        dataType : "json",//数据，这里使用的是Json格式进行传输  
+	        data: JSON.stringify(param),  
+	        contentType:'application/json;charset=utf-8',
+	        success : function(result) {//返回数据根据结果进行相应的处理  
+	            if ( result.success) {  
+	            	infoMask('提交成功');
+	            	window.location.href="/grms/backMoneyPlan/list.html";
+	            } else {  
+	            	infoMask('提交失败');
+	            }  
+	        }  
+	    }); 
+	}else{
+		infoMask('无结算款，无法提交');
+	}
+	
+}
+
+
+//删除模板
+function removeTemplate(str){
+	$("#newTemplate"+str).remove();
+	
+	$(".newTemplate").each(function(index,element){
+		var indexo = index+1;
+		$(element).find("span[name='wrap-span']").html("第"+indexo+"期：");	
+	});
+	
+	i--;
+	infoMask('模板删除成功');
+}
+
+//继续添加模板
+function copyTemplate(){
+	if(!addSure){
+		infoMask('已有结算款，无法添加新模板');
+		return;
+	}
+	
+	var htl = '';
+	htl += '<div class="newTemplate" id="newTemplate'+i+'">';
+	htl += '<div class="table-wrap">';
+	htl +=	'<div  class="table-wrap-a">';
+	htl +=		'<span class="wrap-span" name="wrap-span">第'+i+'期：</span>';
+	htl +=		'<span><a href="javascript:void(0);" onclick="copyTemplate()" id="addDiv'+i+'">继续添加</a></span>';
+	htl +=		'<span  style="margin-left: 20px;"><a href="javascript:void(0);" onclick="removeTemplate('+i+')">删除</a></span>'	;
+	htl +=	'</div>	';
+	htl +=  '</div>';
+	htl += '<div class="table-wrap">';
+	htl +=	'<div>';
+	htl +=		'<span class="wrap-span">款项属性：</span>';
+	htl +=		'<span>';
+	htl +=			'<label class="radio-icon" ><input type="radio" value="1" onclick="changeType('+1+','+i+',this)" class="planType" name="planType'+i+'"/>进度款</label>';
+	htl +=			'<label class="radio-icon" style="margin-left: 20px;"><input type="radio" value="2" onclick="changeType('+2+','+i+',this)"  name="planType'+i+'" class="planType" />结算款</label>';
+	htl +=		'</span>	';
+	htl +=	'</div>	';
+	htl += '</div>	';
+	htl += '<div class="table-wrap">';
+	htl +=	'<div>';
+	htl +=		'<span class="wrap-span">计划收款时间：</span>';
+	htl +=		'<span>';
+	htl +=		'	<input id="planTime" name="planTime" style="height: 32px;" type="text" class="planTimes planTimes'+i+'"/>';
+	htl +=		'</span>	';
+	htl +=	'</div>	';
+	htl += '</div>	';
+	htl += '<div class="table-wrap">';
+	htl += 	'<div>';
+	htl +=		'<span  class="wrap-span">计划回款金额：</span>';
+	htl +=		'<span>';
+	htl +=			'<input id="planMoney'+i+'" class="planMoneys" name="planMoney" type="text"/>';
+	htl +=		'</span>	';
+	htl +=	'</div>	';
+	htl += '</div>	';
+	htl += '<div class="table-wrap"  style="padding-bottom: 20px;">';
+	htl +=	'<div>';
+	htl +=	'	<span  class="wrap-span">备注：</span>';
+	htl +=		'<span>';
+	htl +=		'	<input class="remarks" id="remark" name="remark" type="text"/>';
+	htl +=		'</span>	';
+	htl +=	'</div>	';
+	htl +=	'</div>	';
+	var targetObj = $("#template").append(htl);
+	$('.planTimes'+i).datebox({});  
+	timeCheck();
+	i++;	
+}
+
+
+//获取表单数据并封装
+function packageFrom(){
+	//收款计划信息
+	var listLink=[];
+	var checkArr = [];
+	console.log(checkArr);
+	
+	$(".newTemplate").each(function(index,element){
+		var plan={};		
+		type=$(element).find("label input:checked").val();	
+		planBackTime =$(element).find('.planTimes').eq(0).datetimebox('getValue');
+		planBackMoney=$(element).find('.planMoneys').val();
+		remark       =$(element).find('.remarks').val();		
+		plan.type=type;
+		plan.planBackTime=planBackTime;
+		plan.planBackMoney=planBackMoney;
+		plan.remark=remark;
+		
+		listLink.push(plan);
+	});
+	console.log(listLink);
+	return listLink;
+}
+
+
+function changeType(s,n,e){
+	console.log(s);
+	
+	setTimeout(function(){
+		$("input[type='radio']").each(function(){
+			if($(this).is(':checked') == true){
+				$(this).parent().addClass("radio-bg");
+			}else{
+				$(this).parent().removeClass("radio-bg");
+			}
+		});
+	},200);
+	
+	if(s=='1'){//进度款
+		$("#addDiv"+n).attr("hidden",false);
+		$("#planMoney"+n).val(money).attr("readonly",false);
+		addSure = true;
+	}else if(s=='2'){//结算款
+		
+		var money = parseFloat($("#money").val());
+		var newTemplatePrevAll = $(e).parents(".newTemplate").prevAll();
+		
+		if(newTemplatePrevAll.length >= 1){
+			newTemplatePrevAll.each(function(index,element){
+				var planBackMoney = parseFloat($(element).find('.planMoneys').val());
+				console.log(planBackMoney)
+				console.log(money)
+				money = money - planBackMoney;
+				
+			});
+		}
+
+		$(e).parents(".newTemplate").find(".planMoneys").val(money.toFixed(2)).attr("readonly","readonly");
+		moneyFlag = money;
+		
+		$("#addDiv"+n).attr("hidden",true);
+
+		
+		var nextAll = $(e).parent().parent().parent().parent().parent().nextAll();
+		nextAll.each(function(e,ele){
+			$(ele).remove();
+		})
+		console.log($(e));
+		i=parseInt(n)+1;
+		addSure = false;
+	}
+}
+
+timeCheck();
+function timeCheck(){
+	$(".newTemplate .planTimes").datetimebox({
+        onSelect : function(beginDate){
+        	var nextTime = $(this).parent().parent().parent().parent().next().find(".planTimes");
+        	//$(this).parent().parent().parent().parent().nextAll().find('.planTimes').eq(0).datebox('');
+        	var nextAll = $(this).parent().parent().parent().parent().nextAll();
+        	nextAll.each(function(index,ele){
+        		$(ele).find(".planTimes").eq(0).datetimebox('setValue', '');
+        		console.log(index);
+        		console.log($(ele));
+        		
+        	})
+        	nextTime.datebox('calendar').calendar({ 
+                validator: function(date){
+                    return beginDate<=date;
+                }
+            });
+        }
+    });
+
+}
+	
+ 
+

@@ -1,0 +1,25 @@
+package com.hori.grms.service;
+
+import java.util.List;
+
+import com.hori.grms.model.BackMoneyPlanPeriods;
+import com.hori.grms.vo.BackMoneyPlanPeriodsVo;
+
+
+public interface BackMoneyPlanPeriodsService {
+	void insertSelective(BackMoneyPlanPeriods backMoneyPlanPeriods);
+
+	void updateByPrimaryKeySelective(BackMoneyPlanPeriods backMoneyPlanPeriods);
+
+	BackMoneyPlanPeriods selectByPrimaryKey(String id);
+
+	List<BackMoneyPlanPeriods> getPeriodsListByPlanCode(String backMoneyPlanCode);
+
+	void deleteByCode(String backMoneyPlanCode);
+
+	List<BackMoneyPlanPeriodsVo> getBackMoneyPlanListByCondition(
+			String selectCondition, String condition, String selectCondition2,
+			String condition2);
+
+	List<BackMoneyPlanPeriods> getNotBackPlanList();
+}

@@ -1,0 +1,514 @@
+/*
+ * ProductMenuExample.java
+ * Copyright(C) 20xx-2015 xxxxxx公司
+ * All rights reserved.
+ * -----------------------------------------------
+ * 2018-08-08 Created
+ */
+package com.hori.grms.model;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class ProductMenuExample {
+
+    protected String orderByClause;
+    protected boolean distinct;
+    protected List<Criteria> oredCriteria;
+
+    public ProductMenuExample() {
+        oredCriteria = new ArrayList<Criteria>();
+    }
+    public void setOrderByClause(String orderByClause) {
+        this.orderByClause = orderByClause;
+    }
+    public String getOrderByClause() {
+        return orderByClause;
+    }
+    public void setDistinct(boolean distinct) {
+        this.distinct = distinct;
+    }
+    public boolean isDistinct() {
+        return distinct;
+    }
+    public List<Criteria> getOredCriteria() {
+        return oredCriteria;
+    }
+    public void or(Criteria criteria) {
+        oredCriteria.add(criteria);
+    }
+    public Criteria or() {
+        Criteria criteria = createCriteriaInternal();
+        oredCriteria.add(criteria);
+        return criteria;
+    }
+    public Criteria createCriteria() {
+        Criteria criteria = createCriteriaInternal();
+        if (oredCriteria.size() == 0) {
+            oredCriteria.add(criteria);
+        }
+        return criteria;
+    }
+    protected Criteria createCriteriaInternal() {
+        Criteria criteria = new Criteria();
+        return criteria;
+    }
+    public void clear() {
+        oredCriteria.clear();
+        orderByClause = null;
+        distinct = false;
+    }
+
+    /**
+     * 产品清单
+     * 
+     * @author 
+     * @version 1.0 2018-08-08
+     */
+    protected abstract static class GeneratedCriteria {
+
+        protected List<Criterion> criteria;
+
+        protected GeneratedCriteria() {
+            super();
+            criteria = new ArrayList<Criterion>();
+        }
+        public boolean isValid() {
+            return criteria.size() > 0;
+        }
+        public List<Criterion> getAllCriteria() {
+            return criteria;
+        }
+        public List<Criterion> getCriteria() {
+            return criteria;
+        }
+        protected void addCriterion(String condition) {
+            if (condition == null) {
+                throw new RuntimeException("Value for condition cannot be null");
+            }
+            criteria.add(new Criterion(condition));
+        }
+        protected void addCriterion(String condition, Object value, String property) {
+            if (value == null) {
+                throw new RuntimeException("Value for " + property + " cannot be null");
+            }
+            criteria.add(new Criterion(condition, value));
+        }
+        protected void addCriterion(String condition, Object value1, Object value2, String property) {
+            if (value1 == null || value2 == null) {
+                throw new RuntimeException("Between values for " + property + " cannot be null");
+            }
+            criteria.add(new Criterion(condition, value1, value2));
+        }
+        public Criteria andIdIsNull() {
+            addCriterion("id is null");
+            return (Criteria) this;
+        }
+        public Criteria andIdIsNotNull() {
+            addCriterion("id is not null");
+            return (Criteria) this;
+        }
+        public Criteria andIdEqualTo(String value) {
+            addCriterion("id =", value, "id");
+            return (Criteria) this;
+        }
+        public Criteria andIdNotEqualTo(String value) {
+            addCriterion("id <>", value, "id");
+            return (Criteria) this;
+        }
+        public Criteria andIdGreaterThan(String value) {
+            addCriterion("id >", value, "id");
+            return (Criteria) this;
+        }
+        public Criteria andIdGreaterThanOrEqualTo(String value) {
+            addCriterion("id >=", value, "id");
+            return (Criteria) this;
+        }
+        public Criteria andIdLessThan(String value) {
+            addCriterion("id <", value, "id");
+            return (Criteria) this;
+        }
+        public Criteria andIdLessThanOrEqualTo(String value) {
+            addCriterion("id <=", value, "id");
+            return (Criteria) this;
+        }
+        public Criteria andIdLike(String value) {
+            addCriterion("id like", value, "id");
+            return (Criteria) this;
+        }
+        public Criteria andIdNotLike(String value) {
+            addCriterion("id not like", value, "id");
+            return (Criteria) this;
+        }
+        public Criteria andIdIn(List<String> values) {
+            addCriterion("id in", values, "id");
+            return (Criteria) this;
+        }
+        public Criteria andIdNotIn(List<String> values) {
+            addCriterion("id not in", values, "id");
+            return (Criteria) this;
+        }
+        public Criteria andIdBetween(String value1, String value2) {
+            addCriterion("id between", value1, value2, "id");
+            return (Criteria) this;
+        }
+        public Criteria andIdNotBetween(String value1, String value2) {
+            addCriterion("id not between", value1, value2, "id");
+            return (Criteria) this;
+        }
+        public Criteria andBusinessTypeIsNull() {
+            addCriterion("business_type is null");
+            return (Criteria) this;
+        }
+        public Criteria andBusinessTypeIsNotNull() {
+            addCriterion("business_type is not null");
+            return (Criteria) this;
+        }
+        public Criteria andBusinessTypeEqualTo(String value) {
+            addCriterion("business_type =", value, "businessType");
+            return (Criteria) this;
+        }
+        public Criteria andBusinessTypeNotEqualTo(String value) {
+            addCriterion("business_type <>", value, "businessType");
+            return (Criteria) this;
+        }
+        public Criteria andBusinessTypeGreaterThan(String value) {
+            addCriterion("business_type >", value, "businessType");
+            return (Criteria) this;
+        }
+        public Criteria andBusinessTypeGreaterThanOrEqualTo(String value) {
+            addCriterion("business_type >=", value, "businessType");
+            return (Criteria) this;
+        }
+        public Criteria andBusinessTypeLessThan(String value) {
+            addCriterion("business_type <", value, "businessType");
+            return (Criteria) this;
+        }
+        public Criteria andBusinessTypeLessThanOrEqualTo(String value) {
+            addCriterion("business_type <=", value, "businessType");
+            return (Criteria) this;
+        }
+        public Criteria andBusinessTypeLike(String value) {
+            addCriterion("business_type like", value, "businessType");
+            return (Criteria) this;
+        }
+        public Criteria andBusinessTypeNotLike(String value) {
+            addCriterion("business_type not like", value, "businessType");
+            return (Criteria) this;
+        }
+        public Criteria andBusinessTypeIn(List<String> values) {
+            addCriterion("business_type in", values, "businessType");
+            return (Criteria) this;
+        }
+        public Criteria andBusinessTypeNotIn(List<String> values) {
+            addCriterion("business_type not in", values, "businessType");
+            return (Criteria) this;
+        }
+        public Criteria andBusinessTypeBetween(String value1, String value2) {
+            addCriterion("business_type between", value1, value2, "businessType");
+            return (Criteria) this;
+        }
+        public Criteria andBusinessTypeNotBetween(String value1, String value2) {
+            addCriterion("business_type not between", value1, value2, "businessType");
+            return (Criteria) this;
+        }
+        public Criteria andProductTypeIsNull() {
+            addCriterion("product_type is null");
+            return (Criteria) this;
+        }
+        public Criteria andProductTypeIsNotNull() {
+            addCriterion("product_type is not null");
+            return (Criteria) this;
+        }
+        public Criteria andProductTypeEqualTo(String value) {
+            addCriterion("product_type =", value, "productType");
+            return (Criteria) this;
+        }
+        public Criteria andProductTypeNotEqualTo(String value) {
+            addCriterion("product_type <>", value, "productType");
+            return (Criteria) this;
+        }
+        public Criteria andProductTypeGreaterThan(String value) {
+            addCriterion("product_type >", value, "productType");
+            return (Criteria) this;
+        }
+        public Criteria andProductTypeGreaterThanOrEqualTo(String value) {
+            addCriterion("product_type >=", value, "productType");
+            return (Criteria) this;
+        }
+        public Criteria andProductTypeLessThan(String value) {
+            addCriterion("product_type <", value, "productType");
+            return (Criteria) this;
+        }
+        public Criteria andProductTypeLessThanOrEqualTo(String value) {
+            addCriterion("product_type <=", value, "productType");
+            return (Criteria) this;
+        }
+        public Criteria andProductTypeLike(String value) {
+            addCriterion("product_type like", value, "productType");
+            return (Criteria) this;
+        }
+        public Criteria andProductTypeNotLike(String value) {
+            addCriterion("product_type not like", value, "productType");
+            return (Criteria) this;
+        }
+        public Criteria andProductTypeIn(List<String> values) {
+            addCriterion("product_type in", values, "productType");
+            return (Criteria) this;
+        }
+        public Criteria andProductTypeNotIn(List<String> values) {
+            addCriterion("product_type not in", values, "productType");
+            return (Criteria) this;
+        }
+        public Criteria andProductTypeBetween(String value1, String value2) {
+            addCriterion("product_type between", value1, value2, "productType");
+            return (Criteria) this;
+        }
+        public Criteria andProductTypeNotBetween(String value1, String value2) {
+            addCriterion("product_type not between", value1, value2, "productType");
+            return (Criteria) this;
+        }
+        public Criteria andProductMenuIsNull() {
+            addCriterion("product_menu is null");
+            return (Criteria) this;
+        }
+        public Criteria andProductMenuIsNotNull() {
+            addCriterion("product_menu is not null");
+            return (Criteria) this;
+        }
+        public Criteria andProductMenuEqualTo(String value) {
+            addCriterion("product_menu =", value, "productMenu");
+            return (Criteria) this;
+        }
+        public Criteria andProductMenuNotEqualTo(String value) {
+            addCriterion("product_menu <>", value, "productMenu");
+            return (Criteria) this;
+        }
+        public Criteria andProductMenuGreaterThan(String value) {
+            addCriterion("product_menu >", value, "productMenu");
+            return (Criteria) this;
+        }
+        public Criteria andProductMenuGreaterThanOrEqualTo(String value) {
+            addCriterion("product_menu >=", value, "productMenu");
+            return (Criteria) this;
+        }
+        public Criteria andProductMenuLessThan(String value) {
+            addCriterion("product_menu <", value, "productMenu");
+            return (Criteria) this;
+        }
+        public Criteria andProductMenuLessThanOrEqualTo(String value) {
+            addCriterion("product_menu <=", value, "productMenu");
+            return (Criteria) this;
+        }
+        public Criteria andProductMenuLike(String value) {
+            addCriterion("product_menu like", value, "productMenu");
+            return (Criteria) this;
+        }
+        public Criteria andProductMenuNotLike(String value) {
+            addCriterion("product_menu not like", value, "productMenu");
+            return (Criteria) this;
+        }
+        public Criteria andProductMenuIn(List<String> values) {
+            addCriterion("product_menu in", values, "productMenu");
+            return (Criteria) this;
+        }
+        public Criteria andProductMenuNotIn(List<String> values) {
+            addCriterion("product_menu not in", values, "productMenu");
+            return (Criteria) this;
+        }
+        public Criteria andProductMenuBetween(String value1, String value2) {
+            addCriterion("product_menu between", value1, value2, "productMenu");
+            return (Criteria) this;
+        }
+        public Criteria andProductMenuNotBetween(String value1, String value2) {
+            addCriterion("product_menu not between", value1, value2, "productMenu");
+            return (Criteria) this;
+        }
+        public Criteria andProductSpecIsNull() {
+            addCriterion("product_spec is null");
+            return (Criteria) this;
+        }
+        public Criteria andProductSpecIsNotNull() {
+            addCriterion("product_spec is not null");
+            return (Criteria) this;
+        }
+        public Criteria andProductSpecEqualTo(String value) {
+            addCriterion("product_spec =", value, "productSpec");
+            return (Criteria) this;
+        }
+        public Criteria andProductSpecNotEqualTo(String value) {
+            addCriterion("product_spec <>", value, "productSpec");
+            return (Criteria) this;
+        }
+        public Criteria andProductSpecGreaterThan(String value) {
+            addCriterion("product_spec >", value, "productSpec");
+            return (Criteria) this;
+        }
+        public Criteria andProductSpecGreaterThanOrEqualTo(String value) {
+            addCriterion("product_spec >=", value, "productSpec");
+            return (Criteria) this;
+        }
+        public Criteria andProductSpecLessThan(String value) {
+            addCriterion("product_spec <", value, "productSpec");
+            return (Criteria) this;
+        }
+        public Criteria andProductSpecLessThanOrEqualTo(String value) {
+            addCriterion("product_spec <=", value, "productSpec");
+            return (Criteria) this;
+        }
+        public Criteria andProductSpecLike(String value) {
+            addCriterion("product_spec like", value, "productSpec");
+            return (Criteria) this;
+        }
+        public Criteria andProductSpecNotLike(String value) {
+            addCriterion("product_spec not like", value, "productSpec");
+            return (Criteria) this;
+        }
+        public Criteria andProductSpecIn(List<String> values) {
+            addCriterion("product_spec in", values, "productSpec");
+            return (Criteria) this;
+        }
+        public Criteria andProductSpecNotIn(List<String> values) {
+            addCriterion("product_spec not in", values, "productSpec");
+            return (Criteria) this;
+        }
+        public Criteria andProductSpecBetween(String value1, String value2) {
+            addCriterion("product_spec between", value1, value2, "productSpec");
+            return (Criteria) this;
+        }
+        public Criteria andProductSpecNotBetween(String value1, String value2) {
+            addCriterion("product_spec not between", value1, value2, "productSpec");
+            return (Criteria) this;
+        }
+        public Criteria andNumLimitIsNull() {
+            addCriterion("num_limit is null");
+            return (Criteria) this;
+        }
+        public Criteria andNumLimitIsNotNull() {
+            addCriterion("num_limit is not null");
+            return (Criteria) this;
+        }
+        public Criteria andNumLimitEqualTo(Integer value) {
+            addCriterion("num_limit =", value, "numLimit");
+            return (Criteria) this;
+        }
+        public Criteria andNumLimitNotEqualTo(Integer value) {
+            addCriterion("num_limit <>", value, "numLimit");
+            return (Criteria) this;
+        }
+        public Criteria andNumLimitGreaterThan(Integer value) {
+            addCriterion("num_limit >", value, "numLimit");
+            return (Criteria) this;
+        }
+        public Criteria andNumLimitGreaterThanOrEqualTo(Integer value) {
+            addCriterion("num_limit >=", value, "numLimit");
+            return (Criteria) this;
+        }
+        public Criteria andNumLimitLessThan(Integer value) {
+            addCriterion("num_limit <", value, "numLimit");
+            return (Criteria) this;
+        }
+        public Criteria andNumLimitLessThanOrEqualTo(Integer value) {
+            addCriterion("num_limit <=", value, "numLimit");
+            return (Criteria) this;
+        }
+        public Criteria andNumLimitIn(List<Integer> values) {
+            addCriterion("num_limit in", values, "numLimit");
+            return (Criteria) this;
+        }
+        public Criteria andNumLimitNotIn(List<Integer> values) {
+            addCriterion("num_limit not in", values, "numLimit");
+            return (Criteria) this;
+        }
+        public Criteria andNumLimitBetween(Integer value1, Integer value2) {
+            addCriterion("num_limit between", value1, value2, "numLimit");
+            return (Criteria) this;
+        }
+        public Criteria andNumLimitNotBetween(Integer value1, Integer value2) {
+            addCriterion("num_limit not between", value1, value2, "numLimit");
+            return (Criteria) this;
+        }
+    }
+
+    public static class Criteria extends GeneratedCriteria {
+
+
+        protected Criteria() {
+            super();
+        }
+    }
+
+    /**
+     * 产品清单
+     * 
+     * @author 
+     * @version 1.0 2018-08-08
+     */
+    public static class Criterion {
+
+        private String condition;
+        private Object value;
+        private Object secondValue;
+        private boolean noValue;
+        private boolean singleValue;
+        private boolean betweenValue;
+        private boolean listValue;
+        private String typeHandler;
+
+        public String getCondition() {
+            return condition;
+        }
+        public Object getValue() {
+            return value;
+        }
+        public Object getSecondValue() {
+            return secondValue;
+        }
+        public boolean isNoValue() {
+            return noValue;
+        }
+        public boolean isSingleValue() {
+            return singleValue;
+        }
+        public boolean isBetweenValue() {
+            return betweenValue;
+        }
+        public boolean isListValue() {
+            return listValue;
+        }
+        public String getTypeHandler() {
+            return typeHandler;
+        }
+        protected Criterion(String condition) {
+            super();
+            this.condition = condition;
+            this.typeHandler = null;
+            this.noValue = true;
+        }
+        protected Criterion(String condition, Object value, String typeHandler) {
+            super();
+            this.condition = condition;
+            this.value = value;
+            this.typeHandler = typeHandler;
+            if (value instanceof List<?>) {
+                this.listValue = true;
+            } else {
+                this.singleValue = true;
+            }
+        }
+        protected Criterion(String condition, Object value) {
+            this(condition, value, null);
+        }
+        protected Criterion(String condition, Object value, Object secondValue, String typeHandler) {
+            super();
+            this.condition = condition;
+            this.value = value;
+            this.secondValue = secondValue;
+            this.typeHandler = typeHandler;
+            this.betweenValue = true;
+        }
+        protected Criterion(String condition, Object value, Object secondValue) {
+            this(condition, value, secondValue, null);
+        }
+    }
+}

@@ -1,0 +1,88 @@
+package com.hori.grms.service;
+
+import java.util.Map;
+
+import com.github.pagehelper.PageInfo;
+import com.hori.grms.model.ProjectActionException;
+import com.hori.grms.model.ProjectProduct;
+import com.hori.grms.queryBean.PAExceptionQueryBean;
+import com.hori.grms.vo.ProjectActionExceptionVo;
+
+/**
+ * 执行清单异常Service
+ * @author hehj
+ * @datetime 2018年8月14日 上午10:53:45
+ */
+public interface ProjectActionExceptionService {
+
+	/**
+	 * 根据参数查询异常上报记录，根据上报时间倒序
+	 * @param queryBean
+	 * @return
+	 */
+	PageInfo<ProjectActionExceptionVo> listException(PAExceptionQueryBean queryBean);
+
+	/**
+	 * 根据异常记录id修改执行部门确认状态
+	 * @param exceptionRecordId
+	 * @param confirmStatus
+	 * @throws Exception 
+	 */
+	void changeConfirmStatus(String exceptionRecordId, Short confirmStatus) throws Exception;
+	/**
+	 * 获取清单异常上报记录
+	 * @param queryBean
+	 * @return
+	 */
+	PageInfo<Map<String, Object>> listProjectActionExceptions(PAExceptionQueryBean queryBean);
+
+	/**
+	 * 生成一条执行异常记录<br/>
+	 * 生成异常记录后，修改执行清单状态和项目状态
+	 * @param pae 异常记录实体
+	 */
+	void insertExcuteException(ProjectActionException pae);
+	/**
+	 * 终止执行清单
+	 * @param exceptionId 异常id
+	 * @param resultRemark 异常处理备注
+	 * @param dealName 处理人
+	 * @param dealAccount 处理人账户
+	 * @throws Exception
+	 */
+	void stopProjectAction(String exceptionId,String resultRemark,String dealName,String dealAccount) throws Exception;
+	/**
+	 * 继续执行清单
+	 * @param exceptionId 异常id
+	 * @param resultRemark 异常处理备注
+	 * @param userName 处理人名称
+	 * @param userAccount 处理人账户
+	 * @throws Exception 
+	 */
+	void goOnProjectAction(String exceptionId, String resultRemark, String userName, String userAccount) throws Exception;
+	/**
+	 * 暂停执行清单
+	 * @param exceptionId 异常id
+	 * @param resultRemark 异常处理备注
+	 * @param userName 处理人名称
+	 * @param userAccount 处理人账户
+	 */
+	void pauseProjectAction(String exceptionId, String resultRemark, String userName, String userAccount) throws Exception;
+	/**
+	 * 异常扣款操作
+	 * @param exceptionId 异常id
+	 * @param resultRemark 异常处理备注
+	 * @param money 扣款金额
+	 * @param userName 处理人名称
+	 * @param userAccount 处理人账户
+	 */
+	void deduction(String exceptionId, String resultRemark, String money, String userName, String userAccount) throws Exception;
+	/**
+	 * 场地置换操作
+	 * @param projectProduct
+	 * @param userName
+	 * @param userAccount
+	 */
+	void substitution(String exceptionId,ProjectProduct projectProduct, String userName, String userAccount);
+
+}

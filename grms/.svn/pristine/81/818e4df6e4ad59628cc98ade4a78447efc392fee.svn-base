@@ -1,0 +1,477 @@
+var dataStatus = null;
+var pageNoAll=1;
+var pageSizeAll=10;
+var roleType = null;
+$(function(){		
+	//初始化项目状态选择值
+	dataStatus = -2;
+	//全部选中
+	var statusVal = 1;
+	var pendingStatus = $("#pendingStatus").val();
+	if(pendingStatus=='1' || pendingStatus=='2' || pendingStatus=='3' 
+		|| pendingStatus=='4' || pendingStatus=='5' || pendingStatus=='6'){
+		statusVal = pendingStatus;
+	}
+	$(".workorder-tabs .workorder-tabs"+statusVal).addClass("workorder-select").siblings().removeClass("workorder-select");
+	$(".addProject-pop>div").eq(0).addClass("addProject-pop-active").siblings().removeClass("addProject-pop-active");
+	
+	
+	//初始化角色类型
+	roleType = 1
+	
+	
+	/*$("[name='projectStauts']").on("click", function(){
+		
+		//选择项目状态值发生改变则重新查询
+		if(dataStatus!=$(this).attr("data-status")){
+			dataStatus = $(this).attr("data-status")
+			console.log(dataStatus)			
+		}	
+	});*/
+	$(".workorder-tabs>div").click(function(){
+		if($(this).hasClass("workorder-tabs1")){
+			dataStatus=-2;
+		}
+		if($(this).hasClass("workorder-tabs2")){
+			dataStatus=0;
+		}
+		if($(this).hasClass("workorder-tabs3")){
+			dataStatus=1;
+		}
+		if($(this).hasClass("workorder-tabs4")){
+			dataStatus=2;
+		}
+		if($(this).hasClass("workorder-tabs5")){
+			dataStatus=4;
+		}
+		if($(this).hasClass("workorder-tabs6")){
+			dataStatus=3;
+		}
+		$(this).addClass("workorder-select").siblings().removeClass("workorder-select");
+		$(".addProject-pop>div").eq($(this).index()).addClass("addProject-pop-active").siblings().removeClass("addProject-pop-active");
+		setTimeout(function(){
+			//dataFunc();
+		},500);
+		
+		findMenu();
+		
+	});
+	
+	
+	$('#createBtn').linkbutton({    
+	}); 
+	$('#searchBtn').linkbutton({  
+		
+	});
+	
+	/*$('#win').window({
+		title:"消息提醒",
+	    width:400,    
+	    height:350,    
+	    modal:true,
+	    collapsible:false,
+	    minimizable:false,
+	    maximizable:false
+	});*/
+	
+	
+
+	
+	//$('#win').window('close');
+	
+	findMenu();
+	
+	
+})
+//添加客户
+function stopProject(){	
+	$('#remark').textbox({
+		width:350,
+		height:200,
+		multiline:true,
+		deltaX:10,
+		prompt:"请输入立项终止的意见"
+	})
+	 wrapMaskShow();//父级遮罩显示
+	 $('body').css('overflow','hidden');//禁止滚动	 
+	 $('#win').dialog({
+	        width:400,
+	        height:350,
+	        modal:true,
+	        collapsible:false,
+	        minimizable:false,
+	        maximizable:false,
+	        closable:true,
+	        draggable:false,
+	        resizable:false,
+	        inline:false,
+	        title:"消息提醒",
+	        ok:"确定",
+	        cancel:"取消",
+	        buttons:[{
+	            text:'确认',
+	            handler:function(){
+	                
+	                ensureStopProject();
+	               
+	            }
+	        },{
+	            text:'取消',
+	            handler:function(){
+	            	cancelStopProject();
+	            }
+	        }],
+
+	        onClose : function(){
+	            wrapMaskHide();//父级遮罩隐藏
+	            $('body').css('overflow','auto');//恢复滚动
+	        }
+	    });
+	    winHiSelfAdaptation($('#roleWin_detail'));//弹窗定位    	    
+}
+
+//查询数据
+var product_codeP="";
+var nameP="";
+var contract_CodeP="";
+var customer_CameP="";
+
+function findMenu(){
+	var productCode=$('#productCode').val();
+	var name=$('#name').val();
+	var contractCode=$('#contractCode').val();
+	var customerName=$('#customerName').val();
+	
+	product_codeP=productCode;
+	nameP=name;
+	contract_CodeP=contractCode;
+	customer_CameP=customerName;
+	
+	pageNo=pageNoAll;
+	pageSize=pageSizeAll;
+	var projectQueryBean='{"productCode":"'+productCode+'","name":"'+name+'","contractCode":"'+contractCode
+	+'","customerName":"'+customerName+'","status":"'+dataStatus
+	+'","pageNumber":"'+pageNo+'","pageSize":"'+pageSize+'"}';
+	
+    $.ajax({  
+        type : "POST",  //提交方式  
+        url : "/grms/project/getlistData.html",//路径  
+        dataType : "json",//数据，这里使用的是Json格式进行传输  
+        data:  {"projectQueryBean":projectQueryBean},  
+        success : function(result) {//返回数据根据结果进行相应的处理  
+            if ( result.success) {  
+            	var data2=result.rows;
+            	var total=result.total;
+            	refresh(data2);
+            	paginationpage(total,data2);
+            	
+            	
+            } else {  
+            	
+            }  
+        }  
+    }); 
+}
+
+//刷新表格数据
+function refresh(data){
+//	表格数据渲染
+    $('#dg').datagrid({
+        border:true,
+        scrollbarSize:0,
+        nowrap:false,//允许换行
+        data:data,
+        emptyMsg:'<span>无记录</span>',
+        onLoadSuccess:function(){ //dom操作
+            $('#dg').datagrid('resize');
+        },
+        columns:[[
+            {
+                field:'productCode',
+                title:'项目编号',
+                width:450,
+                align:'left'
+            },
+            {
+                field:'name',
+                title:'项目名称',
+                width:300,
+                align:'left'
+                
+            },
+            {
+                field:'createTime',
+                title:'创建时间',
+                width:220,
+                align:'left'
+            },
+            {
+                field:'contractCode',
+                title:'合同编号',
+                width:450,
+                align:'left'
+            },
+            {
+                field:'customerName',
+                title:'客户名称',
+                width:190,
+                align:'left'
+            },
+            {
+                field:'createrName',
+                title:'创建人',
+                width:190,
+                align:'left'
+            },
+            {
+                field:'status',
+                title:'状态',
+                width:220,
+                align:'left',
+                formatter: function(value){
+                	if(value==0){
+                		return "待审核";
+                	}else if(value==1){
+                		return "审核通过";
+                	}else if(value==2){
+                		return "审核不通过";
+                	}else if(value==3){
+                		return "立项终止";
+                	}else if(value==4){
+                		return "撤回";
+                	}
+                }
+            },
+            {
+                field:'handle',
+                title:'操作',
+                width:574,
+                align:'left',
+                formatter: function(value,row,index){
+                	//处理操作得按钮（根据用户的类型）
+                	var status = row.status
+                	
+                	var detailWorkOrder = '<a href="javascript:;" data-id="1" onclick="projectOperation(1,\''+index+'\')">查看</a>  ';
+                	var workOrder = "";
+                	
+                	//状态：-1删除  0待审核 1审核通过 2审核不通过 3立项终止 4撤回
+                	if(status==0){
+                		
+                		if(roleType==2){
+                			var revokeWorkOrder = '<a href="javascript:;" data-id="2" onclick="projectOperation(2,\''+index+'\')">撤回</a> ';
+                    		workOrder = detailWorkOrder+revokeWorkOrder;
+                		}else if(roleType==1){
+                			
+                			var examWorkOrder = '<a href="javascript:;" data-id="5" onclick="projectOperation(5,\''+index+'\')">审批</a> ';
+                			workOrder = examWorkOrder;
+                			
+                		}
+                		
+                		
+                		
+                	}else if(status==1){
+                		
+                		if(roleType==2){
+                			workOrder = detailWorkOrder;
+                		}else if(roleType==1){
+                			
+                			var stopWorkOrder = '<a href="javascript:;" data-id="6" onclick="projectOperation(6,\''+index+'\')">终止</a> ';
+                			workOrder = detailWorkOrder+stopWorkOrder;
+                		}
+                		
+                		
+                	}else if(status==2){
+                		
+                		var editWorkOrder = '<a href="javascript:;" data-id="3" onclick="projectOperation(3,\''+index+'\')">编辑</a> ';
+                		var deleteWorkOrder = '<a href="javascript:;" data-id="4" onclick="projectOperation(4,\''+index+'\')">删除</a> ';
+                		workOrder = detailWorkOrder+editWorkOrder+deleteWorkOrder;
+                		
+                	}else if(status==3){
+                		
+                		var deleteWorkOrder = '<a href="javascript:;" data-id="4" onclick="projectOperation(4,\''+index+'\')">删除</a> ';
+                		workOrder = detailWorkOrder+deleteWorkOrder;
+                	
+                	}else if(status==4){
+                	
+                		var editWorkOrder = '<a href="javascript:;" data-id="3" onclick="projectOperation(3,\''+index+'\')">编辑</a> ';
+                		var deleteWorkOrder = '<a href="javascript:;" data-id="4" onclick="projectOperation(4,\''+index+'\')">删除</a> ';
+                		workOrder = detailWorkOrder+editWorkOrder+deleteWorkOrder;
+
+                	}
+                	
+                    return workOrder;
+                }
+            }
+        ]]
+    });
+}
+
+//项目操作
+function projectOperation(type,index){
+	
+	var checkedItem=$('#dg').datagrid('getData').rows[index];
+	var productCode = checkedItem.productCode
+	//操作类型：1、查看 2、撤回 3、编辑 4、删除 5、审核 6、终止
+	if(type==1){
+		
+		window.location.href="/grms/project/viewProject.html?projectCode=" + productCode;
+	}else if(type==2){
+		
+		$.messager.confirm("操作提示", "确定撤回项目？", function (data) {
+			wrapMaskHide();
+			if(data){
+				
+				//撤回项目异步发送请求
+				$.ajax({  
+			        type : "POST",  //提交方式  
+			        url : "/grms/project/revoke.html",//路径  
+			        dataType : "json",//数据，这里使用的是Json格式进行传输  
+			        data:  {"productCode":productCode},  
+			        success : function(result) {//返回数据根据结果进行相应的处理  
+			            if ( result.success) {
+			            	wrapMaskShow();	
+			            	$.messager.alert('提示','项目撤回成功！！',"",function(){
+			            		wrapMaskHide();	
+			            	});
+			            	findMenu()
+			            }else{
+			            	wrapMaskShow();	
+			            	$.messager.alert('提示','项目撤回失败！！',"",function(){
+			            		wrapMaskHide();	
+			            	});
+			            }
+			        }  
+			    }); 
+			}else{
+				return;
+			}
+		});
+		
+	}else if(type==3){
+		
+		//window.location.href="/grms/project/addProject.html?type=1&productCode="+productCode;
+		pageNo=pageNoAll;
+		pageSize=pageSizeAll;
+		var projectQueryBean='{"productCode":"'+product_codeP+'","name":"'+nameP+'","contractCode":"'+contract_CodeP
+		+'","customerName":"'+customer_CameP+'","status":"'+dataStatus
+		+'","pageNumber":"'+pageNo+'","pageSize":"'+pageSize+'"}';
+	    window.location.href="../project/addProject.html?type="+1+"&productCode="+productCode+"&projectQueryBean="+encodeURIComponent(projectQueryBean);
+		
+	}else if(type==4){
+		
+		$.messager.confirm("操作提示", "确定删除项目？", function (data) {
+			wrapMaskHide();
+			if(data){
+				
+				//撤回项目异步发送请求
+				$.ajax({  
+			        type : "POST",  //提交方式  
+			        url : "/grms/project/delet.html",//路径  
+			        dataType : "json",//数据，这里使用的是Json格式进行传输  
+			        data:  {"productCode":productCode},  
+			        success : function(result) {//返回数据根据结果进行相应的处理  
+			            if ( result.success) {
+			            	wrapMaskShow();	
+			            	$.messager.alert('提示','项目删除成功！！',"",function(){
+			            		wrapMaskHide();	
+			            	});
+			            	findMenu();
+			            }else{
+			            	wrapMaskShow();	
+			            	$.messager.alert('提示','项目删除失败！！',"",function(){
+			            		wrapMaskHide();	
+			            	});
+			            }
+			        }  
+			    }); 
+			}else{
+				return;
+			}
+		});
+		
+	}else if(type==5){
+		
+		window.location.href="/grms/project/viewProject.html?projectCode=" + productCode;
+		
+	}else if(type==6){
+		//$('#win').window('open');
+		stopProject();
+		//将要终止项目的id存在隐藏域中
+		$("#projectId").val(productCode);
+	}
+	
+}
+
+function paginationpage(total,data2){
+//  分页
+    $('#pp').pagination({
+        total:total,
+        layout:['list','first','prev','links','next','last','manual'],
+        emptyMsg: '<span>无记录</span>',
+        showRefresh:true,
+        displayMsg:' ',
+        pageList:[10,20,30],
+        onSelectPage:function (pageNo, pageSize) {
+        	pageNoAll=pageNo;
+        	pageSizeAll=pageSize;
+        	findMenu()
+        }
+    });
+    $(".pagination-page-list").parent().append("条");
+    $(".pagination-page-list").parent().prepend("共计"+total+"条,每页显示： ");
+
+}
+
+//确定终止项目按钮
+function ensureStopProject(){
+	
+	//获取要终止项目的id(隐藏域中)
+	var productCode=$("#productCode").val();
+	
+	var remark=$("#remark").textbox('getValue');
+	
+	wrapMaskHide();		
+ 	$('#win').dialog('close');
+	
+	//撤回项目异步发送请求
+	$.ajax({  
+        type : "POST",  //提交方式  
+        url : "/grms/project/stopProject.html",//路径  
+        dataType : "json",//数据，这里使用的是Json格式进行传输  
+        data:  {"productCode":productCode,"remark":remark},  
+        success : function(result) {//返回数据根据结果进行相应的处理  
+            if ( result.success) {
+            	wrapMaskShow();	
+            	$.messager.alert('提示','立项终止成功！！',"",function(){
+            		wrapMaskHide();	
+            	});
+            	findMenu();
+            }else{
+            	wrapMaskShow();	
+            	$.messager.alert('提示','立项终止失败！！',"",function(){
+            		wrapMaskHide();	
+            	});
+            }
+        }  
+    }); 
+	
+}
+
+//取消终止项目按钮
+function cancelStopProject(){
+	$("#detail").textbox('clear');
+	wrapMaskHide();		
+ 	$('#win').dialog('close');
+	//$('#win').window('close');
+}
+
+function creatProject(){
+	
+	pageNo=pageNoAll;
+	pageSize=pageSizeAll;
+	var projectQueryBean='{"productCode":"'+product_codeP+'","name":"'+nameP+'","contractCode":"'+contract_CodeP
+	+'","customerName":"'+customer_CameP+'","status":"'+dataStatus
+	+'","pageNumber":"'+pageNo+'","pageSize":"'+pageSize+'"}';
+    window.location.href="../project/addProject.html?type="+0+"&projectQueryBean="+encodeURIComponent(projectQueryBean);
+}
+

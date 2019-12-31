@@ -1,0 +1,154 @@
+body {
+    font-family:verdana,helvetica,arial,sans-serif;
+    padding:20px;
+    font-size:12px;
+    margin:0;
+}
+h2 {
+    font-size:18px;
+    font-weight:bold;
+    margin:0;
+    margin-bottom:15px;
+}
+
+.btn92s {
+    width: 92px;
+    margin-right: 10px;
+   
+    height: 30px;
+    line-height: 30px;
+    background-position: 0px 0px;
+    color: #FFF;
+    display: inline-block;
+    text-align: center;
+    background: transparent url("../images/bg_btn.png") repeat-x scroll 0% 0%;   
+    border-radius: 4px;
+}
+.quick-gif { 
+ 
+    bottom: 1px;
+    right: 1px;
+    width: 80px;
+    height: 22px;
+    display:inline;
+    float:right;
+    clear:both;
+    background:#000; 
+}
+
+.quick-gif .up {
+    background-position: 0px 0px;
+}
+.quick-gif .down {
+    background-position: 0px -22px;
+}
+.quick-gif a {
+    display: block;
+    height: 22px;
+    line-height: 22px;
+    background: transparent url("../images/quick.png") no-repeat scroll 0% 0%;
+    color: #FFF;
+    padding-left: 10px;
+}
+a, a:focus {
+    outline: 0px none;
+}
+
+a, img {
+    border: 0px none;
+}
+a {
+    color: #07F;
+    text-decoration: none;
+    outline: 0px none;
+}
+.section-hd {
+    width: 70px;
+    height: 18px;
+    line-height: 18px;
+    padding: 2px 0px;
+    float: left;
+    text-align: right;
+    font-weight: 700;
+}
+.pt2 {
+    padding: 2px 0px;
+}
+.wrap-left {
+    display: inline-block;
+    width: 82px;
+    vertical-align: middle;
+}
+.btn-small {
+    display: inline-block;
+    width: 73px;
+    height: 18px;
+    line-height: 16px;
+    border: 1px solid #CFCDC7;
+    background: #F7F7F7 none repeat scroll 0% 0%;
+    text-align: center;
+    color: #333;
+    border-radius: 5px;
+    vertical-align: middle;
+}
+.sel-box w80 {
+    width: 80px;
+}
+
+.sel-box a {
+    display: block;
+    width: 14px;
+    height: 15px;
+    background: transparent url("../images/icon_close.png") repeat scroll 0% 0%;
+    position: absolute;
+    right: 2px;
+    top: 1px;
+}
+.close{
+	position:absolute;
+	top:5px;
+	right:10px;
+	width:16px;
+	height:16px;
+	background:url("../images/icon.png") 0 -350px no-repeat;
+	text-indent:-9999px
+}
+.w80 {
+    width: 80px;
+}
+.sel-box {
+    display: inline-block;
+    height: 18px;
+    line-height: 18px;
+    overflow: hidden;
+    border: 1px solid #CFCDC7;
+    margin-right: 15px;
+    position: relative;
+    padding-right: 16px;
+    text-align: center;
+    vertical-align: middle;
+    background: #EEF1F8 none repeat scroll 0% 0%;
+}
+
+.quick-box-bd {    
+    overflow: hidden;
+}
+div, form, img, ul, ol, li, dl, dt, dd {
+    margin: 0px;
+    padding: 0px;
+    border: 0px none;
+    list-style: outside none none;
+}
+.color333 {
+    color: #333;
+}
+.check {
+    vertical-align: -3px;
+    margin-right: 4px;
+}
+.quick-box-bd li {
+    width: 24%;
+    height: 30px;
+    line-height: 30px;
+    float: left;
+}

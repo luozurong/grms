@@ -1,0 +1,86 @@
+*{
+	
+}
+.content-wrap{
+	box-sizing: border-box;
+    padding: 0 20px;
+}
+.addCustomerMessager{
+	background: #fff;
+}
+.addCustomer-item{
+	min-height: 40px;
+	line-height: 50px;
+	font-size: 14px;
+	color: #333;
+}
+.addCustomer-item-name{
+	display: inline-block;
+	width: 200px;
+	text-align: right;
+}
+.addCustomer-item-select{
+	width: 100px;
+	height: 32px;
+	line-height: 32px;
+}
+.addCustomer-item-input{
+	width: 290px;
+	height: 28px;
+	line-height: 28px;
+	padding-left: 10px;
+}
+#acceptor{
+	/* border:1px solid #ccc;
+	height:25px; */
+}
+/*业务员转移*/
+#salesmanInfo{
+	min-height:200px;
+	max-height:350px;
+}
+#salesmanInfo .addCustomer-item{
+	box-sizing: border-box;
+    padding: 0 10px;
+    width:100%;
+}
+#salesmanInfo #transferName{
+	width:150px;
+    height: 32px;
+    font-size: 14px;
+    line-height: 30px;
+    border: 1px solid #ccc;
+    padding-left:5px;
+}
+/*底部按钮*/
+.bottomButtonBox {
+	width:100%;
+	margin:20px;
+	margin-bottom:0;
+	padding-bottom:20px;
+	text-align: center;
+}
+.buleButton{
+	background-color:#51d2b6;
+	color:#fff;
+	line-height:27px;
+	height:27px;
+	border-radius:3px;
+	text-align: center;
+	display: inline-block;
+	min-width: 120px;
+    height: 40px;
+    line-height: 40px;
+    padding: 0 10px;
+}
+.bottomButtonBox span{
+	width:140px;
+	height:40px;
+	line-height:40px;
+	text-align: center;
+	padding:0;
+}
+.bottomButtonBox span:nth-child(1){
+	margin-right:30px;
+}
+

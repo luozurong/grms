@@ -1,0 +1,80 @@
+
+//初始化按钮
+$(function(){
+	
+});
+
+
+//提交
+function submit(){
+	var type = $(".table-wrap input[type='radio']:checked").val();
+	var planBackTime = $('#planTime').datebox('getValue');
+	var planBackMoney = $("#planMoney").val();
+	var remark = $("#remark").val();
+	var contractCode = $("#contractCode").val();
+	$.ajax({  
+        type : "POST",  //提交方式  
+        url : "/grms/backMoneyPlan/getBackMoneyPlanList",//路径  
+        dataType : "json",//数据，这里使用的是Json格式进行传输  
+        data:  {"type":type,"planBackTime":planBackTime,"planBackMoney":planBackMoney,"remark":remark,"contractCode":contractCode},  
+        success : function(result) {//返回数据根据结果进行相应的处理  
+            if ( result.success) {  
+            	infoMask('提交成功');
+            } else {  
+            	infoMask('提交失败');
+            }  
+        }  
+    }); 
+}
+
+
+//删除模板
+function removeTemplate(){
+	
+}
+
+//继续添加模板
+function copyTemplate(){
+	var htl = '';
+	htl += '<div class="table-wrap">';
+	htl +=	'<div>';
+	htl +=		'<span>第1期：</span>';
+	htl +=		'<span><a href="javascript:void(0);" onclick="copyTemplate()">继续添加</a></span>';
+	htl +=		'<span><a href="javascript:void(0);" onclick="removeTemplate()">删除</a></span>'	;
+	htl +=	'</div>	';
+	htl +=  '</div>';
+	htl += '<div class="table-wrap">';
+	htl +=	'<div>';
+	htl +=		'<span>款项属性：</span>';
+	htl +=		'<span>';
+	htl +=			'<input type="checkbox" class="planType" onclick="changeType(1)" checked="checked">进度款</input>';
+	htl +=			'<input type="checkbox" class="planType" onclick="changeType(2)">结算款</input>';
+	htl +=		'</span>	';
+	htl +=	'</div>	';
+	htl += '</div>	';
+	htl += '<div class="table-wrap">';
+	htl +=	'<div>';
+	htl +=		'<span>计划收款时间：</span>';
+	htl +=		'<span>';
+	htl +=		'	<input id="planTime" type="text" class="easyui-datebox"/>';
+	htl +=		'</span>	';
+	htl +=	'</div>	';
+	htl += '</div>	';
+	htl += '<div class="table-wrap">';
+	htl += 	'<div>';
+	htl +=		'<span>计划回款金额：</span>';
+	htl +=		'<span>';
+	htl +=			'<input id="planMoney" type="text"/>';
+	htl +=		'</span>	';
+	htl +=	'</div>	';
+	htl += '</div>	';
+	htl += '<div class="table-wrap">';
+	htl +=	'<div>';
+	htl +=	'	<span>备注：</span>';
+	htl +=		'<span>';
+	htl +=		'	<input id="remark" type="text"/>';
+	htl +=		'</span>	';
+	htl +=	'</div>	';
+	$("#template").append(htl);
+}
+

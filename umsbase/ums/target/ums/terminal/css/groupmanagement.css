@@ -1,0 +1,180 @@
+html,body {
+    height: 100%;
+}
+body{
+	min-width: 1100px;
+	box-sizing: border-box;
+    /*background-color: #f8f8f8;*/
+}
+.export{
+    margin-left: 40px;
+    width: 128px;
+    height: 34px;
+    line-height: 34px;
+    font-size: 14px;
+    color: #FC883B;
+    text-align: center;
+    border: 1px solid #FC883B;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.wrap{
+    position: relative;
+    margin-left: 24px;
+    margin-right: 24px;
+    min-height: calc(100% - 123px);
+    border: 1px solid #e1e1e1;
+    background-color: #FFFFFF;
+}
+.menuL{
+    position: absolute;
+    left: 0;
+    top: 0;
+    box-sizing: border-box;
+    height: 100%;
+    width: 230px;
+    border-right: 1px solid #e1e1e1;
+    overflow: auto;
+    background-color: #ffffff;
+}
+.search-1{
+    margin-left:26px;
+    margin-top:30px;
+    width: 150px;
+    height: 26px;
+}
+.search-1 .searchbox-button{
+    right: 126px;
+    /*重置easyUI搜索框放大镜位置*/
+}
+.tree-wrap{
+    margin-left:26px;
+    margin-top:30px;
+}
+
+.content{
+    margin-left: 229px;
+    background-color: #ffffff;
+}
+.content-header{
+    padding-right: 24px;
+    height: 36px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    /*background-color: #f8f8f8;*/
+}
+.reflesh{
+    width: 80px;
+    height: 36px;
+    font-size: 14px;
+    line-height: 34px;
+    color:#6A6A6A ;
+    border: 1px solid #cecece;
+    border-radius: 4px;
+    text-align: center;
+    margin-left: 40px;
+    cursor: pointer;
+}
+.search{
+    margin-right: 24px;
+    width: 280px;
+    height: 36px;
+}
+.search>input{
+    width: 278px;
+    height: 34px;
+    font-size: 14px;
+    line-height: 34px;
+    color: #CCCCCC;
+    text-align: center;
+}
+.content-body{
+    padding-bottom: 40px;
+}
+/*终端机 icon*/
+.datagrid-row>td:nth-of-type(2) {
+    /*padding-left: 40px;*/
+    /* background: url("../images/ic_zhongduanji.png") 30px center no-repeat; */
+}
+.textbox {
+    /*更改表单样式*/
+    height: 28px;
+    border: 1px solid #cecece;
+}
+.textbox .textbox-text{
+    /*height: 26px !important;*/
+    font-size: 14px;
+    text-align: left;
+    /*cursor: pointer;*/
+}
+.pagination {
+    position: absolute;
+    bottom: 0;
+    left: calc(50%);
+}
+/*分页按钮*/
+.pagination table{
+    margin: 0 auto;
+    float: none;
+}
+
+/*隐藏提示框的问号*/
+.messager-icon .messager-info {
+    display: none;
+}
+/*隐藏提示框的叉号*/
+.panel-tool {
+    display: none;
+}
+/*閫夐」鍗�*/
+.tabs,.tabs-header, .tabs-scroller-left, .tabs-scroller-right, .tabs-tool, .tabs, .tabs-panels, .tabs li a.tabs-inner, .tabs li.tabs-selected a.tabs-inner, .tabs-header-bottom .tabs li.tabs-selected a.tabs-inner, .tabs-header-left .tabs li.tabs-selected a.tabs-inner, .tabs-header-right .tabs li.tabs-selected a.tabs-inner{
+    border: none;
+}
+/*.panel-body, .panel-body-noheader, .panel-body-noborder{
+	padding: 0 !important;
+}*/
+.tabs-header{
+    background-color: #FFFFFF;
+    padding: 0 24px;
+    border-bottom: 1px solid #dfdfdf;
+}
+.tabs li a{
+    /*height: 46px;*/
+    line-height: 45px !important;
+}
+.tabs li a.tabs-inner,.tabs li a.tabs-inner:hover{
+    background: none;
+    color: #222222;
+}
+
+.tabs li.tabs-selected a.tabs-inner,.tabs li a.tabs-inner{
+    color: #222222;
+    font-weight: 100;
+    background: none !important;
+}
+.tabs li{
+    width: 120px;
+    height: 45px;
+    text-align: center;
+    line-height: 45px;
+}
+.tabs-wrap{
+    /*border-bottom: 1px solid #dfdfdf;*/
+}
+.tabs-title{
+    font-size: 14px;
+}
+.tabs-selected{
+    border-bottom: 3px solid #FF883B !important;
+    box-sizing: border-box;
+}
+.tabs-selected .tabs-title{
+    color: #FF883B;
+}
+
+#tt .panel-body{
+	background-color: #F8F8F8;
+}
+.datagrid-empty{
+	background-color: #FFFFFF;
+}

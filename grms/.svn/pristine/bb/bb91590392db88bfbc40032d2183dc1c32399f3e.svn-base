@@ -1,0 +1,193 @@
+
+//客户管理，客户详情
+$(function(){
+	
+	searchById();
+	transferInfo();
+});
+var userAccount;
+var selectedRow;
+function searchById(){
+	var id = $("#detailId").val();
+ 	$.ajax({
+ 		type : "post",
+ 		url : "/grms/customerManagement/getDetailById.html",
+ 		dataType : "json",
+ 		data : {"id":id},
+	 	success : function(result) {
+	 		if (result.succ) {
+	 			var dataMap = result.data;
+				$("#salesman").html(dataMap.salesman);
+				$("#companyName").html(dataMap.name);
+				$("#companyId").html(dataMap.custId);
+				$("#companyAddress").html(dataMap.addressDetail);
+				$("#companyType").html(dataMap.customerType);
+				$("#industry").html(dataMap.industry);
+				$("#department").html(dataMap.department);
+				$("#dutyName").html(dataMap.dutyName);
+				$("#dutyPhone").html(dataMap.dutyPhone);
+				$("#contactor").html(dataMap.contactor);
+				$("#contactorPhone").html(dataMap.contactorPhone);
+				$("#remark").html(dataMap.remark);
+				//$("#account").val(dataMap.account);
+				userAccount = dataMap.account;
+			}else{
+				
+			}
+	 	}
+ 	});
+}
+
+
+function toTransfer(selectName){
+	$("#salesmanInfo").dialog({
+        width:500,
+        height:300,
+        modal:true,
+        collapsible:false,
+        minimizable:false,
+        maximizable:false,
+        closable:true,
+        draggable:false,
+        resizable:false,
+        inline:false,
+        title:"消息提醒",
+        ok:"确认",
+        cancel:"取消",
+        buttons:[{
+            text:'确认',
+            handler:function(){
+                wrapMaskHide();
+                $("#transferName").val("");
+                //search(selectName);
+                dataEmpty();
+            	$('#salesmanInfo').dialog('close');
+            	//页面显示选中的业务员
+            }
+        },{
+            text:'取消',
+            handler:function(){
+                wrapMaskHide();
+                $("#transferName").val("");
+                dataEmpty();
+                $('#salesmanInfo').dialog('close');
+               
+            }
+        }],
+        onClose : function(){
+            wrapMaskHide();//父级遮罩隐藏
+            $('body').css('overflow','auto');//恢复滚动
+        }
+    });
+}
+
+function dataEmpty(){
+	dataList = [];
+	initDagaGrid(1,10);
+	pagenationPage()
+}
+
+	$("#searchList").click(function(){
+		var selectName = $("#transferName").val();
+		var account = userAccount;
+		$.ajax({
+			type : "post",
+			url : "/ums/salesmanAction!getSalesmanList.html",
+			dataType : "json",
+			data : {"name":selectName,"account":account},
+			success : function(result) {
+				if (result.succ) {
+					dataList = result.data;
+					initDagaGrid(1,10);
+					pagenationPage()
+				}else{
+					
+				}
+			}
+		});
+	})
+
+//移交客户更新	
+function confirmSave(){
+		//获取该客户的Id
+		var custId = $("#detailId").val();
+		//获取转移后业务员的Account和姓名从弹窗列表中获取
+		var acceptAccount = selectedRow.userAccount;
+		var acceptName = selectedRow.userName;
+		$("#acceptor").val(acceptName);
+		$.ajax({
+			type : "post",
+			url : "/grms/customerManagement/transferCustomer.html",
+			dataType : "json",
+			data : {"custId":custId,"acceptAccount":acceptAccount,"acceptName":acceptName},
+			success : function(result) {
+				if (result.succ) {
+					window.location.href = "/grms/customerManagement/list.html";
+				}else{
+					
+				}
+			}
+		});
+	}
+function cancel(){
+	window.location.href = "/grms/customerManagement/list.html";
+}
+function initDagaGrid(pageNo,pageSize){
+	var xL=(pageNo-1)*pageSize;
+	var yL=pageNo*pageSize;
+	var data1=dataList.slice(xL,yL);
+	$("#availableList").datagrid({
+	    border:true,
+	    scrollbarSize:0,
+	    nowrap:false,//允许换行
+	    emptyMsg: '<span>无记录</span>',
+	    data:data1,
+	    fitColumns:true,//宽度不自适应
+	    checkOnSelect:false,//点击该复选框的时候才会选中或取消
+	    emptyMsg:'<span>无记录</span>',
+	    singleSelect:false,
+	    selectOnCkeck:true,
+	    ckeckOnSelect:true,
+	    onBeforeLoad:function(param){
+			$('#availableList').datagrid('resize');	
+	    },
+	    onLoadSuccess:function(data){
+			$('#availableList').datagrid('resize');	
+			var dataHeight =  $(".datagrid-view").height()-19;
+	        $(".datagrid-view").css("height",dataHeight );
+	    },
+	    columns:[[
+	        {
+	            field:'userName',
+	            title:'业务员',
+	            width:400,
+	            align:'center',
+	            singleSelect:true,
+	            formatter: function(value, row, Index){
+	                return '<input type="radio" name="selectRadio" id="selectRadio"' + Index + '    value="' + row.userAccount + '"+,+"'+row.userName+'" />';
+	            }
+	        },
+	    ]],
+	    onClickRow: function(index, data) {
+	    	selectedRow = $('#availableList').datagrid('getSelected');
+            console.log(selectedRow);
+            }
+	});
+}
+function pagenationPage(){
+	//分页
+	$('#pp').pagination({
+	    total:dataList.length,
+	    layout:['list','first','prev','links','next','last','manual'],
+	    emptyMsg: '<span>无记录</span>',
+	    showRefresh:true,
+	    displayMsg:' ',
+	    pageList:[5,10,15],
+	    //pageSize:10,
+	    onSelectPage:function (pageNo, pageSize) {
+	    	initDagaGrid(pageNo,pageSize);
+	    }
+	});
+	$(".pagination-page-list").parent().append("条");
+    $(".pagination-page-list").parent().prepend("共计"+dataList.length+"条,每页显示： ");
+}

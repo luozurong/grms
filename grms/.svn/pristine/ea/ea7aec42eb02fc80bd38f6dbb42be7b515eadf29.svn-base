@@ -1,0 +1,149 @@
+/*
+ * ProjectAction.java
+ * Copyright(C) 20xx-2015 xxxxxx公司
+ * All rights reserved.
+ * -----------------------------------------------
+ * 2018-08-08 Created
+ */
+package com.hori.grms.model;
+
+import java.util.Date;
+
+/**
+ * 项目执行清单
+ * 
+ * @author 
+ * @version 1.0 2018-08-08
+ */
+public class ProjectAction {
+
+    //id
+    private String id;
+    //项目编号
+    private String projectCode;
+    //项目名称
+    private String projectName;
+    //项目产品id（基础信息）
+    private String projectProductId;
+    //执行部门id
+    private String departmentId;
+    //执行部门名称
+    private String departmentName;
+    //业务部门执行状态（1：进行中 2：完成 3:执行异常 4：收款异常）
+    private Integer businessActionStatus;
+    //执行部门和综合部门执行状态（1：待确认 2：待执行 3：执行中 4：策划中 5：已完成 6：结案）
+    private Integer actionStatus;
+    //执行清单编号
+    private String actionCode;
+    //是否异常(执行部门和综合部门),1：正常 0：异常
+    private Integer exceptionStatus;
+    //业务审批状态（财务发起，业务部门审批）:1:置换场地 2:扣款 3:暂停 4:完成 5:终止
+    private Integer businessApproveStatus;
+    //业务处理时间
+    private Date dealTime;
+    //审批描述
+    private String approveSuggestion;
+    //领取人账号
+    private String receiveAccount;
+    //领取人名称
+    private String receiveName;
+    //领取时间
+    private Date recevieTime;
+
+    public String getId() {
+        return id;
+    }
+    public void setId(String id) {
+        this.id = id;
+    }
+    public String getProjectCode() {
+        return projectCode;
+    }
+    public void setProjectCode(String projectCode) {
+        this.projectCode = projectCode;
+    }
+    public String getProjectName() {
+        return projectName;
+    }
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
+    }
+    public String getProjectProductId() {
+        return projectProductId;
+    }
+    public void setProjectProductId(String projectProductId) {
+        this.projectProductId = projectProductId;
+    }
+    public String getDepartmentId() {
+        return departmentId;
+    }
+    public void setDepartmentId(String departmentId) {
+        this.departmentId = departmentId;
+    }
+    public String getDepartmentName() {
+        return departmentName;
+    }
+    public void setDepartmentName(String departmentName) {
+        this.departmentName = departmentName;
+    }
+    public Integer getBusinessActionStatus() {
+        return businessActionStatus;
+    }
+    public void setBusinessActionStatus(Integer businessActionStatus) {
+        this.businessActionStatus = businessActionStatus;
+    }
+    public Integer getActionStatus() {
+        return actionStatus;
+    }
+    public void setActionStatus(Integer actionStatus) {
+        this.actionStatus = actionStatus;
+    }
+    public String getActionCode() {
+        return actionCode;
+    }
+    public void setActionCode(String actionCode) {
+        this.actionCode = actionCode;
+    }
+    public Integer getExceptionStatus() {
+        return exceptionStatus;
+    }
+    public void setExceptionStatus(Integer exceptionStatus) {
+        this.exceptionStatus = exceptionStatus;
+    }
+    public Integer getBusinessApproveStatus() {
+        return businessApproveStatus;
+    }
+    public void setBusinessApproveStatus(Integer businessApproveStatus) {
+        this.businessApproveStatus = businessApproveStatus;
+    }
+    public Date getDealTime() {
+        return dealTime;
+    }
+    public void setDealTime(Date dealTime) {
+        this.dealTime = dealTime;
+    }
+    public String getApproveSuggestion() {
+        return approveSuggestion;
+    }
+    public void setApproveSuggestion(String approveSuggestion) {
+        this.approveSuggestion = approveSuggestion;
+    }
+    public String getReceiveAccount() {
+        return receiveAccount;
+    }
+    public void setReceiveAccount(String receiveAccount) {
+        this.receiveAccount = receiveAccount;
+    }
+    public String getReceiveName() {
+        return receiveName;
+    }
+    public void setReceiveName(String receiveName) {
+        this.receiveName = receiveName;
+    }
+    public Date getRecevieTime() {
+        return recevieTime;
+    }
+    public void setRecevieTime(Date recevieTime) {
+        this.recevieTime = recevieTime;
+    }
+}

@@ -1,0 +1,14 @@
+/**
+ * 
+ */
+package com.hori.grms.service;
+
+/** 
+ * @ClassName: ProjectProductMenuAreaService 
+ * @Description: 项目产品明细小区关联表
+ * @author zhuqiang
+ * @date 2018年8月8日 下午7:14:56 
+ */
+public interface ProjectProductMenuAreaService{
+
+}

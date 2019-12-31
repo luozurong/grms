@@ -1,0 +1,30 @@
+package com.hori.grms.service;
+
+import java.util.List;
+
+import com.hori.grms.model.DepartmentBusinessArea;
+import com.hori.grms.model.DepartmentBusinessType;
+
+
+public interface DepartmentBusinessService {
+	//产品资源配置列表
+	List<DepartmentBusinessType> getBusinessTypeList(String condition);
+	//删除产品资源配置
+	void delDepartmentBusiness(String id);
+	void insertType(DepartmentBusinessType type);
+	void insertArea(DepartmentBusinessArea area);
+	/**
+	 * 根据业务类型查询
+	 * @param businessType
+	 * @return
+	 */
+	List<DepartmentBusinessType> findByBusinessType(String businessType);
+	/**
+	 * 根据城市查询负责此城市对应业务的执行部门列表
+	 * @param city 城市编码
+	 * @param businessType 业务类型
+	 * @return
+	 */
+	List<DepartmentBusinessType> findByBusinessAreaCity(String city,String businessType);
+	
+}

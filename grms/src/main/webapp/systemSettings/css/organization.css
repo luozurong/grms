@@ -1,0 +1,74 @@
+.create {
+	margin-left: 0;
+}
+
+.inputBox{
+	padding: 10px 0 0 70px;
+	font-size: 16px;
+}
+.textBox{
+	padding-left: 70px;
+}
+.inputBox label,.textBox label{
+	display: inline-block;
+	vertical-align: middle;
+	height: 30px;
+	line-height: 30px;
+	padding-right: 10px;
+	font-size: 16px;
+	color: #8c8c8c;
+}
+.inputBox label:before{
+	content: '*';
+	line-height: 150%;
+	color: #e65e4e;
+}
+.inputBox input{
+	height: 28px;
+	line-height: 28px;
+	border: solid 1px #999999;
+	width: 368px;
+	padding: 0 5px;
+}
+.textBox textarea{
+	width: 588px;
+	border: solid 1px #999999;
+	height: 148px;
+	resize: both;
+	padding: 5px;
+	resize: none;
+}
+.inputBox:first-child{
+	padding: 18px 0 0 70px;
+}
+.textBox{
+	margin-top: 80px;
+}
+.sure{
+	width: 600px;
+	text-align: center;
+	margin:50px 0 23px 0;
+}
+.sure input{
+	width: 118px;
+	border: 1px;
+	background: #51d2b6;
+	border-radius: 4px;
+	height: 32px;
+	line-height: 32px;
+	font-size: 18px;
+	color: #fff;
+}
+.tree-wrap{
+    margin-left: 12px;
+    margin-top: 10px;
+}
+.wrap {
+    height: 100%;
+}
+.body-wrap {
+    min-height: calc(100% - 180px);
+}
+
+
+

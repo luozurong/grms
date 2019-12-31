@@ -1,0 +1,68 @@
+package com.hori.grms.dao;
+
+import java.util.Date;
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Param;
+
+import com.hori.grms.model.Attachment;
+import com.hori.grms.model.Contract;
+import com.hori.grms.queryBean.ContractProjectQueryBean;
+import com.hori.grms.queryBean.ContractQueryBean;
+import com.hori.grms.vo.ContractProjectVo;
+import com.hori.grms.vo.ContractVo;
+
+public interface ContractMapper {
+    int deleteByPrimaryKey(String id);
+
+    int insert(Contract record);
+
+    int insertSelective(Contract record);
+
+    ContractVo selectByPrimaryKey(String id);
+
+    int updateByPrimaryKeySelective(Contract record);
+
+    int updateByPrimaryKeyWithBLOBs(Contract record);
+
+    int updateByPrimaryKey(Contract record);
+    
+    List<ContractVo> selectByContract(@Param("queryBean") ContractQueryBean queryBean);
+    
+    List<ContractProjectVo> selectProject(@Param("queryBean") ContractProjectQueryBean queryBean);
+    
+    ContractProjectVo selectProjectStatus(@Param("projectCode") String projectCode);
+
+
+    int updateCommitContract(@Param("id") String id,@Param("status")  String status,@Param("date") Date date );
+    
+    List<ContractVo> selectByContractOther(@Param("id") String id);
+    /**
+     * 根据项目编号获取【执行合同】
+     * @param projectCode
+     * @return
+     */
+    ContractVo selectExecuteContractByProjectCode(@Param("projectCode") String projectCode);
+	
+	void updateContractUrl(@Param("id") String id,@Param("url") String url);
+	//回写合同编号
+	void updateCodeForProject(@Param("projectCode") String projectCode,@Param("contractCode") String contractCode);
+	
+	List<Attachment> findBycorrelationId(@Param("correlationId") String correlationId,@Param("type") String type,@Param("isExtra") String isExtra);
+
+	/**
+	 * 根据项目编号获取【执行合同】
+	 * @param projectCode
+	 * @param status 合同状态，1：未提交 2：待审批-业务管理 3:待审批-合同管理 4:待审批-财务管理 5:审批通过 6:业务-审批不通过 7:已完成 8 合同-审批不通过 9 财务-审批不通过
+	 * @return
+	 */
+	ContractVo selectECByProjectCodeAndStatus(@Param("projectCode") String projectCode, @Param("status") int status);
+	
+	//更新合同状态
+	void updateAttment(@Param("id") String id);
+	
+	//通过合同编号获取对应的合同
+	ContractVo selectExecuteContractByContractCode(@Param("contractCode") String contractCode);
+
+}

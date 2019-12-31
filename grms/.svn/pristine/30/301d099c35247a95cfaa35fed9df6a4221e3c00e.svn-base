@@ -1,0 +1,17 @@
+package com.hori.grms.dao;
+
+import com.hori.grms.model.ContractApproveLog;
+
+public interface ContractApproveLogMapper {
+    int deleteByPrimaryKey(String id);
+
+    int insert(ContractApproveLog record);
+
+    int insertSelective(ContractApproveLog record);
+
+    ContractApproveLog selectByPrimaryKey(String id);
+
+    int updateByPrimaryKeySelective(ContractApproveLog record);
+
+    int updateByPrimaryKey(ContractApproveLog record);
+}

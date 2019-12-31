@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 引入servlet分文件 -->
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+       version="3.1" metadata-complete="true">
+	<display-name>grms</display-name>
+	<!-- 引入cs-servlet分文件 变量 -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath:/com/hori/grms/resources/applicationContext*.xml</param-value>
+	</context-param>
+	<context-param>
+		<param-name>log4jConfigLocation</param-name><!-- 指定日志文件路径 默认是在classpath下 -->
+		<param-value>classpath:/com/hori/grms/resources/log4j.properties</param-value>
+	</context-param>
+	<context-param>
+		<param-name>webAppRootKey</param-name>
+		<param-value>grms.root</param-value>
+	</context-param>
+	<listener>
+		<listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
+	</listener>
+	<!-- delegatingFilterProxy -->
+	<filter>
+	    <filter-name>springSessionRepositoryFilter</filter-name>
+	    <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	</filter>
+	<filter-mapping>
+	    <filter-name>springSessionRepositoryFilter</filter-name>
+	    <url-pattern>/*</url-pattern>
+	</filter-mapping>
+		
+	<!-- 过滤乱码 -->
+	<filter>
+		<filter-name>encodingFilter</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>encodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<!-- webservice -->
+	<servlet>
+		<servlet-name>CXFServlet</servlet-name>
+		<servlet-class>org.apache.cxf.transport.servlet.CXFServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>CXFServlet</servlet-name>
+		<url-pattern>/WS/*</url-pattern>
+	</servlet-mapping>
+
+
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	 <listener> 
+    <listener-class> 
+            org.springframework.web.context.request.RequestContextListener 
+        </listener-class> 
+   </listener>
+	<!-- 防止spring内存溢出监听器 -->
+	<listener>
+		<listener-class>org.springframework.web.util.IntrospectorCleanupListener</listener-class>
+	</listener>
+   
+      
+	<!-- spring mvc servlet -->
+	<servlet>
+		<!-- 中央控制器 -->
+		<servlet-name>springMvc</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>classpath:/com/hori/grms/resources/applicationContext-mvc.xml</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>springMvc</servlet-name>
+		<!-- <url-pattern>*.do</url-pattern> -->
+		<url-pattern>/</url-pattern>
+	</servlet-mapping>
+
+	<!-- rest风格的解决 HTTP Status 405 - JSPs only permit GET POST or HEAD -->
+	<!-- https://bz.apache.org/bugzilla/show_bug.cgi?id=56568 网友提供 http://stackoverflow.com/questions/24673041/405-jsp-error-with-put-method -->
+	<filter>
+		<filter-name>getMethodConvertingFilter</filter-name>
+		<filter-class>com.hori.grms.Filter.GetMethodConvertingFilter</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>getMethodConvertingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+		<dispatcher>FORWARD</dispatcher>
+	</filter-mapping> 
+
+    <!-- 配置可以把post 可以改为 delete 或者post请求 rest风格  -->
+    <filter>
+      <filter-name>HiddenHttpMethodFilter</filter-name>
+      <filter-class>org.springframework.web.filter.HiddenHttpMethodFilter</filter-class>
+    </filter>  
+    <filter-mapping>
+       <filter-name>HiddenHttpMethodFilter</filter-name>
+       <url-pattern>/*</url-pattern>
+    </filter-mapping>	
+   
+	<!-- 配置session超时时间，单位分钟 -->
+	<session-config>
+		<session-timeout>30</session-timeout>
+	</session-config>
+	<welcome-file-list>
+		<welcome-file>authorize</welcome-file>
+	</welcome-file-list>
+
+</web-app>

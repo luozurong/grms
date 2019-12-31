@@ -1,0 +1,75 @@
+
+.role-name {
+    margin-top: 14px;
+    margin-left: 30px;
+}
+.active{
+	background: #51d2b6;
+    padding: 2px 8px;
+    border-radius: 12px;
+}
+.left-name a {
+	padding: 2px 8px;
+}
+.adjust1{
+    margin-left:0;
+}
+.conditions-select {
+    min-height: 130px;
+}
+#pp{
+    margin-top:0;
+    margin-bottom: 0;
+}
+.wrap {
+    height: 100%;
+}
+.body-wrap{
+    min-height: calc(100% - 240px);
+    background-color: #F8f8f8;
+}
+.datagrid-btable{
+    /*border-left:1px solid transparent !important;*/
+    /*border-right:1px solid transparent;*/
+    border-bottom:1px solid transparent;
+}
+.panel-header,
+.panel-body {
+    border-color: #e4e4e4;
+    border-left: none;
+    border-right: none;
+}
+.tree-wrap{
+    margin-left: 12px;
+    margin-top: 10px;
+}
+
+#roleWin_detail .detail-wrap {
+    height: 439px;
+}
+.nameDetail {
+    margin-left: 110px;
+    padding:5px;
+    width: 408px;
+    height: 34px;
+    border:1px solid #cccccc;
+    overflow: auto;
+    margin-top: 20px;
+}
+.theName {
+    display: inline-block;
+    margin-left: 10px;
+    min-width:60px;
+    height: 34px;
+    line-height: 34px;
+}
+
+
+.pagination-page-list, .pagination .pagination-num{
+    color:#666;
+    border-color:#ccc;
+}
+
+
+
+

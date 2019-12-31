@@ -1,0 +1,15 @@
+/**
+ * 
+ */
+package com.hori.grms.service;
+
+/** 
+ * @ClassName: ProjectActionService 
+ * @Description: 项目执行清单
+ * @author zhuqiang
+ * @date 2018年8月8日 下午6:53:32 
+ */
+
+public interface ProjectActionService {
+
+}

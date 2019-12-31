@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hori.grms.dao.DepartmentBusinessTypeMapper" >
+  <resultMap id="BaseResultMap" type="com.hori.grms.model.DepartmentBusinessType" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="department_id" property="departmentId" jdbcType="VARCHAR" />
+    <result column="department_name" property="departmentName" jdbcType="VARCHAR" />
+    <result column="business_type" property="businessType" jdbcType="VARCHAR" />
+    <result column="area_flag" property="areaFlag" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap id="DepartmentBusinessVoMap" type="com.hori.grms.vo.DepartmentBusinessVo" >
+    <id column="business_type_id" property="businessTypeId" jdbcType="VARCHAR" />
+    <result column="department_id" property="departmentId" jdbcType="VARCHAR" />
+    <result column="province_name" property="provinceName" jdbcType="VARCHAR" />
+    <result column="city_name" property="cityName" jdbcType="VARCHAR" />
+    <result column="department_name" property="departmentName" jdbcType="VARCHAR" />
+    <result column="business_type" property="businessType" jdbcType="VARCHAR" />
+    <result column="area_flag" property="areaFlag" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, department_id, department_name, business_type, area_flag
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from department_business_type
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <select id="getBusinessTypeList" resultMap="BaseResultMap" parameterType="String">
+  	select * from department_business_type where 1=1 
+  	<if test="condition !=null and condition != ''">
+  		and department_name like '%${condition}%'
+  	</if>
+  </select>
+  <delete id="delDepartmentBusinessType" parameterType="String" >
+    delete from department_business_type
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  
+  <insert id="insert" parameterType="com.hori.grms.model.DepartmentBusinessType" >
+    insert into department_business_type (id, department_id, department_name, business_type, area_flag)
+    values (#{id,jdbcType=VARCHAR}, #{departmentId,jdbcType=VARCHAR},#{departmentName,jdbcType=VARCHAR},#{businessType,jdbcType=VARCHAR},#{areaFlag,jdbcType=INTEGER})
+  </insert>
+  <!-- 根据业务类型查询 -->
+  <select id="findByBusinessType" resultMap="BaseResultMap" parameterType="String">
+  	select * from department_business_type where business_type = #{businessType,jdbcType=VARCHAR}
+  </select>
+   <!-- 根据城市查询负责此城市对应业务的执行部门列表 -->
+  <select id="findByBusinessAreaCity" resultMap="BaseResultMap" parameterType="String">
+  	SELECT dbt.* FROM department_business_type dbt,department_business_area dba WHERE dbt.id=dba.business_type_id 
+  	       AND dba.city=#{city,jdbcType=VARCHAR} and dbt.business_type = #{businessType,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="getBusinessVoList" resultMap="DepartmentBusinessVoMap" parameterType="String">
+  	select da.business_type_id,da.department_id,da.province_name,da.city_name,dt.department_name,
+  	dt.business_type,dt.area_flag 
+  	from department_business_type dt 
+  	left join department_business_area da on da.business_type_id = dt.id 
+  	where 1=1 
+  	<if test="condition !=null and condition != ''">
+  		and dt.department_name like '%${condition}%'
+  	</if>
+  </select>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.hori.grms.model.DepartmentBusinessType" >
+    update department_business_type
+    <set >
+      <if test="departmentId != null" >
+        department_id = #{departmentId,jdbcType=VARCHAR},
+      </if>
+      <if test="departmentName != null" >
+        department_name = #{departmentName,jdbcType=VARCHAR},
+      </if>
+      <if test="businessType != null" >
+        business_type = #{businessType,jdbcType=VARCHAR},
+      </if>
+      <if test="areaFlag != null" >
+        area_flag = #{areaFlag,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+ <beans xmlns="http://www.springframework.org/schema/beans"  
+    xmlns:context="http://www.springframework.org/schema/context"  
+    xmlns:jaxws="http://cxf.apache.org/jaxws"   
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+    xsi:schemaLocation="http://www.springframework.org/schema/beans 
+    http://www.springframework.org/schema/beans/spring-beans-4.0.xsd 
+    http://www.springframework.org/schema/context 
+    http://www.springframework.org/schema/context/spring-context-4.0.xsd 
+    http://cxf.apache.org/jaxws 
+    http://cxf.apache.org/schemas/jaxws.xsd">
+    <import resource="classpath:META-INF/cxf/cxf.xml" />  
+
+    <jaxws:client id="iAuthorizeAreaService" serviceClass="com.jlit.vdcs.webservice.IAuthorizeAreaService"   
+            address="${vdcs_server_address}/ws/authorizeAreaService">
+    </jaxws:client> 
+    
+    <!-- 人员管理操作记录的webservice -->
+    <jaxws:client id="iOperationRecordService" serviceClass="com.jlit.vdcs.webservice.IOperationRecordService"   
+            address="${uoms_server_address}/ws/iOperationRecordService">  
+    </jaxws:client>
+    
+    <!-- 工单的webservice -->
+    <jaxws:client id="iWorkOrderService" serviceClass="com.jlit.vdcs.webservice.IWorkOrderService"   
+            address="${uoms_server_address}/ws/workOrderService">  
+    </jaxws:client>
+</beans> 

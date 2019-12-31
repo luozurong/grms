@@ -1,0 +1,46 @@
+package com.hori.grms.service;
+
+import java.util.List;
+
+import javax.servlet.http.HttpSession;
+
+import com.hori.grms.model.BackMoneyPlan;
+import com.hori.grms.model.BackMoneyPlanPeriods;
+import com.hori.grms.queryBean.BackMoneyPlanQueryBean;
+import com.hori.grms.vo.BackMoneyPlanVo;
+import com.hori.grms.vo.ContractDetailVo;
+import com.hori.grms.vo.ContractVo;
+
+
+public interface BackMoneyPlanService {
+	List<BackMoneyPlanVo> getBackMoneyPlanListByCondition(BackMoneyPlanQueryBean queryBean);
+	
+	void insertSelective(BackMoneyPlan backMoneyPlan,List<BackMoneyPlanPeriods> list,HttpSession session,String contractCode);
+	
+	List<ContractDetailVo> getContractList(String condition);
+	
+	ContractDetailVo getContractDetail(String contractCode);
+	
+	BackMoneyPlan getBackMoneyPlanByCode(String backMoneyPlanCode);
+	
+	void updateByPrimaryKeySelective(BackMoneyPlan backMoneyPlan);
+
+	BackMoneyPlan getBackMoneyPlanByContractCode(String contractCode);
+	
+	List<BackMoneyPlanVo> getBackMoneyPlanList();
+
+	/**
+	 * 通过projectCode来获取计划回款信息
+	 * @param projectCode
+	 * @return
+	 */
+	List<BackMoneyPlanVo> getBackMoneyPlanListByProjectCode(String projectCode);
+	/**
+	 * 乙方执行终止：
+		1）生成扣款计划，状态：待扣款，可登记，且排序在已完成收款计划后；
+		2）登记通过扣款计划后，更新结算计划的应收回款金额（未登记收款计划默认实际收款0）；
+		3）其他未完成的非结算收款计划默认为已收款；
+		4）结算款计划：为待付款，可登记。
+	 */
+	void stopActionUpdateBackPlan(String backMoneyPlanCode,Double reduceMoney);
+}

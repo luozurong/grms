@@ -1,0 +1,67 @@
+.personal,.tel,.password{
+    margin: 0 20px 24px;
+    background: #fff;
+    box-shadow: 0 2px 2px #eee;
+    border: 1px solid #d7d7d7;
+}
+.personal{
+	min-height: 406px;
+}
+.tel{
+	height: 290px;
+}
+.password{
+	height: 387px;
+}
+ul{
+	margin-top: 30px;
+}
+li{
+	margin-top: 15px;
+	margin-left: 30px;
+	
+}
+li label{
+	display: inline-block;
+	height: 30px;
+	line-height: 30px;
+	vertical-align: middle;
+	color: #222;
+}
+li input{
+	border: 1px solid #999;
+	height: 28px;
+	line-height: 28px;
+	width: 280px;
+	padding: 0 10px;
+}
+.number{
+	display: inline-block;
+	margin-left: 10px;
+	height: 30px;
+	line-height: 30px;
+	color: #51D2B6;
+}
+.ps{
+	text-indent: 70px;
+    margin-top: 10px;
+    color: #999;
+}
+.submitButton{
+	width: 120px;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    background-color: #51d2b6;
+    color: #FFFFFF;
+    border: 1px solid #51d2b6;
+    border-radius: 4px;
+}
+
+
+
+
+
+
+
+

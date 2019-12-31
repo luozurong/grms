@@ -1,0 +1,270 @@
+.wrap{
+    background: #ffffff;
+    position:absolute;
+    margin:auto;
+    top: 0;
+    /*bottom: 0;*/
+    left:0;
+    right: 0;
+    height: 650px;
+}
+
+
+.header{
+    width: 100%;
+}
+.logo-wrap{
+    /*width: 1200px;*/
+    width: 100%;
+    height:85px ;
+    margin: 0 auto;
+    position: relative;
+}
+
+.logo{
+    width: 126px;
+    height:85px ;
+    background: url("../images/login_logo.png") no-repeat 0 center;
+    /*background-size: cover;*/
+    position: absolute;
+    left: 70px;
+}
+
+.content{
+    width: 100%;
+    min-height: 500px;
+    background: url("../images/bg.png") no-repeat scroll center 0;
+    background-size:100% 100%;
+    -webkit-background-size:100% 100%;
+}
+.content-wrap{
+    width: 1000px;
+    height: 500px;
+    margin: 0 auto;
+    position:relative;
+}
+@media screen and (min-height: 850px) {
+    .wrap {
+        height: 850px;
+        bottom: 0;
+    }
+    .content{
+        height: 650px;
+    }
+    .content-wrap{
+        height: 650px;
+    }
+}
+.login-wrap{
+    width: 400px;
+    height: 400px;
+    margin:auto;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left:0;
+    right: 0;
+    background: #ffffff;
+    border-radius: 6px;
+    box-shadow: 0 0 10px #c0c0c0;
+}
+.account{
+    width: 100%;
+    height: 120px;
+    line-height: 120px;
+    font-size: 20px;
+    color: #000000;
+    text-align: center;
+}
+.login-phone,.login-password{
+    width: 300px;
+    height: 40px;
+    margin: 0 auto;
+    position: relative;
+}
+.login-password{
+    margin-top: 14px;
+}
+.phone,.password{
+    padding-left: 8px;
+    width: 290px;
+    height: 38px;
+    font-size: 14px;
+    color: #222222;
+    border-radius: 4px;
+    border: 1px solid #CCCCCC;
+}
+.phone-delete,.password-delete{
+	display:none;
+    width: 16px;
+    height: 16px;
+    position: absolute;
+    right: 16px;
+    top: 11px;
+    background: url("../images/btn_ic_cancle.png") no-repeat;
+    background-size: cover;
+
+}
+.verify-info{
+    width: 300px;
+    height: 18px;
+    margin: 20px auto 0;
+}
+.info-detail{
+    width: 110px;
+    height: 20px;
+    line-height: 20px;
+    text-align: left;
+    font-size: 14px;
+    color: #e64340;
+    padding-left:26px;
+    background: url("../images/ic_!.png") 0 1px no-repeat;
+}
+.forget-password{
+    width: 86px;
+    height: 20px;
+}
+.forget-password>a{
+    display: block;
+    width: 70px;
+    height: 20px;
+    line-height: 20px;
+    text-align: right;
+    font-size: 14px;
+    color: #CCCCCC;
+    padding-left:16px;
+    background: url("../images/ic_-.png") 0 2px no-repeat;
+}
+.register{
+    width: 300px;
+    height: 40px;
+    line-height: 40px;
+    margin: 30px auto 0;
+    text-align: center;
+    font-size: 16px;
+    color: #ffffff;
+    background:#46c6b0 ;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.footer-info{
+    margin-top: 40px;
+    font-size: 14px;
+    color: #222222;
+    text-align: center;
+}
+
+/*楠岃瘉鐮侀伄缃�*/
+html,body{
+    height:100%;
+    margin:0;
+    padding:0;
+}
+.mask{
+    /*display: none;*/
+    height:100%;
+    width:100%;
+    position:fixed;
+    _position:absolute;
+    left: 0;
+    top:0;
+    z-index:1000;
+    opacity:0.80;
+    filter:alpha(opacity=80);
+    background-color:#222222;
+}
+.popup{
+    /*display: none;*/
+    height:380px;
+    width:380px;
+    /*overflow:auto;*/
+    border-radius: 6px;
+    background-color:#fff;
+    position:absolute;
+    top:50%;
+    left:50%;
+    margin-left:-190px;
+    margin-top:-190px;
+    z-index:1010;
+    word-wrap: break-word;
+}
+.popup-delete {
+    position: absolute;
+    right: -30px;
+    top: -22px;
+    width: 26px;
+    height: 26px;
+    background: url("../images/ic_delete.png");
+    background-size: cover;
+    text-align: center;
+    z-index: 99999;
+}
+.popup-title{
+    width: 100%;
+    height: 100px;
+    line-height: 100px;
+    font-size: 20px;
+    color: #000000;
+    text-align: center;
+}
+.popup-info{
+    margin: 14px auto 0;
+    width: 300px;
+    height: 40px;
+
+}
+/*.write-code,.write-img{*/
+    /*width: 150px;*/
+    /*height: 40px;*/
+/*}*/
+
+.write-code>input{
+    padding-left: 12px;
+    width: 168px;
+    height: 38px;
+    line-height: 38px;
+    border: 1px solid #CCCCCC;
+}
+.write-img>img{
+    width: 100px;
+    height: 38px;
+    border: 1px solid #CCCCCC;
+    /*border-left: none;*/
+}
+.popup-error{
+    width: 300px;
+    height: 20px;
+    margin: 0 auto;
+    margin-top: 14px;
+}
+.popup-errordetail{
+    width: 274px;
+    height: 20px;
+    line-height: 20px;
+    margin: 0 auto;
+    text-align: left;
+    font-size: 14px;
+    color: #e64340;
+    margin-top: 14px;
+    padding-left:26px;
+    background: url("../images/ic_!.png") 0 1px no-repeat;
+}
+.confirm{
+    width: 300px;
+    height: 40px;
+    line-height: 40px;
+    margin: 30px auto 0;
+    text-align: center;
+    font-size: 16px;
+    color: #ffffff;
+    background:#46c6b0 ;
+    border-radius: 4px;
+}
+
+
+
+
+
+
+
+

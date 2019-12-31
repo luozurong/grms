@@ -1,0 +1,368 @@
+package com.hori.grms.controller;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.alibaba.fastjson.JSON;
+import com.github.pagehelper.PageInfo;
+import com.hori.grms.model.BackMoneyPlan;
+import com.hori.grms.model.BackMoneyPlanPeriods;
+import com.hori.grms.service.BackMoneyPlanPeriodsService;
+import com.hori.grms.service.BackMoneyPlanService;
+import com.hori.grms.util.UUIDGeneratorUtil;
+import com.hori.grms.vo.BackMoneyPlanVo;
+import com.hori.grms.vo.ContractVo;
+/**
+ * 收款计划
+ * @author dell
+ *
+ */
+@Controller
+@RequestMapping("backMoneyPlan")
+public class BackMoneyPlanController{
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+	
+	@Autowired
+	BackMoneyPlanService backMoneyPlanService;
+	@Autowired
+	BackMoneyPlanPeriodsService backMoneyPlanPeriodsService;
+	@RequestMapping("/list")
+	public String list(HttpServletRequest request){		
+		
+		return "/backMoneyPlan/backMoneyPlan.jsp";
+	}
+	
+	//回款计划列表
+	@RequestMapping("/getBackMoneyPlanList")
+	@ResponseBody
+	public String getBackMoneyPlanList(HttpServletRequest request, HttpServletResponse response){
+		Map<String,Object> resultMap = new HashMap<String, Object>();
+		try{
+			String selectCondition = request.getParameter("selectCondition");
+			String condition = request.getParameter("condition");
+			String backMoneyStatus = request.getParameter("backMoneyStatus");
+			String startTime = request.getParameter("startTime");
+			String endTime = request.getParameter("endTime");
+			
+			List<BackMoneyPlanVo> list = backMoneyPlanService.getBackMoneyPlanList(selectCondition,condition,backMoneyStatus,startTime,endTime);
+			
+			PageInfo<BackMoneyPlanVo> pageInfo = new PageInfo<BackMoneyPlanVo>(list);
+			resultMap.put("rows", pageInfo.getList());
+			resultMap.put("total", pageInfo.getTotal());
+			
+			resultMap.put("success", true);
+		}catch(Exception e){
+			logger.info("发送异常"+e.getMessage());
+			resultMap.put("success", false);
+		}
+		return JSON.toJSONString(resultMap);
+	}
+	
+	
+	//合同列表
+	@RequestMapping("/getContractList")
+	@ResponseBody
+	public String getContractList(HttpServletRequest request, HttpServletResponse response){
+		Map<String,Object> resultMap = new HashMap<String, Object>();
+		try{
+			String condition = request.getParameter("condition");
+			List<ContractVo> list = backMoneyPlanService.getContractList(condition);
+			PageInfo<ContractVo> pageInfo = new PageInfo<ContractVo>(list);
+			resultMap.put("rows", pageInfo.getList());
+			resultMap.put("total", pageInfo.getTotal());
+			resultMap.put("success", true);
+		}catch(Exception e){
+			logger.info("发送异常"+e.getMessage());
+			resultMap.put("success", false);
+		}
+		return JSON.toJSONString(resultMap);
+	}
+	
+	//合同详情
+	@RequestMapping("/getContractDetail")
+	@ResponseBody
+	public String getContractDetail(HttpServletRequest request, HttpServletResponse response){
+		Map<String,Object> resultMap = new HashMap<String, Object>();
+		try{
+			String contractCode = request.getParameter("contractCode");
+			ContractVo contractVo = backMoneyPlanService.getContractDetail(contractCode);
+			resultMap.put("contractVo", contractVo);
+			resultMap.put("success", true);
+		}catch(Exception e){
+			logger.info("发送异常"+e.getMessage());
+			resultMap.put("success", false);
+		}
+		return JSON.toJSONString(resultMap);
+	}
+	
+	//新增回款计划页
+	@RequestMapping("/jumpToCreateBackMoneyPlan")
+	public String jumpToCreateBackMoneyPlan(HttpServletRequest request){
+		
+		String contractCode = request.getParameter("contractCode");
+		ContractVo contractVo = backMoneyPlanService.getContractDetail(contractCode);
+		request.setAttribute("contractVo", contractVo);
+		
+		return "/backMoneyPlan/createBackMoneyPlan.jsp";
+	}
+	
+	//编辑回款计划页
+	@RequestMapping("/jumpToEditBackMoneyPlan")
+	public String jumpToEditBackMoneyPlan(HttpServletRequest request){
+		
+		String backMoneyPlanCode = request.getParameter("backMoneyPlanCode");
+		/*ContractVo contractVo = backMoneyPlanService.getContractDetail(contractCode);
+		request.setAttribute("contractVo", contractVo);*/
+		
+		return "/backMoneyPlan/editBackMoneyPlan.jsp";
+	}
+	
+	//跳转计划详情页
+	@RequestMapping("/jumpToPlanDetail")
+	public String jumpToPlanDetail(HttpServletRequest request){
+		//合同code
+		String contractCode = request.getParameter("contractCode");
+		//收款计划code
+		String backMoneyPlanCode = request.getParameter("backMoneyPlanCode");
+		//合同信息
+		ContractVo contractVo = backMoneyPlanService.getContractDetail(contractCode);
+		//回款计划信息
+		BackMoneyPlan backMoneyPlan = backMoneyPlanService.getBackMoneyPlanByCode(backMoneyPlanCode);
+		request.setAttribute("createrName", backMoneyPlan.getCreaterName());
+		request.setAttribute("createTime", backMoneyPlan.getCreateTime());
+		request.setAttribute("contractVo", contractVo);
+		request.setAttribute("contractCode", contractCode);
+		request.setAttribute("backMoneyPlanCode", backMoneyPlanCode);
+		return "/backMoneyPlan/backMoneyPlanDetail.jsp";
+	}
+	
+	//提交回款计划
+	@RequestMapping("/saveBackMoneyPlan")
+	@ResponseBody
+	public String saveBackMoneyPlan(HttpServletRequest request, HttpServletResponse response){
+		Map<String,Object> resultMap = new HashMap<String, Object>();
+		try{
+			String type = request.getParameter("type");
+			String planBackTime = request.getParameter("planBackTime");
+			String planBackMoney = request.getParameter("planBackMoney");
+			String remark = request.getParameter("remark");
+			String contractCode = request.getParameter("contractCode");
+			//生成32位收款计划编号
+			String backMoneyPlanCode = UUIDGeneratorUtil.generateUUID();
+			
+			BackMoneyPlan backMoneyPlan = new BackMoneyPlan();
+			backMoneyPlan.setId(UUIDGeneratorUtil.generateUUID());
+			backMoneyPlan.setBackMoneyPlanCode(backMoneyPlanCode);
+			backMoneyPlan.setContractCode(contractCode);
+			backMoneyPlan.setCreaterName("大黄");
+			backMoneyPlan.setCreaterAccount("admin");
+			backMoneyPlan.setCreaterLevel("1");
+			backMoneyPlan.setCreateTime(new Date());
+			backMoneyPlan.setCheckStatus((short)0);
+			backMoneyPlanService.insertSelective(backMoneyPlan);
+			
+			
+			BackMoneyPlanPeriods backMoneyPlanPeriods = new BackMoneyPlanPeriods();
+			backMoneyPlanPeriods.setBackMoneyPlanCode(backMoneyPlanCode);
+			backMoneyPlanPeriods.setId(UUIDGeneratorUtil.generateUUID());
+			backMoneyPlanPeriods.setPlanBackMoney(Long.parseLong(planBackMoney));
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			backMoneyPlanPeriods.setPlanBackTime(sdf.parse(planBackTime));
+			backMoneyPlanPeriods.setRemark(remark);
+			backMoneyPlanPeriods.setType(Short.parseShort(type));
+			backMoneyPlanPeriods.setStatus((short)0);
+			backMoneyPlanPeriodsService.insertSelective(backMoneyPlanPeriods);
+			
+			resultMap.put("success", true);
+		}catch(Exception e){
+			logger.info("发送异常"+e.getMessage());
+			resultMap.put("success", false);
+		}
+		return JSON.toJSONString(resultMap);
+	}
+	
+	//编辑回款计划
+	@RequestMapping("/editBackMoneyPlan")
+	@ResponseBody
+	public String editBackMoneyPlan(HttpServletRequest request, HttpServletResponse response){
+		Map<String,Object> resultMap = new HashMap<String, Object>();
+		try{
+			String type = request.getParameter("type");
+			String planBackTime = request.getParameter("planBackTime");
+			String planBackMoney = request.getParameter("planBackMoney");
+			String remark = request.getParameter("remark");
+			String contractCode = request.getParameter("contractCode");
+			//生成32位收款计划编号
+			/*String backMoneyPlanCode = UUIDGeneratorUtil.generateUUID();
+			
+			BackMoneyPlan backMoneyPlan = new BackMoneyPlan();
+			backMoneyPlan.setId(UUIDGeneratorUtil.generateUUID());
+			backMoneyPlan.setBackMoneyPlanCode(backMoneyPlanCode);
+			backMoneyPlan.setContractCode(contractCode);
+			backMoneyPlan.setCreaterName("大黄");
+			backMoneyPlan.setCreaterAccount("admin");
+			backMoneyPlan.setCreaterLevel("1");
+			backMoneyPlan.setCreateTime(new Date());
+			backMoneyPlan.setCheckStatus((short)0);
+			backMoneyPlanService.insertSelective(backMoneyPlan);
+			
+			
+			BackMoneyPlanPeriods backMoneyPlanPeriods = new BackMoneyPlanPeriods();
+			backMoneyPlanPeriods.setBackMoneyPlanCode(backMoneyPlanCode);
+			backMoneyPlanPeriods.setId(UUIDGeneratorUtil.generateUUID());
+			backMoneyPlanPeriods.setPlanBackMoney(Long.parseLong(planBackMoney));
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			backMoneyPlanPeriods.setPlanBackTime(sdf.parse(planBackTime));
+			backMoneyPlanPeriods.setRemark(remark);
+			backMoneyPlanPeriods.setType(Short.parseShort(type));
+			backMoneyPlanPeriodsService.insertSelective(backMoneyPlanPeriods);*/
+			
+			resultMap.put("success", true);
+		}catch(Exception e){
+			logger.info("发送异常"+e.getMessage());
+			resultMap.put("success", false);
+		}
+		return JSON.toJSONString(resultMap);
+	}
+	
+	//删除回款计划（逻辑删除）
+	@RequestMapping("/delBackMoneyPlan")
+	@ResponseBody
+	public String delBackMoneyPlan(HttpServletRequest request, HttpServletResponse response){
+		Map<String,Object> resultMap = new HashMap<String, Object>();
+		try{
+			String backMoneyPlanCode = request.getParameter("backMoneyPlanCode");
+			//回款计划 逻辑删除
+			BackMoneyPlan backMoneyPlan = backMoneyPlanService.getBackMoneyPlanByCode(backMoneyPlanCode);
+			backMoneyPlan.setCheckStatus((short)-1);
+			backMoneyPlanService.updateByPrimaryKeySelective(backMoneyPlan);
+			//子计划 物理删除
+			backMoneyPlanPeriodsService.deleteByCode(backMoneyPlanCode);
+			resultMap.put("success", true);
+		}catch(Exception e){
+			logger.info("发送异常"+e.getMessage());
+			resultMap.put("success", false);
+		}
+		return JSON.toJSONString(resultMap);
+	}
+	
+	//审核
+	@RequestMapping("/checkerBackMoneyPlan")
+	@ResponseBody
+	public String checkerBackMoneyPlan(HttpServletRequest request, HttpServletResponse response){
+		Map<String,Object> resultMap = new HashMap<String, Object>();
+		try{
+			String backMoneyPlanCode = request.getParameter("backMoneyPlanCode");
+			//back_money_plan表审核状态改为 “已审核”
+			BackMoneyPlan backMoneyPlan = backMoneyPlanService.getBackMoneyPlanByCode(backMoneyPlanCode);
+			backMoneyPlan.setCheckStatus((short)1);
+			backMoneyPlanService.updateByPrimaryKeySelective(backMoneyPlan);
+			//back_money_plan_periods表状态改为“待付款”
+			List<BackMoneyPlanPeriods> backList = backMoneyPlanPeriodsService.getPeriodsListByPlanCode(backMoneyPlanCode);
+			for (BackMoneyPlanPeriods backMoneyPlanPeriods : backList) {
+				backMoneyPlanPeriods.setStatus((short)0);
+				backMoneyPlanPeriodsService.updateByPrimaryKeySelective(backMoneyPlanPeriods);
+			}
+			
+			resultMap.put("success", true);
+		}catch(Exception e){
+			logger.info("发送异常"+e.getMessage());
+			resultMap.put("success", false);
+		}
+		return JSON.toJSONString(resultMap);
+	}
+	
+	//撤回
+	@RequestMapping("/withdrawBackMoneyPlan")
+	@ResponseBody
+	public String withdrawBackMoneyPlan(HttpServletRequest request, HttpServletResponse response){
+		Map<String,Object> resultMap = new HashMap<String, Object>();
+		try{
+			String backMoneyPlanCode = request.getParameter("backMoneyPlanCode");
+			//back_money_plan表审核状态改为 “待审核”
+			BackMoneyPlan backMoneyPlan = backMoneyPlanService.getBackMoneyPlanByCode(backMoneyPlanCode);
+			backMoneyPlan.setCheckStatus((short)0);
+			backMoneyPlanService.updateByPrimaryKeySelective(backMoneyPlan);
+			//back_money_plan_periods表状态改为？
+			/**TODO**/
+			resultMap.put("success", true);
+		}catch(Exception e){
+			e.printStackTrace();
+			resultMap.put("success", false);
+		}
+		return JSON.toJSONString(resultMap);
+	}
+	
+	//计划详情
+	@RequestMapping("/getBackMoneyPlanDetail")
+	@ResponseBody
+	public String getBackMoneyPlanDetail(HttpServletRequest request, HttpServletResponse response){
+		Map<String,Object> resultMap = new HashMap<String, Object>();
+		try{
+			String backMoneyPlanCode = request.getParameter("backMoneyPlanCode");
+			
+			List<BackMoneyPlanPeriods> backList = backMoneyPlanPeriodsService.getPeriodsListByPlanCode(backMoneyPlanCode);
+			resultMap.put("backList", backList);
+			resultMap.put("success", true);
+		}catch(Exception e){
+			e.printStackTrace();
+			resultMap.put("success", false);
+		}
+		return JSON.toJSONString(resultMap);
+	}
+	
+	//登记回款/扣款
+	@RequestMapping("/enregisterMoney")
+	@ResponseBody
+	public String enregisterMoney(HttpServletRequest request, HttpServletResponse response){
+		Map<String,Object> resultMap = new HashMap<String, Object>();
+		try{
+			//1为回款，2为扣款
+			String type = request.getParameter("type");
+			//子计划ID
+			String id = request.getParameter("id");
+			//实际回款/扣款
+			String realMoney = request.getParameter("realMoney");
+			//审批意见
+			String realBackRemark = request.getParameter("realBackRemark");
+			//到账时间（回款）
+			String realBackTime = request.getParameter("realBackTime");
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			BackMoneyPlanPeriods backMoneyPlanPeriods = backMoneyPlanPeriodsService.selectByPrimaryKey(id);
+			if(type.equals("1")){
+				backMoneyPlanPeriods.setType((short)1);
+			}else if(type.equals("2")){
+				backMoneyPlanPeriods.setType((short)3);
+			}
+			/**TODO**/
+			//
+			backMoneyPlanPeriods.setRealBackTime(sdf.parse(realBackTime));
+			backMoneyPlanPeriods.setRealBackMoney(Long.parseLong(realMoney));
+			backMoneyPlanPeriods.setRealBackRemark(realBackRemark);
+			backMoneyPlanPeriods.setStatus((short)1);
+			backMoneyPlanPeriodsService.updateByPrimaryKeySelective(backMoneyPlanPeriods);
+			
+			resultMap.put("success", true);
+		}catch(Exception e){
+			logger.info("发送异常"+e.getMessage());
+			resultMap.put("success", false);
+		}
+		return JSON.toJSONString(resultMap);
+	}
+	
+	
+}

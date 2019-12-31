@@ -1,0 +1,10 @@
+INDEX VERSION 1.3+E:\hlztCode\sanweiProject\.metadata\.plugins\org.eclipse.wst.jsdt.core\indexes
+3541734207.index
+376127853.index
+3970334578.index
+2000116267.index
+944758882.index
+944158684.index
+3210502046.index
+3959091409.index
+792195059.index

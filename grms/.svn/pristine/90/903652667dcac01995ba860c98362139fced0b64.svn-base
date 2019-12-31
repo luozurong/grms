@@ -1,0 +1,42 @@
+
+var ums_server_url = "http://127.0.0.1:8090/ums";
+
+
+$(function(){
+
+
+});
+
+
+//确定
+function saveData(){
+	var departmentName = $("#departmentName").text();
+	var departmentId = $("#departmentId").text();
+	var businessType = "1";
+	var province = "";
+	var provinceName = "";
+	var city = "";
+	var cityName = "";
+	$.ajax({
+		type:"POST",
+		url:"/grms/departmentBusiness/save",
+		data:{"departmentId":departmentId,"departmentName":departmentName,"businessType":businessType,"province":province,"provinceName":provinceName,
+				"city":city,"cityName":cityName},
+		dataType:"json",
+		success:function(result){
+			if(result.success){
+				alert("创建成功");
+			}else{
+				alert("创建失败");
+			}
+		}
+	})
+		
+	
+}
+
+
+//取消
+function cancel(){
+	window.history.go(-1);
+}

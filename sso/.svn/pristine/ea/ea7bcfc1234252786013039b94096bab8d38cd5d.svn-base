@@ -1,0 +1,133 @@
+package com.hori.vo;
+
+import java.util.List;
+
+public class LoginForSystemLoginVo implements java.io.Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	/**
+	 * 请求处理结果0为正常返回，1用户不存在   2密码不正确，3为用户为停用状态请联系管理员 4 传入参数错误
+	 */
+	private String result;
+	/**
+	 * 错误内容
+	 */
+	private String reason;
+	/**
+	 * 返回32位token
+	 */
+	private String token;
+	/**
+	 * 用户类型(编码)
+	 */
+	private String userType;
+	/**
+	 * 用户类型(名称)
+	 */
+	private String userTypeName;
+	/**
+	 * 用户对象信息
+	 */
+	private UserDetailLoginVo userDetail;
+	/**
+	 * 资源权限对象数组(暂时分为3部分菜单2级，按钮1级)
+	 */
+	private List<AuthorLoginVo> resourceMenu1; 
+	
+	private List<AuthorLoginVo> resourceMenu2; 
+	
+	private List<AuthorLoginVo> resourceButton; 
+	/**
+	 * 用户授权的责任范围对象数组
+	 */
+	private List<AuthorizeAreaLoginVo> authorizeArea;
+	
+	public LoginForSystemLoginVo(){}
+
+	public String getResult() {
+		return result;
+	}
+
+	public void setResult(String result) {
+		this.result = result;
+	}
+
+	public String getReason() {
+		return reason;
+	}
+
+	public void setReason(String reason) {
+		this.reason = reason;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+
+	public String getUserType() {
+		return userType;
+	}
+
+	public void setUserType(String userType) {
+		this.userType = userType;
+	}
+
+	public String getUserTypeName() {
+		return userTypeName;
+	}
+
+	public void setUserTypeName(String userTypeName) {
+		this.userTypeName = userTypeName;
+	}
+
+	public UserDetailLoginVo getUserDetail() {
+		return userDetail;
+	}
+
+	public void setUserDetail(UserDetailLoginVo userDetail) {
+		this.userDetail = userDetail;
+	}
+
+	public List<AuthorLoginVo> getResourceMenu1() {
+		return resourceMenu1;
+	}
+
+	public void setResourceMenu1(List<AuthorLoginVo> resourceMenu1) {
+		this.resourceMenu1 = resourceMenu1;
+	}
+
+	public List<AuthorLoginVo> getResourceMenu2() {
+		return resourceMenu2;
+	}
+
+	public void setResourceMenu2(List<AuthorLoginVo> resourceMenu2) {
+		this.resourceMenu2 = resourceMenu2;
+	}
+
+	public List<AuthorLoginVo> getResourceButton() {
+		return resourceButton;
+	}
+
+	public void setResourceButton(List<AuthorLoginVo> resourceButton) {
+		this.resourceButton = resourceButton;
+	}
+
+	public List<AuthorizeAreaLoginVo> getAuthorizeArea() {
+		return authorizeArea;
+	}
+
+	public void setAuthorizeArea(List<AuthorizeAreaLoginVo> authorizeArea) {
+		this.authorizeArea = authorizeArea;
+	}
+	
+	
+	
+
+}

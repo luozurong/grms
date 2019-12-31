@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+
+	<head lang="en">
+		<meta charset="UTF-8">
+		<title>合同管理</title>
+		<meta http-equiv="X-UA-Compatible" content="edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+		<link rel="stylesheet" type="text/css" href="../common/css/reset.css" />
+		<link rel="stylesheet" type="text/css" href="../common/css/default.css" />
+		<link rel="stylesheet" type="text/css" href="../common/easyui/themes/default/easyui.css" />
+		<link rel="stylesheet" type="text/css" href="../common/easyui/themes/icon.css" />
+		<link rel="stylesheet" type="text/css" href="../common/css/common.css" />
+		<link rel="stylesheet" type="text/css" href="../contract/css/contract.css" />
+
+		<link rel="stylesheet" type="text/css" href="../contract/css/allWorkOrder.css" />
+		<link rel="stylesheet" type="text/css" href="../contract/css/contractEdit.css" />
+		<style type="text/css">
+		  #allotWorkOrder .datagrid-header-check input,#allotWorkOrder2 .datagrid-header-check input{
+		    opacity: 0!important;
+		  }
+		</style>
+	</head>
+
+	<body>
+		<div class="workorder-breadcrumb">
+			<span class="go-back">返回</span>
+			<span class="workorder-breadcrumb-icon"></span>
+			<span>合同管理</span>
+			<span class="ic_right"></span>
+			<span>合同</span>
+			<span class="ic_right"></span>
+			<span>合同新建</span>
+		</div>
+		<div class="wrap">
+			<input id="id" type="hidden" />
+			<input id="fromContractCode" type="hidden" />
+			<input id="fromContractName" type="hidden" />
+			<input id="contractCode" type="hidden" />
+			<input id="productCode" type="hidden" />
+			<input id="projectName" type="hidden" />
+			<input id="url" type="hidden" />
+			<div>
+				<ul>
+					<li><label class="label-span">合同类型：</label>
+						<label class="radio-icon">
+	       			 	<input type="radio" name="contractType" value="1" onchange="divShow(this)"/> 
+	       			 	<span>执行合同</span>
+	       			 </label>
+						<label class="radio-icon" style="margin-left: 50px;">
+	                 	<input type="radio" name="contractType" value="2" onchange="divHidden(this)"/>
+	                 	<span>框架合同</span>
+	                 	
+	                 </label>
+					</li>
+					<li> <div id="divContract"><label class="label-span">
+	       			关联框架合同名称：
+	       			</label>
+						<button type="button" id="btnContract" onclick="createNew()" class="chooseT">选择合同</button>
+						<span class="contract-name" id="contract-name"></span></div>
+					</li>
+					<li><label class="label-span">合同名称：</label><input type="text" id="contractName" maxlength="30" /></li>
+					<li><div id="divProject"> <label class="label-span">项目名称：</label><button type="button" id="btnProject" onclick="createNew2()" class="chooseT">选择项目</button>
+						<span class="contract-name" id="project-name"></span></div>
+					</li>
+					<li><label class="label-span">合同金额：</label><input type="text" id="money" value="" /></li>
+					<li><label class="label-span">客户资源系数：</label><input type="text" id="customerResource" value="" />(系数范围0-1，精确到小数点后两位)</li>
+					<li style="display: inline-block;">
+						<div id="fielUpload" class="cl2 fl" style="overflow: hidden;clear:both;">
+							<form id="upfile"><label class="label-span">选择一个文件：</label>
+								<input type="file" name="file" id="upload" />
+								<input id="uploadFile" class='blueButtom' value="上传" type="button" />
+							</form>
+							<div id="upFile"></div>
+							<div class="projectFileListBox">				     
+								<table id="projectFileList" border="1">
+								    <tr>
+								        <td>附件名称</td>
+								        <td>操作</td>					        
+								    </tr>
+								   <!--  <c:forEach items="${attchmentsFrom }" var="attachment" varStatus="idx">
+								        <tr id='${attachment.id }'>
+								           <td>${attachment.fileName }</td>
+								           <td>
+			                		        <a onclick='downloadAttchment("${attachment.id }","${attachment.fileUrl }")'>下载</a>
+			                		        <a onclick='deleteAttchment("${attachment.id}")'>删除</a>
+			                		       </td>
+			                		   </tr>
+								    </c:forEach> -->
+								    
+								</table>
+							 </div>
+						</div>
+					</li>
+				</ul>
+				<div id="alterUserDetail" style="text-align: center;">
+					<input type="submit" value="取消" class="cancelButton" onclick="cancel2()" />
+					<input type="submit" value="确定" class="submitButton" onclick="save()" />
+				</div>
+			</div>
+
+			<!--合同列表-->
+			<div id="allotWorkOrder" style="display: none">
+				<div class="allotWorkOrder-input" style="padding: 20px 0;width: 740px;overflow: hidden;">
+					<input type="text" id="allot_maintainerName" placeholder="请输入合同名称" style="width:180px;height: 32px;border-radius: 3px;padding-left: 5px;border: 1px solid #ccc;">
+					<button onclick="searchMaintainer('1','6')" style="float: right;border: 1px solid #51d2b6;color: #51d2b6;width: 120px;height: 32px;line-height: 32px;border-radius: 3px;">搜索</button>
+				</div>
+				<div class="allotWorkOrder-tabel">
+					<div id="allotWorkOrderTable"></div>
+					<div id="pp-allotWorkOrderTable" style="margin-top: 20px;display:block;width: 700px;border: 1px solid #eee;padding:5px 0;"></div>
+				</div>
+
+			</div>
+			<!--项目列表-->
+
+			<div id="allotWorkOrder2" style="display: none">
+
+				<div class="allotWorkOrder-input" style="padding: 20px 0;width:740px;">
+					<input type="text" id="allot_projectName" placeholder="请输入项目名称" style="width:180px;height: 34px;padding-left: 5px;border-radius: 5px;border: 1px solid #ccc;">
+					<button onclick="searchProject('1','6')" style="float: right;border: 1px solid #51d2b6;color: #51d2b6;width: 120px;height: 32px;line-height: 32px;border-radius: 3px;">搜索</button>
+				</div>
+				<div class="allotWorkOrder-tabel">
+					<div id="allotWorkOrderTable2"></div>
+					<div id="pp-allotWorkOrderTable2" style="margin-top: 20px;width: 700px;display:block;border: 1px solid #eee;"></div>
+				</div>
+
+			</div>
+		</div>
+		<!--遮罩-->
+		<div class="shadeBox">
+			<div class="tipsInfo">
+				<p>正在处理中......</p>
+			</div>
+		</div>
+
+		<script type="text/javascript" src="../common/easyui/jquery.min.js"></script>
+		<script type="text/javascript" src="../common/easyui/jquery.easyui.min.js"></script>
+		<script type="text/javascript" src="../common/easyui/locale/easyui-lang-zh_CN.js"></script>
+		<script type="text/javascript" src="../common/plugin/common.js"></script>
+		<script type="text/javascript" src="../contract/js/contractEdit.js"></script>
+	</body>
+
+</html>

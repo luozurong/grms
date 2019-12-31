@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hori.grms.dao.ProjectProductMenuAreaMapper" >
+    <resultMap id="BaseResultMap" type="com.hori.grms.model.ProjectProductMenuArea" >
+        <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="area_name" property="areaName" jdbcType="VARCHAR" />
+        <result column="organization_seq" property="organizationSeq" jdbcType="VARCHAR" />
+        <result column="project_product_menu_id" property="projectProductMenuId" jdbcType="VARCHAR" />
+        <result column="province" property="province" jdbcType="VARCHAR" />
+        <result column="province_name" property="provinceName" jdbcType="VARCHAR" />
+        <result column="city" property="city" jdbcType="VARCHAR" />
+        <result column="city_name" property="cityName" jdbcType="VARCHAR" />
+        <result column="country" property="country" jdbcType="VARCHAR" />
+        <result column="country_name" property="countryName" jdbcType="VARCHAR" />
+    </resultMap>
+       
+
+    <sql id="Example_Where_Clause" >
+        <where >
+            <foreach collection="oredCriteria" item="criteria" separator="or" >
+                <if test="criteria.valid" >
+                    <trim prefix="(" suffix=")" prefixOverrides="and" >
+                        <foreach collection="criteria.criteria" item="criterion" >
+                            <choose >
+                                <when test="criterion.noValue" >
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue" >
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue" >
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue" >
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+
+    <sql id="Update_By_Example_Where_Clause" >
+        <where >
+            <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+                <if test="criteria.valid" >
+                    <trim prefix="(" suffix=")" prefixOverrides="and" >
+                        <foreach collection="criteria.criteria" item="criterion" >
+                            <choose >
+                                <when test="criterion.noValue" >
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue" >
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue" >
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue" >
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+
+    <sql id="Base_Column_List" >
+        id, area_name, organization_seq, project_product_menu_id, province, province_name, 
+        city, city_name, country, country_name
+    </sql>
+
+    <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.hori.grms.model.ProjectProductMenuAreaExample" >
+        select
+        <if test="distinct" >
+            distinct
+        </if>
+        'true' as QUERYID,
+        <include refid="Base_Column_List" />
+        from project_product_menu_area
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+        <if test="orderByClause != null" >
+            order by ${orderByClause}
+        </if>
+    </select>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+        select 
+        <include refid="Base_Column_List" />
+        from project_product_menu_area
+        where id = #{id,jdbcType=VARCHAR}
+    </select>
+
+    <insert id="insert" parameterType="com.hori.grms.model.ProjectProductMenuArea" >
+        insert into project_product_menu_area (id, area_name, organization_seq, 
+            project_product_menu_id, province, province_name, 
+            city, city_name, country, 
+            country_name)
+        values (#{id,jdbcType=VARCHAR}, #{areaName,jdbcType=VARCHAR}, #{organizationSeq,jdbcType=VARCHAR}, 
+            #{projectProductMenuId,jdbcType=VARCHAR}, #{province,jdbcType=VARCHAR}, #{provinceName,jdbcType=VARCHAR}, 
+            #{city,jdbcType=VARCHAR}, #{cityName,jdbcType=VARCHAR}, #{country,jdbcType=VARCHAR}, 
+            #{countryName,jdbcType=VARCHAR})
+    </insert>
+
+    <select id="countByExample" parameterType="com.hori.grms.model.ProjectProductMenuAreaExample" resultType="java.lang.Integer" >
+        select count(*) from project_product_menu_area
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+    </select>
+
+    <update id="updateByExampleSelective" parameterType="map" >
+        update project_product_menu_area
+        <set >
+            <if test="record.id != null" >
+                id = #{record.id,jdbcType=VARCHAR},
+            </if>
+            <if test="record.areaName != null" >
+                area_name = #{record.areaName,jdbcType=VARCHAR},
+            </if>
+            <if test="record.organizationSeq != null" >
+                organization_seq = #{record.organizationSeq,jdbcType=VARCHAR},
+            </if>
+            <if test="record.projectProductMenuId != null" >
+                project_product_menu_id = #{record.projectProductMenuId,jdbcType=VARCHAR},
+            </if>
+            <if test="record.province != null" >
+                province = #{record.province,jdbcType=VARCHAR},
+            </if>
+            <if test="record.provinceName != null" >
+                province_name = #{record.provinceName,jdbcType=VARCHAR},
+            </if>
+            <if test="record.city != null" >
+                city = #{record.city,jdbcType=VARCHAR},
+            </if>
+            <if test="record.cityName != null" >
+                city_name = #{record.cityName,jdbcType=VARCHAR},
+            </if>
+            <if test="record.country != null" >
+                country = #{record.country,jdbcType=VARCHAR},
+            </if>
+            <if test="record.countryName != null" >
+                country_name = #{record.countryName,jdbcType=VARCHAR},
+            </if>
+        </set>
+        <if test="_parameter != null" >
+            <include refid="Update_By_Example_Where_Clause" />
+        </if>
+    </update>
+
+    <update id="updateByExample" parameterType="map" >
+        update project_product_menu_area
+        set id = #{record.id,jdbcType=VARCHAR},
+            area_name = #{record.areaName,jdbcType=VARCHAR},
+            organization_seq = #{record.organizationSeq,jdbcType=VARCHAR},
+            project_product_menu_id = #{record.projectProductMenuId,jdbcType=VARCHAR},
+            province = #{record.province,jdbcType=VARCHAR},
+            province_name = #{record.provinceName,jdbcType=VARCHAR},
+            city = #{record.city,jdbcType=VARCHAR},
+            city_name = #{record.cityName,jdbcType=VARCHAR},
+            country = #{record.country,jdbcType=VARCHAR},
+            country_name = #{record.countryName,jdbcType=VARCHAR}
+        <if test="_parameter != null" >
+            <include refid="Update_By_Example_Where_Clause" />
+        </if>
+    </update>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.hori.grms.model.ProjectProductMenuArea" >
+        update project_product_menu_area
+        <set >
+            <if test="areaName != null" >
+                area_name = #{areaName,jdbcType=VARCHAR},
+            </if>
+            <if test="organizationSeq != null" >
+                organization_seq = #{organizationSeq,jdbcType=VARCHAR},
+            </if>
+            <if test="projectProductMenuId != null" >
+                project_product_menu_id = #{projectProductMenuId,jdbcType=VARCHAR},
+            </if>
+            <if test="province != null" >
+                province = #{province,jdbcType=VARCHAR},
+            </if>
+            <if test="provinceName != null" >
+                province_name = #{provinceName,jdbcType=VARCHAR},
+            </if>
+            <if test="city != null" >
+                city = #{city,jdbcType=VARCHAR},
+            </if>
+            <if test="cityName != null" >
+                city_name = #{cityName,jdbcType=VARCHAR},
+            </if>
+            <if test="country != null" >
+                country = #{country,jdbcType=VARCHAR},
+            </if>
+            <if test="countryName != null" >
+                country_name = #{countryName,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+        delete from project_product_menu_area
+        where id = #{id,jdbcType=VARCHAR}
+    </delete>
+
+    <delete id="deleteByExample" parameterType="com.hori.grms.model.ProjectProductMenuAreaExample" >
+        delete from project_product_menu_area
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+    </delete>
+    
+    <!-- 通过project_product_menu_id列表 删除  -->
+    <delete id="deleteByProjectProductMenuIds">
+        delete from project_product_menu_area where 1=1 and 
+        project_product_menu_id in 
+        <foreach collection="project_product_menuIds" item="ppmId" open="(" close=")" separator=",">
+              #{ppmId}
+        </foreach>
+    </delete>
+   
+    <!-- 查找媒管部门需要导出的数据 -->
+    <resultMap id="ExportMGVoResultMap" type="com.hori.grms.vo.ExportMGVo" >
+        <id column="project_code" property="projectCode" jdbcType="VARCHAR" />
+        <result column="action_code" property="actionCode" jdbcType="VARCHAR" />
+        <result column="area_name" property="areaName" jdbcType="VARCHAR" />
+        <result column="organization_seq" property="organizationSeq" jdbcType="VARCHAR" />
+        <result column="begin_time" property="beginTime" jdbcType="TIMESTAMP" />
+        <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+        <result column="product_type" property="productType" jdbcType="VARCHAR" />
+        <result column="product_menu" property="productMenu" jdbcType="VARCHAR" />
+        <result column="product_spec" property="productSpec" jdbcType="VARCHAR" />
+    </resultMap>
+    <select id="listMGData" parameterType="com.hori.grms.queryBean.ProjectActionQueryBean" resultMap="ExportMGVoResultMap">
+    	select
+    		ppma.area_name, ppma.organization_seq, ppm.begin_time, ppm.end_time, pm.product_type, pm.product_menu,
+    		pm.product_spec, pp.project_code, pa.action_code
+    	from project_product_menu_area ppma
+    	left join project_product_menu ppm on ppma.project_product_menu_id = ppm.id
+    	left join product_menu pm on ppm.product_menu_id = pm.id
+    	left join project_product pp on ppm.project_product_id = pp.id
+    	left join project_action pa on ppm.project_product_id = pa.project_product_id
+    	where pp.business_type = '2'
+    	<if test="queryBean.projectName != null and queryBean.projectName != ''">
+    		and pa.project_name like '%${queryBean.projectName}%'
+    	</if>
+    	<if test="queryBean.actionCode != null and queryBean.actionCode != ''">
+    		and pa.action_code like '%${queryBean.actionCode}%'
+    	</if>
+    	<if test="queryBean.startTime != null and queryBean.startTime != ''">
+       		and DATE_FORMAT(pp.begin_time, '%Y-%m-%d') &gt;= #{queryBean.startTime}
+       	</if>
+       	<if test="queryBean.endTime != null and queryBean.endTime != ''">
+       		and DATE_FORMAT(pp.end_time, '%Y-%m-%d') &lt;= #{queryBean.endTime}
+       	</if>
+       	<if test="queryBean.actionStatus != null">
+        		and pa.action_status = ${queryBean.actionStatus}
+       	</if>
+       	<if test="queryBean.dataArea == 0">
+       		and (pa.receive_account in
+       		<foreach collection="queryBean.userList"  item="userAccount" separator="," open="(" close=")">
+            	#{userAccount}
+            </foreach>
+            or pa.receive_account is null)
+       	</if>
+       	<if test="queryBean.dataArea == 1">
+       		and pa.department_id in
+       		<foreach collection="queryBean.departList"  item="departId" separator="," open="(" close=")">
+            	#{departId}
+            </foreach>
+       	</if>
+    </select>
+    
+    <select id="getAreaNamesByPPID" parameterType="java.lang.String" resultType="java.lang.String">
+    	SELECT group_concat( distinct ppma.area_name separator ',')
+		FROM project_product_menu_area ppma
+		LEFT JOIN project_product_menu ppm ON ppma.project_product_menu_id = ppm.id
+		WHERE ppm.project_product_id = #{projectProductId,jdbcType=VARCHAR}
+    </select>
+    
+     <!-- 查找清单关联的小区 -->
+   	<select id="getAreaByPPMId" parameterType="java.lang.String" resultType="com.hori.grms.vo.ProjectProductMenuAreaVo">
+   		SELECT pa.project_product_menu_id,pa.country,pa.city,pa.province,pa.country_name,pa.city_name,pa.province_name  
+   		from project_product_menu_area pa
+		WHERE pa.project_product_menu_id= #{projectProductMenuId} GROUP BY pa.country,pa.city,pa.province
+   	</select>
+   	
+     <!-- 查找清单关联的小区 -->
+   	<select id="getAreaNamesByPPMAVo" parameterType="com.hori.grms.vo.ProjectProductMenuAreaVo" resultType="java.lang.String">
+   		SELECT pa.area_name from project_product_menu_area pa 
+   		where pa.project_product_menu_id= #{projectProductMenuId} and pa.country = #{country} and pa.city = #{city} and pa.province = #{province}
+   	</select>
+
+</mapper>

@@ -1,0 +1,44 @@
+package com.hori.adms.webservice.impl;
+
+import javax.jws.WebService;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.hori.adms.webservice.IAdmsSchedulerJobService;
+import com.hori.jobtask.SynchronizCommunityTask;
+import com.hori.jobtask.SynchronizTerminalTask;
+
+@WebService(endpointInterface= "com.hori.adms.webservice.IAdmsSchedulerJobService" ) 
+public class IAdmsSchedulerJobServiceImpl implements IAdmsSchedulerJobService {
+	
+	@Autowired
+	private SynchronizTerminalTask synchronizTerminalTask;
+	
+	@Autowired
+	private SynchronizCommunityTask synchronizCommunityTask;
+
+	
+	
+	/**
+	 * 同步对讲的门口机数据 
+	 */
+	@Override
+	public void synchronizTerminal() {
+			synchronizTerminalTask.synchronizedTerminal();
+	}
+	
+	/**
+	 * 同步对讲的小区信息
+	 */
+	@Override
+	public void synchronizCommunity() {
+		synchronizCommunityTask.synchronizedCommunity();
+	}
+
+
+
+    
+
+	
+
+}

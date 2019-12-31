@@ -1,0 +1,49 @@
+package com.hori.grms.service;
+
+import java.util.List;
+
+import com.hori.grms.model.PendingEvent;
+import com.hori.grms.queryBean.PendingEventQueryBean;
+
+/**
+ * 待办事项service
+ * @author FWQ
+ *
+ */
+public interface PendingEventService {
+   
+	/**
+	 * 待办事件列表查询
+	 * @param pendingEventQueryBean
+	 * @return
+	 */
+	public List<PendingEvent> list(PendingEventQueryBean pendingEventQueryBean);
+	
+	/**
+	 * 新添各个管理模块的待办事件
+	 * @param projectName	项目名称
+	 * @param modelCode		模块编号
+	 * @param modelType     模块编号类型（1项目管理、2合同管理、3执行管理、4收款管理、5结案管理
+	 * @param userAccount	业务员账号
+	 * @param userName		业务员名称
+	 */
+	public int createModelPendingEvent(String projectName,String modelCode,String modelType,
+			String userAccount,String userName);
+	
+	/**
+	 * 修改“项目管理”待办事件状态
+	 * @param projectCode 项目编号
+	 * @param status      项目管理 0待审核 1审核通过 2审核不通过 3立项终止 4撤回
+	 * @return
+	 */
+	public void updateProjectPendingEvent(String projectCode,int status);
+	
+	
+	/**
+	 * 修改“合同管理”待办事件状态
+	 * @param projectCode 合同编号
+	 * @param status      合同管理（1：未提交 2：待审批-业务管理 3:待审批-合同管理 4:待审批-财务管理 5:审批通过 6:审批不通过 7:已完成）
+	 * @return
+	 */
+	public void updateContractPendingEvent(String contractCode,int status);
+}

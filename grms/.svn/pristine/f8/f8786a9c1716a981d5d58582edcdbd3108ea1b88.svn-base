@@ -1,0 +1,67 @@
+package com.hori.grms.service.impl;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.hori.grms.dao.BackMoneyPlanPeriodsMapper;
+import com.hori.grms.model.BackMoneyPlanPeriods;
+import com.hori.grms.service.BackMoneyPlanPeriodsService;
+import com.hori.grms.vo.BackMoneyPlanPeriodsVo;
+@Service
+public class BackMoneyPlanPeriodsServiceImpl implements BackMoneyPlanPeriodsService {
+
+	@Autowired
+	private BackMoneyPlanPeriodsMapper backMoneyPlanPeriodsMapper;
+
+	@Override
+	public void insertSelective(BackMoneyPlanPeriods backMoneyPlanPeriods) {
+		// TODO Auto-generated method stub
+		backMoneyPlanPeriodsMapper.insertSelective(backMoneyPlanPeriods);
+	}
+
+
+	@Override
+	public void updateByPrimaryKeySelective(
+			BackMoneyPlanPeriods backMoneyPlanPeriods) {
+		// TODO Auto-generated method stub
+		backMoneyPlanPeriodsMapper.updateByPrimaryKeySelective(backMoneyPlanPeriods);
+	}
+
+	@Override
+	public BackMoneyPlanPeriods selectByPrimaryKey(String id) {
+		// TODO Auto-generated method stub
+		return backMoneyPlanPeriodsMapper.selectByPrimaryKey(id);
+	}
+
+	@Override
+	public List<BackMoneyPlanPeriods> getPeriodsListByPlanCode(
+			String backMoneyPlanCode) {
+		// TODO Auto-generated method stub
+		return backMoneyPlanPeriodsMapper.getPeriodsListByPlanCode(backMoneyPlanCode);
+	}
+
+	@Override
+	public void deleteByCode(String backMoneyPlanCode) {
+		// TODO Auto-generated method stub
+		backMoneyPlanPeriodsMapper.deleteByCode(backMoneyPlanCode);
+	}
+
+
+	@Override
+	public List<BackMoneyPlanPeriodsVo> getBackMoneyPlanListByCondition(
+			String selectCondition, String condition, String selectCondition2,
+			String condition2) {
+		// TODO Auto-generated method stub
+		return backMoneyPlanPeriodsMapper.getBackMoneyPlanListByCondition(selectCondition,condition,selectCondition2,condition2);
+	}
+
+
+	@Override
+	public List<BackMoneyPlanPeriods> getNotBackPlanList() {
+		// TODO Auto-generated method stub
+		return backMoneyPlanPeriodsMapper.getNotBackPlanList();
+	}
+	
+}

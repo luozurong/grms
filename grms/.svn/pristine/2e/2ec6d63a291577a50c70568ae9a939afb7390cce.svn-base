@@ -1,0 +1,198 @@
+var pageNoAll='1';
+var pageSizeAll='10';
+$(function(){
+	$('#beginTime').datebox({    
+	    required:true   
+	}); 
+	$('#endTime').datebox({    
+	    required:true   
+	}); 
+	$('#searchBtn').linkbutton({  
+		
+	});
+	
+	findMenu(pageSizeAll,pageNoAll);
+	
+	
+	
+	
+	
+	
+	
+	
+	
+})
+
+
+
+//查询数据
+function findMenu(pageSize,pageNo){
+	var projectName=$('#projectName').val();
+	var startTime=$('#startTime').val();
+	var endTime=$('#endTime').val();
+	var actionStatus=$('#actionStatus').val();
+	var projectExceptionStatus=$('#projectExceptionStatus').val();
+	
+	pageNo=pageNoAll;
+	pageSize=pageSizeAll;
+	var projectQueryBean='{"projectName":"'+projectName+'","startTime":"'+startTime+'","endTime":"'+endTime
+	+'","actionStatus":"'+actionStatus+'","projectExceptionStatus":"'+projectExceptionStatus
+	+'","pageNumber":"'+pageNo+'","pageSize":"'+pageSize+'"}';
+	
+	console.log(projectQueryBean)
+	
+    $.ajax({  
+        type : "POST",  //提交方式  
+        url : "/grms/projectAction/getlistData.html",//路径  
+        dataType : "json",//数据，这里使用的是Json格式进行传输  
+        data:  {"projectQueryBean":projectQueryBean},  
+        success : function(result) {//返回数据根据结果进行相应的处理  
+            if ( result.success) {  
+            	var data2=result.rows;
+            	var total=result.total;
+            	/*refresh(data2);
+            	paginationpage(total,data2);*/
+            	console.log(data2)
+            	
+            	
+            } else {  
+            	
+            }  
+        }  
+    }); 
+}
+
+
+
+//刷新表格数据
+function refresh(data){
+//	表格数据渲染
+  $('#dg').datagrid({
+      border:true,
+      scrollbarSize:0,
+      nowrap:false,//允许换行
+      data:data,
+      emptyMsg:'<span>无记录</span>',
+      onLoadSuccess:function(){ //dom操作
+          $('#dg').datagrid('resize');
+      },
+      columns:[[
+          {
+              field:'id',
+              title:'项目id',
+              width:450,
+              align:'left'
+          },
+          {
+              field:'name',
+              title:'项目名称',
+              width:300,
+              align:'left'
+              
+          },
+          {
+              field:'createTime',
+              title:'创建时间',
+              width:220,
+              align:'left'
+          },
+          {
+              field:'contractCode',
+              title:'合同编号',
+              width:450,
+              align:'left'
+          },
+          {
+              field:'customerName',
+              title:'客户名称',
+              width:190,
+              align:'left'
+          },
+          {
+              field:'createrName',
+              title:'创建人',
+              width:190,
+              align:'left'
+          },
+          {
+              field:'status',
+              title:'状态',
+              width:220,
+              align:'left',
+              formatter: function(value){
+              	if(value==0){
+              		return "待审核";
+              	}else if(value==1){
+              		return "审核通过";
+              	}else if(value==2){
+              		return "审核不通过";
+              	}else if(value==3){
+              		return "立项终止";
+              	}else if(value==4){
+              		return "撤回";
+              	}
+              }
+          },
+          {
+              field:'handle',
+              title:'操作',
+              width:574,
+              align:'left',
+              formatter: function(value,row,index){
+              	//处理操作得按钮（根据用户的类型）
+              	var status = row.status
+              	
+              	var detailWorkOrder = '<a href="javascript:;" data-id="1" onclick="projectOperation(1,\''+index+'\')">查看</a>  ';
+              	var workOrder = "";
+              	
+              	//状态：-1删除  0待审核 1审核通过 2审核不通过 3立项终止 4撤回
+              	if(status==0){
+              		
+              		if(roleType==2){
+              			var revokeWorkOrder = '<a href="javascript:;" data-id="2" onclick="projectOperation(2,\''+index+'\')">撤回</a> ';
+                  		workOrder = detailWorkOrder+revokeWorkOrder;
+              		}else if(roleType==1){
+              			
+              			var examWorkOrder = '<a href="javascript:;" data-id="5" onclick="projectOperation(5,\''+index+'\')">审批</a> ';
+              			workOrder = examWorkOrder;
+              			
+              		}
+              		
+              		
+              		
+              	}else if(status==1){
+              		
+              		if(roleType==2){
+              			workOrder = detailWorkOrder;
+              		}else if(roleType==1){
+              			
+              			var stopWorkOrder = '<a href="javascript:;" data-id="6" onclick="projectOperation(6,\''+index+'\')">终止</a> ';
+              			workOrder = stopWorkOrder;
+              		}
+              		
+              		
+              	}else if(status==2){
+              		
+              		var editWorkOrder = '<a href="javascript:;" data-id="3" onclick="projectOperation(3,\''+index+'\')">编辑</a> ';
+              		var deleteWorkOrder = '<a href="javascript:;" data-id="4" onclick="projectOperation(4,\''+index+'\')">删除</a> ';
+              		workOrder = detailWorkOrder+editWorkOrder+deleteWorkOrder;
+              		
+              	}else if(status==3){
+              		
+              		var deleteWorkOrder = '<a href="javascript:;" data-id="4" onclick="projectOperation(4,\''+index+'\')">删除</a> ';
+              		workOrder = detailWorkOrder+deleteWorkOrder;
+              	
+              	}else if(status==4){
+              	
+              		var editWorkOrder = '<a href="javascript:;" data-id="3" onclick="projectOperation(3,\''+index+'\')">编辑</a> ';
+              		var deleteWorkOrder = '<a href="javascript:;" data-id="4" onclick="projectOperation(4,\''+index+'\')">删除</a> ';
+              		workOrder = detailWorkOrder+editWorkOrder+deleteWorkOrder;
+
+              	}
+              	
+                  return workOrder;
+              }
+          }
+      ]]
+  });
+}

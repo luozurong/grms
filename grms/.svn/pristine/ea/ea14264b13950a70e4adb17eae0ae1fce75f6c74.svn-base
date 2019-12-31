@@ -1,0 +1,115 @@
+
+//初始化按钮
+$(function(){
+	getDetailList();
+});
+
+
+
+//获取登记记录列表
+function getDetailList(){
+	var backMoneyPlanCode = $("#backMoneyPlanCode").val();
+	$.ajax({  
+        type : "GET",  //提交方式  
+        url : "/grms/backMoneyPlan/getBackMoneyPlanDetail",//路径  
+        data:{"backMoneyPlanCode":backMoneyPlanCode},
+        dataType : "json",//数据，这里使用的是Json格式进行传输  
+        success : function(result) {//返回数据根据结果进行相应的处理  
+            if ( result.success) {  
+            	var sss = result.backList;
+            	var dataList = [];
+            	var $eleS = $("#planList");
+            	for(var i = 0; i < sss.length; i++) {
+            		dataList.push({
+            			registerAccount:sss[i].registerAccount,
+            			registerTime:sss[i].registerTime,
+            			backMoneyPlanCode: sss[i].backMoneyPlanCode,
+            			type: sss[i].type,
+            			planBackTime: sss[i].planBackTime,
+            			planBackMoney: sss[i].planBackMoney,
+            			remark: sss[i].remark,
+            			realBackMoney: sss[i].realBackMoney,
+            			realBackTime: sss[i].realBackTime,
+            			realBackRemark: sss[i].realBackRemark,
+            			status: sss[i].status
+            		})
+            	}
+            	$eleS.datagrid({
+            		data: dataList,
+            		fitColumns: true,
+            		nowrap: false,
+            		scrollbarSize: 0,
+            		onLoadSuccess: function(data) {
+            			$(".datagrid-cell-check").addClass('dataCheck');
+            			$(".datagrid-header-check").addClass('dataCheck');
+            			$eleS.parent().find('td[field=projectProductId] .datagrid-cell').each(function() {
+            				$(this).attr('title', $(this).html());
+            			});
+            			setTimeout(function(){
+            				$eleS.datagrid('resize');
+            			},30)
+            		},
+            		columns: [
+            			[ //相应调整显示栏
+            				{
+            					field: 'registerTime',
+            					title: '审批收款时间',
+            					width: 100,
+            					align: "center"
+            				},
+            				{
+            					field: 'registerAccount',
+            					title: '收款人账号',
+            					width: 80,
+            					align: "center"
+            				},
+            				{
+            					field: 'status',
+            					title: '收款状态',
+            					width: 80,
+            					align: "center",
+            					formatter: function(value,row,index){
+            						if(row.status==0){
+            							return "待收款";
+            						}else if(row.status==1){
+            							return "已收款";
+            						}else{
+            							return "回款异常";
+            						};		
+            					}
+            				},
+            				{
+            					field: 'planBackMoney',
+            					title: '计划回款金额',
+            					width: 80,
+            					align: "center"
+            				},
+            				{
+            					field: 'realBackMoney',
+            					title: '实际回款金额',
+            					width: 100,
+            					align: "center"
+            				},
+            				{
+            					field: 'realBackTime',
+            					title: '到账时间',
+            					width: 80,
+            					align: "center"
+            				},
+            				{
+            					field: 'realBackRemark',
+            					title: '审批意见',
+            					width: 80,
+            					align: "center"
+            				}
+            			]
+            		]
+            	});
+            } else {  
+            	//infoMask('删除失败');
+            }  
+        }  
+    }); 
+}
+
+

@@ -1,0 +1,280 @@
+package com.hori.grms.controller;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFRichTextString;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.CellRangeAddress;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.github.pagehelper.PageInfo;
+import com.hori.grms.model.BackMoneyPlan;
+import com.hori.grms.model.BackMoneyPlanPeriods;
+import com.hori.grms.model.Project;
+import com.hori.grms.model.ProjectAction;
+import com.hori.grms.model.ProjectActionException;
+import com.hori.grms.model.ProjectProduct;
+import com.hori.grms.service.BackMoneyPlanPeriodsService;
+import com.hori.grms.service.BackMoneyPlanService;
+import com.hori.grms.service.CloseCaseService;
+import com.hori.grms.service.ProjectActionExceptionService;
+import com.hori.grms.service.ProjectService;
+import com.hori.grms.util.ExportExcelUtil;
+import com.hori.grms.util.UUIDGeneratorUtil;
+import com.hori.grms.vo.BackMoneyPlanPeriodsVo;
+import com.hori.grms.vo.BackMoneyPlanVo;
+import com.hori.grms.vo.ContractDetailVo;
+import com.hori.grms.vo.ContractVo;
+import com.hori.grms.vo.project.ProductMenuVo;
+import com.hori.grms.vo.project.ProjectMenuVo;
+/**
+ * 收款计录（子计划）
+ * @author dell
+ *
+ */
+@Controller
+@RequestMapping("backMoneyPlanPeriods")
+public class BackMoneyPlanPeriodsController{
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+	
+	@Autowired
+	BackMoneyPlanService backMoneyPlanService;
+	@Autowired
+	BackMoneyPlanPeriodsService backMoneyPlanPeriodsService;
+	@RequestMapping("/list")
+	public String list(HttpServletRequest request){		
+		
+		return "/backMoneyPlan/backMoneyPlanPeriods.jsp";
+	}
+	
+	//子计划列表
+	@RequestMapping("/getBackMoneyPlanPeriodsList")
+	@ResponseBody
+	public String getBackMoneyPlanList(HttpServletRequest request, HttpServletResponse response){
+		Map<String,Object> resultMap = new HashMap<String, Object>();
+		try{
+			String selectCondition = request.getParameter("selectCondition");
+			String condition = request.getParameter("condition");
+			//收款类型、状态
+			String selectCondition2 = request.getParameter("selectCondition2");
+			String condition2 = request.getParameter("condition2");
+			List<BackMoneyPlanPeriodsVo> list = backMoneyPlanPeriodsService.getBackMoneyPlanListByCondition(selectCondition,condition,selectCondition2,condition2);
+			
+			resultMap.put("data", list);
+			resultMap.put("success", true);
+		}catch(Exception e){
+			e.printStackTrace();
+			resultMap.put("success", false);
+		}
+		return JSON.toJSONString(resultMap);
+	}
+	
+	
+	//导出
+	@RequestMapping(value ="/exportBackMoneyPlanPeriods")
+	public void exportBackMoneyPlan(HttpServletRequest request, HttpServletResponse response) {
+		//String projectCode = request.getParameter("projectCode");
+		//if(null!=projectCode&&!projectCode.equals("")) {   //判断ID是否为空
+			
+			//List<ProjectMenuVo>  projectProductList = projectProductService.findVoByProjectCode(projectCode);
+			List<BackMoneyPlanVo> backMoneyPlanList = backMoneyPlanService.getBackMoneyPlanList();
+			
+			if(backMoneyPlanList!=null&&backMoneyPlanList.size()>0) {
+				
+				HSSFWorkbook workbook = new HSSFWorkbook();
+				HSSFSheet sheet = workbook.createSheet("回款计划");			
+				/*################################表头部分设置START################################*/
+				// 表头字体设置
+				HSSFFont headerfont = workbook.createFont();
+				// 字体加粗 	
+				headerfont.setBoldweight(Font.BOLDWEIGHT_BOLD);  
+				
+				//表头style设置
+				HSSFCellStyle headerStyle = workbook.createCellStyle();
+				// 设置长文本自动换行
+				headerStyle.setFont(headerfont);
+				
+				//水平方向对齐
+				headerStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+				// 垂直方向的对齐方式
+				headerStyle.setVerticalAlignment(HSSFCellStyle.ALIGN_CENTER);
+				
+				//设置边框
+				headerStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+				headerStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
+				headerStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
+				headerStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+				
+				//设置背景颜色
+				headerStyle.setFillBackgroundColor(IndexedColors.LIGHT_CORNFLOWER_BLUE.getIndex());
+				/*################################表头部分设置END################################*/  
+				
+				/*################################普通单元格部分设置START################################*/
+				// 创建样式
+				HSSFFont commonfont = workbook.createFont();
+				HSSFCellStyle commonStyle = workbook.createCellStyle();
+				commonStyle.setWrapText(true);
+				commonStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER); // 水平居中    
+				commonStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);//垂直居中 
+				commonStyle.setFont(commonfont);
+				//水平方向对齐
+				commonStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+				//设置边框
+				commonStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+				commonStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
+				commonStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
+				commonStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+				/*################################普通单元格部分设置END################################*/
+				//生成第一行标题行
+				//XSSFRow fristHeadRow = sheet.createRow(0);
+				
+				//生成第一行表头行
+				String[] headers = {"收款计划ID","项目ID","合同ID","合同名称","客户名称","业务员","合同总金额","合同实收金额","合同未收金额","扣款金额","计划收款状态","子计划ID","计划收款日期","收款类型","回款款项属性","计划收款金额","实收金额","未收金额","收款状态"};
+				HSSFRow headerRow = sheet.createRow(0);
+				HSSFRichTextString text;
+			    for (int i = 0; i < headers.length; i++) {
+			    	HSSFCell cell = headerRow.createCell(i);
+			    	cell.setCellStyle(headerStyle);
+			    	text = new HSSFRichTextString(headers[i]);
+					cell.setCellValue(text);
+				}
+			    int rowNum = 1;
+			    SimpleDateFormat fmt1 = new SimpleDateFormat("yyyy年MM月dd日");
+			    SimpleDateFormat fmt2 = new SimpleDateFormat("yyyy年MM月dd日   HH:mm");
+			    for(BackMoneyPlanVo vo : backMoneyPlanList) {
+			    	//查询收款计划下的子计划
+			    	List<BackMoneyPlanPeriods> periodsList = backMoneyPlanPeriodsService.getPeriodsListByPlanCode(vo.getBackMoneyPlanCode());
+			    	
+			    		sheet.addMergedRegion(new CellRangeAddress(rowNum,rowNum+(periodsList.size()-1),0,0));
+			    		sheet.addMergedRegion(new CellRangeAddress(rowNum,rowNum+(periodsList.size()-1),1,1));
+			    		sheet.addMergedRegion(new CellRangeAddress(rowNum,rowNum+(periodsList.size()-1),2,2));
+			    		sheet.addMergedRegion(new CellRangeAddress(rowNum,rowNum+(periodsList.size()-1),3,3));
+			    		sheet.addMergedRegion(new CellRangeAddress(rowNum,rowNum+(periodsList.size()-1),4,4));
+			    		sheet.addMergedRegion(new CellRangeAddress(rowNum,rowNum+(periodsList.size()-1),5,5));
+			    		sheet.addMergedRegion(new CellRangeAddress(rowNum,rowNum+(periodsList.size()-1),6,6));
+			    		sheet.addMergedRegion(new CellRangeAddress(rowNum,rowNum+(periodsList.size()-1),7,7));
+			    		sheet.addMergedRegion(new CellRangeAddress(rowNum,rowNum+(periodsList.size()-1),8,8));
+			    		sheet.addMergedRegion(new CellRangeAddress(rowNum,rowNum+(periodsList.size()-1),9,9));
+			    		sheet.addMergedRegion(new CellRangeAddress(rowNum,rowNum+(periodsList.size()-1),10,10));
+			    		int row1 = 1;
+			    		for(BackMoneyPlanPeriods periods : periodsList) {
+			    			
+			    				int s=0;
+			    				HSSFRow row = sheet.createRow(rowNum++);
+			    				
+			    				//收款计划ID
+			    				HSSFCell cell = row.createCell(s++);
+			    				cell.setCellStyle(commonStyle);
+			    				cell.setCellValue(vo.getBackMoneyPlanCode());
+			    				//项目ID
+			    				cell = row.createCell(s++);
+			    				cell.setCellStyle(commonStyle);
+			    				cell.setCellValue(vo.getContractCode());
+			    				//合同ID
+			    				cell = row.createCell(s++);
+			    				cell.setCellStyle(commonStyle);
+			    				cell.setCellValue(vo.getProjectCode());
+			    				//合同名称
+			    				cell = row.createCell(s++);
+			    				cell.setCellStyle(commonStyle);
+			    				cell.setCellValue(vo.getContractName());
+			    				//客户名称
+			    				cell = row.createCell(s++);
+			    				cell.setCellStyle(commonStyle);
+			    				cell.setCellValue(vo.getCustomerName());
+			    				//业务员
+			    				cell = row.createCell(s++);
+			    				cell.setCellStyle(commonStyle);
+			    				cell.setCellValue(vo.getCreaterName());
+			    				//合同总金额
+			    				cell = row.createCell(s++);
+			    				cell.setCellStyle(commonStyle);
+			    				cell.setCellValue(vo.getMoney());
+			    				//合同实收金额
+			    				/*cell = row.createCell(s++);
+			    				cell.setCellStyle(commonStyle);
+			    				cell.setCellValue(vo.getCollectedMoney());
+			    				//合同未收金额
+			    				cell = row.createCell(s++);
+			    				cell.setCellStyle(commonStyle);
+			    				cell.setCellValue(vo.getUnCollectedMoney());
+			    				//扣款金额
+			    				cell = row.createCell(s++);
+			    				cell.setCellStyle(commonStyle);
+			    				cell.setCellValue(vo.getReduceMoney());
+			    				//计划收款状态
+			    				cell = row.createCell(s++);
+			    				cell.setCellStyle(commonStyle);
+			    				cell.setCellValue(vo.getPlanStatus());*/
+			    				//子计划ID
+			    				cell = row.createCell(s++);
+			    				cell.setCellStyle(commonStyle);
+			    				cell.setCellValue(periods.getId());
+			    				//计划收款日期
+			    				cell = row.createCell(s++);
+			    				cell.setCellStyle(commonStyle);
+			    				cell.setCellValue(fmt1.format(periods.getPlanBackTime()));
+			    				//收款类型
+			    				cell = row.createCell(s++);
+			    				cell.setCellStyle(commonStyle);
+			    				cell.setCellValue(periods.getType());
+			    				//回款款项属性
+			    				cell = row.createCell(s++);
+			    				cell.setCellStyle(commonStyle);
+			    				cell.setCellValue(periods.getType());
+			    				//计划收款金额
+			    				cell = row.createCell(s++);
+			    				cell.setCellStyle(commonStyle);
+			    				cell.setCellValue(periods.getPlanBackMoney());
+			    				//实收金额
+			    				cell = row.createCell(s++);
+			    				cell.setCellStyle(commonStyle);
+			    				cell.setCellValue(periods.getRealBackMoney());
+			    				//未收金额
+			    				cell = row.createCell(s++);
+			    				cell.setCellStyle(commonStyle);
+			    				cell.setCellValue(vo.getMoney()-periods.getRealBackMoney());
+			    				//收款状态
+			    				cell = row.createCell(s++);
+			    				cell.setCellStyle(commonStyle);
+			    				cell.setCellValue(periods.getStatus());
+			    		}
+			    	}
+			    
+			    for (int i = 0; i < headers.length; i++) {
+			    	sheet.autoSizeColumn(i);
+			    	if(sheet.getColumnWidth(i) < 20*256){
+			    		sheet.setColumnWidth(i, 20*256);
+			    	}
+				}
+			    ExportExcelUtil.downSpcialFile("收款计划.xls",workbook,request,response);
+			}
+		}
+
+	//}
+}

@@ -1,0 +1,71 @@
+package com.hori.grms.service;
+
+import java.util.List;
+
+import com.hori.grms.model.Attachment;
+import com.hori.grms.model.CloseCaseInfo;
+import com.hori.grms.queryBean.CloseCaseQueryBean;
+import com.hori.grms.vo.CloseCaseVo;
+
+public interface CloseCaseService {
+	
+	/**
+	 * 获取结案列表
+	 * @param queryBean
+	 * @return
+	 */
+	public List<CloseCaseVo> getCloseCases(CloseCaseQueryBean queryBean);
+	
+	/**
+	 * 获取结案列表总数
+	 * @param queryBean
+	 * @return
+	 */
+	public int getCloseCaseCount(CloseCaseQueryBean queryBean);
+	
+	/**
+	 * 根据附件id获取附件
+	 * @param id
+	 * @return
+	 */
+	public Attachment getAttachmentById(String id);
+	
+	/**
+	 * 执行人员提交/撤回结案
+	 * @param ids
+	 * @param status
+	 * @return
+	 */
+	public int updateStatusForAction(List<String> ids, Integer status);
+	
+	/**
+	 * 业务人员处理/撤回结案
+	 * @param closeCaseCodes
+	 * @param status
+	 * @return
+	 */
+	public int updateStatusForBusiness(List<String> closeCaseCodes, Integer status);
+	
+	/**
+	 * 上传附件
+	 * @param ids
+	 * @param url
+	 * @param urlName
+	 * @return
+	 */
+	public int uploadAttachment(List<Attachment> attachments);
+	
+	/**
+	 * 根据id删除附件（这里只删除路径）
+	 * @param ids
+	 * @return
+	 */
+	public int deleteAttachments(List<String> ids);
+	
+	/**
+	 * 保存
+	 * @param closeCaseInfo
+	 * @return
+	 */
+	public int save(CloseCaseInfo closeCaseInfo);
+}

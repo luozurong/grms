@@ -1,0 +1,33 @@
+/**
+ * 
+ */
+package com.hori.grms.service;
+
+import java.util.List;
+
+import com.hori.grms.model.Attachment;
+
+/** 
+ * @ClassName: AttachmentService 
+ * @Description:文件上传附件
+ * @author zhuqiang
+ * @date 2018年8月15日 上午10:20:05 
+ */
+public interface AttachmentService {
+
+	/**
+	 * 根据关联业务id查看附件相关信息
+	 * @param productCode
+	 * @param type
+	 * @return
+	 */
+	List<Attachment> findBycorrelationId(String correlationId,Integer type);
+	/**
+	 * 根据项目编码查看附件相关信息
+	 * @param projectCode
+	 * @param i
+	 * @return
+	 */
+	List<Attachment> findBycorrelationIdForClose(String projectCode, int i);
+
+}

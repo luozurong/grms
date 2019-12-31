@@ -1,0 +1,409 @@
+*{
+    margin:0;
+    padding:0;
+}
+body{
+    padding:0;
+    margin:0;
+    font-size: 14px;
+    color:#666;
+    background: #f8f8f8;
+}
+.workorder-breadcrumb,.workorder-tabs,.workorder-search,.workorder-btn,.content-wrap{
+    margin-left:24px;
+    margin-right:24px;
+    box-sizing: border-box;
+}
+.workorder-tabs,.workorder-search,.workorder-btn{
+    background: #fff;
+    padding-left:25px;
+}
+.workorder-breadcrumb{
+    line-height: 50px;
+}
+.workorder-breadcrumb-icon{
+    display: inline-block;
+    width:16px;
+    height:22px;
+    float:left;
+    margin-top:13px;
+    margin-right:10px;
+    background:url(../images/ic_location.png) no-repeat;
+}
+.workorder-tabs{
+    overflow: hidden;
+    border-bottom: 1px solid #ccc;
+    line-height:45px;
+}
+.workorder-select{
+    border-bottom:3px solid #51d2b6;
+    color:#51d2b6;
+}
+.workorder-tabs>div{
+    float:left;
+    padding-left:23px;
+    padding-right:23px;
+    position: relative;
+}
+.workorder-tabs>div>span:last-child{
+
+    width:22px;
+    height:13px;
+    border-radius: 7px;
+    text-align: center;
+    color:#fff;
+    position: absolute;
+    top:7px;
+    right:1px;
+    z-index: 1;
+    font-size: 12px;
+    background:#e65e4e;
+    line-height:13px;
+    display: none;
+}
+.workorder-tabs>div>span:last-child i{
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+    -webkit-transform:scale(0.75);
+    font-style: normal;
+}
+.workorder-address{
+    margin-top:2px;
+    padding-top:18px;
+}
+.workorder-address select{
+    display: inline-block;
+    width:116px !important;
+    height:32px !important;
+}
+.validatebox-text{
+    display: inline-block;
+    width:114px !important;
+    height:32px !important;
+    box-sizing: border-box;
+    padding-left:8px !important;
+}
+.workorder-time{
+    margin-left: 38px;
+}
+.textbox{
+    border-color:#c2c2c2;
+    margin-right:5px !important;
+    -moz-border-radius: 0px;
+    -webkit-border-radius: 0px;
+    border-radius: 0px;
+}
+.datebox{
+    width:124px !important;
+    height:32px !important;
+
+}
+.textbox-invalid{
+    border-color:#c2c2c2;
+}
+.validatebox-invalid{
+    background: #fff;
+}
+.workorder-input{
+    margin-top:23px;
+}
+.workorder-exigency{
+    margin-top:32px;
+}
+.workorder-exigency>label{
+    margin-left:20px;
+    display: inline-block;
+}
+.workorder-exigency label input{
+    display: inline-block;
+    float:left;
+    width:15px;
+    height:15px;
+    border-radius:0 0;
+    margin-top:2px;
+    margin-right: 2px;
+    outline: none;
+}
+.workorder-search{
+    padding-bottom:17px;
+    border-bottom:1px solid #f3f3f3;
+}
+.workorder-btn{
+    padding:14px 25px;
+    margin-bottom:22px;
+    border-bottom:1px solid #e9e9e9;
+}
+.workorder-btn button{
+    width:90px;
+    height:33px;
+    border-radius: 3px;
+    text-align: center;
+    line-height: 30px !important;
+    outline: none;
+    margin-right:17px;
+}
+/*
+.pagination-page-list, .pagination .pagination-num{
+    color:#666;
+    border-color:#ccc;
+}
+*/
+
+.workorder-btn button:nth-child(1),.workorder-btn button:nth-child(2){
+    color:#51d2b6;
+    border:1px solid #51d2b6;
+    background: #fff;
+}
+.workorder-btn button:nth-child(3){
+    color:#fff;
+    border:1px solid #e65e4e;
+    background: #e65e4e;
+}
+.workorder-btn button:nth-child(4){
+    color:#fff;
+    border:1px solid #51d2b6;
+    background: #51d2b6;
+}
+td input[type='checkbox']{
+    opacity: 1 !important;
+}
+.content-wrap {
+    margin-left:24px;
+    margin-right:25px;
+}
+
+.body-wrap .content-wrap {
+    margin-left:0;
+    margin-right:0;
+}
+
+td input[type='checkbox']{
+    opacity: 1 !important;
+}
+.datagrid-header-row td{
+    background: #4d525a;
+}
+.datagrid-header td, .datagrid-body td, .datagrid-footer td{
+    border-width: 0;
+}
+.datagrid-btable{
+    border-left:1px solid #e4e4ee !important;
+    border-right:1px solid #e4e4ee;
+    border-bottom:1px solid #e4e4ee;
+}
+.datagrid-cell>a{
+    padding:0 14px;
+    border-right:1px solid #ccc;
+    color:#51d2b6;
+}
+.datagrid-cell>a:first-child{
+    padding-left: 0;
+}
+.datagrid-cell>a:last-child{
+    border-right:none;
+}
+.datagrid-btable tbody tr:nth-child(even){
+    background:#f8f8f8;
+}
+.datagrid-htable, .datagrid-btable, .datagrid-ftable{
+    color:#666;
+}
+.datagrid-htable tbody td{
+    color:#fff;
+}
+.window .window-header .panel-tool{
+    display: none;
+}
+.datagrid-header td.datagrid-header-over{
+    background:#4d525a;
+    color:#fff;
+}
+
+.l-btn{
+    -webkit-border-radius: 0;
+    border-radius: 0;
+}
+.l-btn-plain-selected{
+    border:1px solid #51d2b6;
+}
+.l-btn-plain-selected{
+    border:1px solid #51d2b6;
+}
+.pagination-link:hover{
+    border:1px solid #51d2b6;
+}
+
+.pagination td:first-child{
+    position: absolute;
+    left: 0;
+    top: 10px;
+}
+.pagination table {
+    float: right;
+}
+
+.content-wrap .l-btn{
+    -webkit-border-radius: 0;
+    border-radius: 0;
+}
+.content-wrap .l-btn-plain-selected{
+    border:1px solid #51d2b6;
+}
+.content-wrap .l-btn-plain-selected{
+    border:1px solid #51d2b6;
+}
+.content-wrap .pagination-link:hover{
+    border:1px solid #51d2b6;
+}
+
+.content-wrap .pagination td:first-child{
+    position: absolute;
+    left: 0;
+    top: 10px;
+}
+.content-wrap .pagination table {
+    float: right;
+}
+/***************閻庣數顢婇惁钘夘浖閸℃澹夌�殿噯鎷�*********************/
+.dialog-button{
+    height:100px;
+    background: #fff;
+    border-left:none;
+    border-right:none;
+    border-bottom:none;
+    text-align: center;
+    box-sizing: border-box;
+    padding-top:30px;
+}
+.dialog-button a{
+    width:120px;
+    height:40px;
+    line-height: 40px;
+    text-align: center;
+    display: inline-block;
+    margin:0;
+    padding:0;
+    _display:inline;
+    *display:inline;
+    /* float:left;*/
+}
+.dialog-button a .l-btn-text{
+    line-height: 40px;
+}
+.dialog-button a:nth-child(1){
+    background: #fff;
+    outline: none;
+    margin-right:25px;
+}
+.dialog-button a:nth-child(2){
+    color:#fff;
+    background: #51d2b6;
+    outline: none;
+    border: 1px solid #51d2b6;
+    margin-left:25px;
+}
+/********************闂傚牄鍨哄妯侯嚕閻熸澘姣夋俊妤嬫嫹*************************/
+.window .window-header .panel-tool{
+    display: block;
+}
+/*****************闁搞儱澧芥晶鏍嫚閿旇棄鍓�**************************/
+#picStatistics{
+	overflow:hidden;
+}
+#picStatistics>div{
+    width:100%;
+    height:425px;
+  	overflow:auto;
+  	background:#fff;
+  	margin:0 auto;
+}
+#picStatistics>div::-webkit-scrollbar{
+    width:0px;
+    background: #fff;
+}
+#picStatistics>div::-webkit-scrollbar-thumb{
+    background: #fff;
+}
+#picStatistics>div::-moz-scrollbar{
+    width:0px;
+    background: #fff;
+}
+#picStatistics>div::-moz-scrollbar-thumb{
+    background: #fff;
+}
+#picStatistics>div>div{
+	width:100%;
+	/*padding-top:40px;*/
+}
+#picStatistics  img{
+    display: block;
+    max-width:90%;
+    max-height: 415px;
+    margin:10px auto 0 ;
+  
+}
+/******************閻庣數鍘ч崵顓㈡晬閸懇锟芥鎷嬮妶蹇曠*************************/
+#exportStatistics{
+	display:table;
+}
+#exportStatistics>div{
+	display:table-cell;
+	vertical-align: middle;
+	font-size:16px;
+	padding:0 40px;
+    text-align: center;
+}
+.dialog-button a .l-btn-text{
+    line-height: 40px;
+    font-size: 16px;
+    color:#666;
+}
+.dialog-button a:nth-child(2) .l-btn-text{
+    line-height: 40px;
+    font-size: 16px;
+    color:#fff;
+}
+/******************閻庣數鍘ч崵顓㈡晬閸喎绲圭紒锟介悮瀵哥*************************/
+#hintStatistics>div{
+    text-align: center;
+    line-height: 280px;
+    font-size: 20px;
+    color:#666;
+}
+.workorder-input .workorder-input-word{
+	margin-left:40px !important; 
+}
+.workorder-input .workorder-input-word:nth-child(1){
+	margin-left:0 !important; 
+}
+/*备注*/
+.remarkInfo{
+	padding: 30px 20px 30px 10px;
+}
+.remarkTr{
+	position: relative;
+	min-height: 35px;
+}
+.remarkTxt{
+	display: block;
+	width: 130px;
+	text-align: right;
+	position: absolute;
+	left: 10px;
+	top: 0;
+	color: #222222;
+}
+.explain .remarkTxt{
+	top: 2px;
+}
+.remarkVal{
+	display: block;
+	padding-left: 145px;
+}
+/*合并详情*/
+.mergeDetailTable{
+	padding: 10px 24px;
+}
+
+

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN" "http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>
+	<constant name="struts.objectFactory" value="spring" />
+	<constant name="struts.devMode" value="true" />
+	<constant name="struts.action.extension" value="html,action,do" />
+	<constant name="struts.configuration.xml.reload" value="true" />
+	<constant name="struts.i18n.encoding" value="utf-8" />
+	<constant name="struts.multipart.paeser" value="jakarta" />
+	<constant name="struts.multipart.maxSize" value="10000000000" />
+	<constant name="struts.ui.theme" value="css_xhtml" />
+	<constant name="struts.enable.DynamicMethodInvocation" value="true" /> 
+	<constant name="struts.objectFactory.spring.autoWire.alwaysRespect" value="true" />  
+	 <package name="defaultPackage" extends="struts-default"> 
+		 <interceptors> 
+		<!--  <interceptors>
+		<interceptor name="annotationInterceptor"
+		class="com.opensymphony.xwork2.interceptor.annotations.AnnotationWorkflowInterceptor">
+		</interceptor> 
+		
+		<interceptor-stack name="annotationStack">
+		<interceptor-ref name="defaultStack"></interceptor-ref>
+		<interceptor-ref name="annotationInterceptor"></interceptor-ref>
+		</interceptor-stack> -->
+		
+			<!-- 异常拦截器  Author:xiewenyu  Date:20130312 -->
+			<interceptor name="exceptionInterceptor" class="com.hori.interceptor.ExceptionInterceptor" />
+			
+			<interceptor name="encodingInterceptor" class="com.hori.interceptor.EncodingInterceptor" />
+			<interceptor-stack name="encodingStack">
+				<interceptor-ref name="defaultStack"></interceptor-ref>
+				<interceptor-ref name="encodingInterceptor"></interceptor-ref>
+				<interceptor-ref name="exceptionInterceptor"></interceptor-ref>
+			    <interceptor-ref name="checkbox">
+	        	  <param name="uncheckedValue">0</param>
+	   	        </interceptor-ref>
+			</interceptor-stack>
+
+			<interceptor name="sessionInterceptor" class="com.hori.interceptor.SessionInterceptor" />
+			<interceptor-stack name="sessionStack">
+				<interceptor-ref name="encodingStack"></interceptor-ref>
+				<!-- <interceptor-ref name="annotationStack"></interceptor-ref> -->
+				<interceptor-ref name="sessionInterceptor">
+					<param name="excludeMethods">login,logout</param>
+				</interceptor-ref>
+			</interceptor-stack>
+
+			<interceptor name="authInterceptor" class="com.hori.interceptor.AuthInterceptor" />
+			<interceptor-stack name="authStack">
+				<interceptor-ref name="sessionStack"></interceptor-ref>
+				<!-- <interceptor-ref name="annotationStack"></interceptor-ref> -->
+				<interceptor-ref name="authInterceptor">
+					<param name="excludeMethods">login,logout,goList</param>
+				</interceptor-ref>
+			</interceptor-stack>
+
+			<interceptor name="fileAuthInterceptor" class="com.hori.interceptor.FileAuthInterceptor" />
+			<interceptor-stack name="authAndFileAuthStack">
+				<interceptor-ref name="authStack"></interceptor-ref>
+				<interceptor-ref name="fileAuthInterceptor">
+					<param name="includeMethods">uploadFile,fileManager</param>
+				</interceptor-ref>
+			</interceptor-stack>
+			
+			<!-- url param定义拦截器  -->
+			<interceptor name="urlParamsInterceptor"
+				class="com.hori.interceptor.UrlParamsInterceptor"></interceptor>
+			<interceptor-stack name="urlParamStack">
+				<interceptor-ref name="params" />
+				<interceptor-ref name="urlParamsInterceptor"/>
+				<interceptor-ref name="store">
+					<param name="operationMode">AUTOMATIC</param>
+				</interceptor-ref>
+				<interceptor-ref name="exception" />
+				<interceptor-ref name="conversionError" />
+				<interceptor-ref name="paramsPrepareParamsStack" />
+				<!-- <interceptor-ref name="annotationStack"></interceptor-ref> -->
+			</interceptor-stack>
+		</interceptors>
+
+		<default-interceptor-ref name="authAndFileAuthStack"></default-interceptor-ref>
+
+		<global-results>
+			<result name="noAuth">/error/noAuth.jsp</result>
+			<result name="noFileAuth">/error/noFileAuth.jsp</result>
+			<result name="noSession">/error/noSession.jsp</result>
+			<result name="strutsException">/error/strutsException.jsp</result>
+			 <result name="noLogin">/nologin.jsp</result> 
+			<result name="error">/error/err.jsp</result>
+			<result name="globalError">/error/globalError.jsp</result>
+		</global-results>
+
+		<global-exception-mappings>
+			<exception-mapping result="strutsException"
+				exception="java.lang.Exception"></exception-mapping>
+		</global-exception-mappings>
+	</package>
+</struts>

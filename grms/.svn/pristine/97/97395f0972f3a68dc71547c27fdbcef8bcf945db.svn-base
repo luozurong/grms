@@ -1,0 +1,54 @@
+package com.hori.grms.service;
+
+import java.util.List;
+
+import javax.servlet.http.HttpSession;
+
+import com.hori.grms.model.BackMoneyPlan;
+import com.hori.grms.model.BackMoneyPlanPeriods;
+import com.hori.grms.queryBean.BackMoneyPlanQueryBean;
+import com.hori.grms.vo.BackMoneyPlanVo;
+import com.hori.grms.vo.ContractDetailVo;
+import com.hori.grms.vo.ContractVo;
+
+
+public interface BackMoneyPlanService {
+	List<BackMoneyPlanVo> getBackMoneyPlanListByCondition(BackMoneyPlanQueryBean queryBean);
+	
+	void insertSelective(BackMoneyPlan backMoneyPlan,List<BackMoneyPlanPeriods> list,HttpSession session,String contractCode);
+	
+	List<ContractDetailVo> getContractList(String condition);
+	
+	ContractDetailVo getContractDetail(String contractCode);
+	
+	BackMoneyPlan getBackMoneyPlanByCode(String backMoneyPlanCode);
+	
+	void updateByPrimaryKeySelective(BackMoneyPlan backMoneyPlan);
+
+	BackMoneyPlan getBackMoneyPlanByContractCode(String contractCode);
+	
+	List<BackMoneyPlanVo> getBackMoneyPlanList();
+
+	/**
+	 * 通过projectCode来获取计划回款信息
+	 * @param projectCode
+	 * @return
+	 */
+	List<BackMoneyPlanVo> getBackMoneyPlanListByProjectCode(String projectCode);
+	/**
+	 * 财务异常处理接口(type:1继续，2终止)
+	 */
+	void financeExceptionUpdateBackPlan(String type,String planCode);
+	
+	/**
+	 * 执行异常产生扣款处理接口(type:1扣款，2终止)
+	 */
+	void actionExceptionUpdateBackPlan(String type,String backMoneyPlanCode,String money);
+	/**
+	 * 获取收款计划
+	 * @param contractCode 合同编号
+	 * @param status 收款计划审核状态，-1已删除 0待审核 1已审核 2已结案
+	 * @return
+	 */
+	BackMoneyPlan getBackMoneyPlanByContractCodeAndStatus(String contractCode, int i);
+}

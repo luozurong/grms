@@ -1,0 +1,26 @@
+/**
+ * 
+ */
+package com.hori.grms.service;
+
+import java.util.List;
+
+import com.hori.grms.queryBean.ProjectActionQueryBean;
+import com.hori.grms.vo.ExportMGVo;
+
+/** 
+ * @ClassName: ProjectProductMenuAreaService 
+ * @Description: 项目产品明细小区关联表
+ * @author zhuqiang
+ * @date 2018年8月8日 下午7:14:56 
+ */
+public interface ProjectProductMenuAreaService{
+
+	/**
+	 * 查找媒管部门需要导出的数据
+	 * @param queryBean
+	 * @return
+	 */
+	List<ExportMGVo> listMGData(ProjectActionQueryBean queryBean);
+
+}

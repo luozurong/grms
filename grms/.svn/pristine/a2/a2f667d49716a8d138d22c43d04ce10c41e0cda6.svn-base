@@ -1,0 +1,14 @@
+package com.hori.grms.service;
+
+import java.util.List;
+
+import com.hori.grms.model.BackMoneyPlanPeriods;
+
+
+public interface BackMoneyPlanPeriodsService {
+	void insertSelective(BackMoneyPlanPeriods backMoneyPlanPeriods);
+
+	List<BackMoneyPlanPeriods> getBackMoneyPlanPeriodsList(String contractCode);
+
+	void updateByPrimaryKeySelective(BackMoneyPlanPeriods backMoneyPlanPeriods);
+}

@@ -1,0 +1,222 @@
+var pageNoAll='1';
+var pageSizeAll='10';
+$(function(){
+	$('#startTime').datebox({    
+	       
+	}); 
+	$('#endTime').datebox({    
+	       
+	}); 
+	$('#searchBtn').linkbutton({  
+		
+	});
+	findMenu();
+})
+
+
+
+//查询数据
+function findMenu(){
+	var projectName=$('#projectName').val();
+	var startTime=$('#startTime').val();
+	var endTime=$('#endTime').val();
+	var actionStatus=$('#actionStatus').val();
+	var projectExceptionStatus=$('#projectExceptionStatus').val();
+	
+	pageNo=pageNoAll;
+	pageSize=pageSizeAll;
+	var projectQueryBean='{"projectName":"'+projectName+'","startTime":"'+startTime+'","endTime":"'+endTime
+	+'","actionStatus":"'+actionStatus+'","projectExceptionStatus":"'+projectExceptionStatus
+	+'","pageNumber":"'+pageNo+'","pageSize":"'+pageSize+'"}';
+	
+    $.ajax({  
+        type : "POST",  //提交方式  
+        url : "/grms/projectAction/getlistData.html",//路径  
+        dataType : "json",//数据，这里使用的是Json格式进行传输  
+        data:  {"projectQueryBean":projectQueryBean},  
+        success : function(result) {//返回数据根据结果进行相应的处理  
+            if ( result.success) {  
+            	var data2=result.rows;
+            	var total=result.total;
+            	refresh(data2);
+            	paginationpage(total,data2);
+            	initButton()
+            } else {  
+            	
+            }  
+        }  
+    }); 
+}
+
+
+
+//刷新表格数据
+function refresh(data){
+//	表格数据渲染
+  $('#dg').datagrid({
+      border:true,
+      scrollbarSize:0,
+      nowrap:false,//允许换行
+      data:data,
+      emptyMsg:'<span>无记录</span>',
+      onLoadSuccess:function(){ //dom操作
+          $('#dg').datagrid('resize');
+      },
+      columns:[[
+          {
+              field:'productCode',
+              title:'项目编号',
+              width:450,
+              align:'left'
+          },
+          {
+              field:'name',
+              title:'项目名称',
+              width:300,
+              align:'left'
+              
+          },
+          {
+              field:'createTime',
+              title:'创建时间',
+              width:220,
+              align:'left'
+          },
+          {
+              field:'actionStatus',
+              title:'项目状态',
+              width:190,
+              align:'left',
+              formatter:function(value){
+            	  if(value==0){
+            		  return "未执行"; 
+            	  }else if(value==1){
+            		  return "执行中";
+            	  }else if(value==2){
+            		  return "执行完成";
+            	  }
+              }
+          },
+          {
+              field:'exceptionStatus',
+              title:'项目异常',
+              width:190,
+              align:'left',
+              formatter: function(value,row,index){
+            	  if(row.actionStatus!=1){
+            		  return "正常"
+            	  }
+            	  
+            	  if(value==0){
+            		  return "正常"
+            	  }else if(value==1){
+            		  return "异常"
+            	  }
+                
+              }
+          },
+          
+          {
+              field:'handle',
+              title:'操作',
+              width:574,
+              align:'left',
+              formatter: function(value,row,index){
+              	var actionWorkOrder = '<a href="javascript:;" name="detailList" data-id="1" onclick="projectActionOperation(1,\''+index+'\')">清单明细</a>  ';
+              	var exceptionWorkOrder = ' <a href="javascript:;" name="excptionDetail" data-id="2" onclick="projectActionOperation(2,\''+index+'\')">异常明细</a>  ';
+                return actionWorkOrder+exceptionWorkOrder;
+              }
+          }
+      ]]
+  });
+}
+
+function paginationpage(total,data2){
+//  分页
+    $('#pp').pagination({
+        total:total,
+        layout:['list','first','prev','links','next','last','manual'],
+        emptyMsg: '<span>无记录</span>',
+        showRefresh:true,
+        displayMsg:' ',
+        pageList:[10,20,30],
+        onSelectPage:function (pageNo, pageSize) {
+        	pageNoAll=pageNo;
+        	pageSizeAll=pageSize;
+        	findMenu()
+        }
+    });
+    $(".pagination-page-list").parent().append("条");
+    $(".pagination-page-list").parent().prepend("共计"+total+"条,每页显示： ");
+
+}
+
+//需要隐藏的按钮
+var mapButton = {};
+var userType;
+function initButton(){
+	//
+	mapButton['detailList'] = 1;
+	mapButton['excptionDetail'] = 1;
+	var menuUrl="/grms/projectAction/projectActionList.html";
+    $.ajax({  
+        type : "POST",  //提交方式  
+        url : "/grms/initButtonController/getButttonList.html",//路径  
+        data:{"menuUrl":menuUrl},
+        dataType : "json",//数据，这里使用的是Json格式进行传输  
+        success : function(result) {//返回数据根据结果进行相应的处理  
+            if ( result.success) {
+            	console.log(result)
+            	//比较需要隐藏的按钮
+            	var buttonObject= result.button;
+            	var admin=result.msg;
+            	console.log(admin)
+            	console.log(buttonObject)
+            	if(admin!="admin"){
+            	var temp=1;
+            	for(var prop in mapButton){
+            		temp=1;
+            		for(var j=0;j<buttonObject.length;j++){
+            			if(prop==buttonObject[j].resourceCode){
+            				temp=0;
+            				break;
+            				}
+            			}
+            			if(temp==1){
+            				mapButton[prop]=0;
+            			}
+            		}
+            	if(mapButton['detailList']==0){
+            	  $("[name='detailList']").hide();
+              	}
+              	if(mapButton['excptionDetail']==0){
+              		$("[name='excptionDetail']").hide();
+              	}
+            }else{
+            	userType=0;
+            }
+            } else {  
+            	
+            }  
+        }  
+    }); 
+    
+}
+
+
+//执行清单操作
+function projectActionOperation(type,index){
+	//获取要操作得一行数据
+	var checkedItem=$('#dg').datagrid('getData').rows[index];
+	var productCode = checkedItem.productCode
+	//操作类型：1、清单明细 2、异常明细
+	if(type==1){
+		
+		window.location.href="/grms/project/.html?productCode=" + productCode;
+	
+	}else if(type==2){
+		
+		window.location.href="/grms/projectAction/getAllPAExceptionList.html?productCode=" + productCode;
+		
+	}
+}

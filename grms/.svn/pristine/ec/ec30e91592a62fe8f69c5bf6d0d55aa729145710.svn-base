@@ -1,0 +1,37 @@
+package com.hori.grms.service.impl;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.hori.grms.dao.BackMoneyPlanPeriodsMapper;
+import com.hori.grms.model.BackMoneyPlanPeriods;
+import com.hori.grms.service.BackMoneyPlanPeriodsService;
+@Service
+public class BackMoneyPlanPeriodsServiceImpl implements BackMoneyPlanPeriodsService {
+
+	@Autowired
+	private BackMoneyPlanPeriodsMapper backMoneyPlanPeriodsMapper;
+
+	@Override
+	public void insertSelective(BackMoneyPlanPeriods backMoneyPlanPeriods) {
+		// TODO Auto-generated method stub
+		backMoneyPlanPeriodsMapper.insertSelective(backMoneyPlanPeriods);
+	}
+
+	@Override
+	public List<BackMoneyPlanPeriods> getBackMoneyPlanPeriodsList(
+			String contractCode) {
+		// TODO Auto-generated method stub
+		return backMoneyPlanPeriodsMapper.getBackMoneyPlanPeriodsList(contractCode);
+	}
+
+	@Override
+	public void updateByPrimaryKeySelective(
+			BackMoneyPlanPeriods backMoneyPlanPeriods) {
+		// TODO Auto-generated method stub
+		backMoneyPlanPeriodsMapper.updateByPrimaryKeySelective(backMoneyPlanPeriods);
+	}
+	
+}

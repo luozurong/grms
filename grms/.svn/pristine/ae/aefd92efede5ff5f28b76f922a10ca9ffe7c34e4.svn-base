@@ -1,0 +1,22 @@
+/**
+ * 
+ */
+package com.hori.grms.controller;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+/** 
+ * @ClassName: CustomerController 
+ * @Description: 客户
+ * @author zhuqiang
+ * @date 2018年8月14日 下午3:46:59 
+ */
+@Controller
+@RequestMapping("/customer")
+public class CustomerController extends BaseController {
+	private final Logger logger = LoggerFactory.getLogger(ProjectActionController.class);
+
+}

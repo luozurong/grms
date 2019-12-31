@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hori.grms.dao.ProjectActionMapper" >
+    <resultMap id="BaseResultMap" type="com.hori.grms.model.ProjectAction" >
+        <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="project_code" property="projectCode" jdbcType="VARCHAR" />
+        <result column="project_name" property="projectName" jdbcType="VARCHAR" />
+        <result column="project_product_id" property="projectProductId" jdbcType="VARCHAR" />
+        <result column="department_id" property="departmentId" jdbcType="VARCHAR" />
+        <result column="department_name" property="departmentName" jdbcType="VARCHAR" />
+        <result column="business_action_status" property="businessActionStatus" jdbcType="INTEGER" />
+        <result column="action_status" property="actionStatus" jdbcType="INTEGER" />
+        <result column="action_code" property="actionCode" jdbcType="VARCHAR" />
+        <result column="exception_status" property="exceptionStatus" jdbcType="INTEGER" />
+        <result column="exception_result" property="exceptionResult" jdbcType="INTEGER" />
+        <result column="receive_account" property="receiveAccount" jdbcType="VARCHAR" />
+        <result column="receive_name" property="receiveName" jdbcType="VARCHAR" />
+        <result column="recevie_time" property="recevieTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <sql id="Example_Where_Clause" >
+        <where >
+            <foreach collection="oredCriteria" item="criteria" separator="or" >
+                <if test="criteria.valid" >
+                    <trim prefix="(" suffix=")" prefixOverrides="and" >
+                        <foreach collection="criteria.criteria" item="criterion" >
+                            <choose >
+                                <when test="criterion.noValue" >
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue" >
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue" >
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue" >
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+
+    <sql id="Update_By_Example_Where_Clause" >
+        <where >
+            <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+                <if test="criteria.valid" >
+                    <trim prefix="(" suffix=")" prefixOverrides="and" >
+                        <foreach collection="criteria.criteria" item="criterion" >
+                            <choose >
+                                <when test="criterion.noValue" >
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue" >
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue" >
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue" >
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+
+    <sql id="Base_Column_List" >
+        id, project_code, project_name, project_product_id, department_id, department_name, 
+        business_action_status, action_status, action_code, exception_status, exception_result, 
+        receive_account, receive_name, recevie_time
+    </sql>
+
+    <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.hori.grms.model.ProjectActionExample" >
+        select
+        <if test="distinct" >
+            distinct
+        </if>
+        'true' as QUERYID,
+        <include refid="Base_Column_List" />
+        from project_action
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+        <if test="orderByClause != null" >
+            order by ${orderByClause}
+        </if>
+    </select>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+        select 
+        <include refid="Base_Column_List" />
+        from project_action
+        where id = #{id,jdbcType=VARCHAR}
+    </select>
+
+    <insert id="insert" parameterType="com.hori.grms.model.ProjectAction" >
+        insert into project_action (id, project_code, project_name, 
+            project_product_id, department_id, department_name, 
+            business_action_status, action_status, action_code, 
+            exception_status, exception_result, receive_account, 
+            receive_name, recevie_time)
+        values (#{id,jdbcType=VARCHAR}, #{projectCode,jdbcType=VARCHAR}, #{projectName,jdbcType=VARCHAR}, 
+            #{projectProductId,jdbcType=VARCHAR}, #{departmentId,jdbcType=VARCHAR}, #{departmentName,jdbcType=VARCHAR}, 
+            #{businessActionStatus,jdbcType=INTEGER}, #{actionStatus,jdbcType=INTEGER}, #{actionCode,jdbcType=VARCHAR}, 
+            #{exceptionStatus,jdbcType=INTEGER}, #{exceptionResult,jdbcType=INTEGER}, #{receiveAccount,jdbcType=VARCHAR}, 
+            #{receiveName,jdbcType=VARCHAR}, #{recevieTime,jdbcType=TIMESTAMP})
+    </insert>
+
+    <select id="countByExample" parameterType="com.hori.grms.model.ProjectActionExample" resultType="java.lang.Integer" >
+        select count(*) from project_action
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+    </select>
+
+    <update id="updateByExampleSelective" parameterType="map" >
+        update project_action
+        <set >
+            <if test="record.id != null" >
+                id = #{record.id,jdbcType=VARCHAR},
+            </if>
+            <if test="record.projectCode != null" >
+                project_code = #{record.projectCode,jdbcType=VARCHAR},
+            </if>
+            <if test="record.projectName != null" >
+                project_name = #{record.projectName,jdbcType=VARCHAR},
+            </if>
+            <if test="record.projectProductId != null" >
+                project_product_id = #{record.projectProductId,jdbcType=VARCHAR},
+            </if>
+            <if test="record.departmentId != null" >
+                department_id = #{record.departmentId,jdbcType=VARCHAR},
+            </if>
+            <if test="record.departmentName != null" >
+                department_name = #{record.departmentName,jdbcType=VARCHAR},
+            </if>
+            <if test="record.businessActionStatus != null" >
+                business_action_status = #{record.businessActionStatus,jdbcType=INTEGER},
+            </if>
+            <if test="record.actionStatus != null" >
+                action_status = #{record.actionStatus,jdbcType=INTEGER},
+            </if>
+            <if test="record.actionCode != null" >
+                action_code = #{record.actionCode,jdbcType=VARCHAR},
+            </if>
+            <if test="record.exceptionStatus != null" >
+                exception_status = #{record.exceptionStatus,jdbcType=INTEGER},
+            </if>
+            <if test="record.exceptionResult != null" >
+                exception_result = #{record.exceptionResult,jdbcType=INTEGER},
+            </if>
+            <if test="record.receiveAccount != null" >
+                receive_account = #{record.receiveAccount,jdbcType=VARCHAR},
+            </if>
+            <if test="record.receiveName != null" >
+                receive_name = #{record.receiveName,jdbcType=VARCHAR},
+            </if>
+            <if test="record.recevieTime != null" >
+                recevie_time = #{record.recevieTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        <if test="_parameter != null" >
+            <include refid="Update_By_Example_Where_Clause" />
+        </if>
+    </update>
+
+    <update id="updateByExample" parameterType="map" >
+        update project_action
+        set id = #{record.id,jdbcType=VARCHAR},
+            project_code = #{record.projectCode,jdbcType=VARCHAR},
+            project_name = #{record.projectName,jdbcType=VARCHAR},
+            project_product_id = #{record.projectProductId,jdbcType=VARCHAR},
+            department_id = #{record.departmentId,jdbcType=VARCHAR},
+            department_name = #{record.departmentName,jdbcType=VARCHAR},
+            business_action_status = #{record.businessActionStatus,jdbcType=INTEGER},
+            action_status = #{record.actionStatus,jdbcType=INTEGER},
+            action_code = #{record.actionCode,jdbcType=VARCHAR},
+            exception_status = #{record.exceptionStatus,jdbcType=INTEGER},
+            exception_result = #{record.exceptionResult,jdbcType=INTEGER},
+            receive_account = #{record.receiveAccount,jdbcType=VARCHAR},
+            receive_name = #{record.receiveName,jdbcType=VARCHAR},
+            recevie_time = #{record.recevieTime,jdbcType=TIMESTAMP}
+        <if test="_parameter != null" >
+            <include refid="Update_By_Example_Where_Clause" />
+        </if>
+    </update>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.hori.grms.model.ProjectAction" >
+        update project_action
+        <set >
+            <if test="projectCode != null" >
+                project_code = #{projectCode,jdbcType=VARCHAR},
+            </if>
+            <if test="projectName != null" >
+                project_name = #{projectName,jdbcType=VARCHAR},
+            </if>
+            <if test="projectProductId != null" >
+                project_product_id = #{projectProductId,jdbcType=VARCHAR},
+            </if>
+            <if test="departmentId != null" >
+                department_id = #{departmentId,jdbcType=VARCHAR},
+            </if>
+            <if test="departmentName != null" >
+                department_name = #{departmentName,jdbcType=VARCHAR},
+            </if>
+            <if test="businessActionStatus != null" >
+                business_action_status = #{businessActionStatus,jdbcType=INTEGER},
+            </if>
+            <if test="actionStatus != null" >
+                action_status = #{actionStatus,jdbcType=INTEGER},
+            </if>
+            <if test="actionCode != null" >
+                action_code = #{actionCode,jdbcType=VARCHAR},
+            </if>
+            <if test="exceptionStatus != null" >
+                exception_status = #{exceptionStatus,jdbcType=INTEGER},
+            </if>
+            <if test="exceptionResult != null" >
+                exception_result = #{exceptionResult,jdbcType=INTEGER},
+            </if>
+            <if test="receiveAccount != null" >
+                receive_account = #{receiveAccount,jdbcType=VARCHAR},
+            </if>
+            <if test="receiveName != null" >
+                receive_name = #{receiveName,jdbcType=VARCHAR},
+            </if>
+            <if test="recevieTime != null" >
+                recevie_time = #{recevieTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+        delete from project_action
+        where id = #{id,jdbcType=VARCHAR}
+    </delete>
+
+    <delete id="deleteByExample" parameterType="com.hori.grms.model.ProjectActionExample" >
+        delete from project_action
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+    </delete>
+
+</mapper>

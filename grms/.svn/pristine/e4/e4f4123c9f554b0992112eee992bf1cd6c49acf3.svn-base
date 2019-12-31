@@ -1,0 +1,55 @@
+package com.hori.grms.service.impl;
+
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.hori.grms.dao.ContractMapper;
+import com.hori.grms.dao.ContractTemplateMapper;
+import com.hori.grms.model.Contract;
+import com.hori.grms.model.ContractTemplate;
+import com.hori.grms.queryBean.ContractTemplateQueryBean;
+import com.hori.grms.service.ContractService;
+import com.hori.grms.util.DateUtils;
+@Service
+public class ContractServiceImpl implements ContractService{
+
+	@Autowired
+    private ContractTemplateMapper contractTemplateMapper;
+	@Autowired
+	private ContractMapper contractMapper;
+	@Override
+	public PageInfo<ContractTemplate> getContractTemplate(ContractTemplateQueryBean queryBean) {
+		PageHelper.startPage(queryBean.getPageNumber(),queryBean.getPageSize());
+		if(StringUtils.isNotBlank(queryBean.getStartTime())){
+			queryBean.setStartTime(queryBean.getStartTime()+" 00:00:00"); 
+		}
+		if(StringUtils.isNotBlank(queryBean.getEndTime())){
+			queryBean.setEndTime(queryBean.getEndTime()+" 23:59:59"); 
+		}
+		List<ContractTemplate> contractTemplateList=contractTemplateMapper.selectByQueryBean(queryBean);
+        PageInfo<ContractTemplate> pageInfo = new PageInfo<>(contractTemplateList);
+
+		return pageInfo;
+	}
+	@Override
+	public void delContractTemplate(String id) {
+		contractTemplateMapper.deleteByPrimaryKey(id);
+		
+	}
+	@Override
+	public void saveContractTemplate(ContractTemplate contractTemplate) {
+		// TODO Auto-generated method stub
+		contractTemplateMapper.insert(contractTemplate);
+	}
+	
+	@Override
+	public Contract getExecuteContract(String projectCode) {
+		return contractMapper.selectExecuteContractByProjectCode(projectCode);
+	}
+
+}

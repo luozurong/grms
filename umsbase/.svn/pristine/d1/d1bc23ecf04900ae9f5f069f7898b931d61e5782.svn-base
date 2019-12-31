@@ -1,0 +1,22 @@
+package com.jlit.vdcs.webservice;
+
+
+import javax.jws.WebService;
+
+import com.hori.model.OperationRecord;
+
+
+@WebService
+public interface IOperationRecordService {
+
+/*	*//**
+	 * 保存操作
+	 *//*
+	public void saveOperationRecord(OperationRecord operationRecord);
+	
+	*//**
+	 * 登陆操作
+	 *//*
+	public void login(String account,String ip,boolean resultS,String userbrowser,String useros);*/
+}
+

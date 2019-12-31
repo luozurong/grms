@@ -1,0 +1,341 @@
+
+var userType;
+var dataList;
+var mapButton = {};
+
+$(function () {
+	initButton();
+    $.ajax({  
+        type : "POST",  //提交方式  
+        url : "/ums/organizationAction!getSystemOrganization.html",//路径  
+        dataType : "json",//数据，这里使用的是Json格式进行传输  
+        success : function(result) {//返回数据根据结果进行相应的处理  
+            if ( result.success) {  
+            	var treejson;
+            	treejson=result.obj;
+            	append(treejson);
+            } else {  
+            	
+            }  
+        }  
+    }); 
+    
+    search();
+});
+
+function initButton(){
+	mapButton['search'] = 1;
+	mapButton['create'] = 1;
+	mapButton['batchDel'] = 1;
+	mapButton['edit'] = 1;
+	mapButton['delete'] = 1;
+	var menuUrl="/grms/departmentBusiness/list.html";
+    $.ajax({  
+        type : "POST",  //提交方式  
+        url : "/grms/initButtonController/getButttonList",//路径  
+        data : {"menuUrl":menuUrl},
+        dataType : "json",//数据，这里使用的是Json格式进行传输  
+        async : false,
+        success : function(result) {//返回数据根据结果进行相应的处理  
+            if ( result.success) {
+            	//比较需要隐藏的按钮
+            	var buttonObject = result.button;
+            	var admin = result.admin;
+            	//如果是管理员
+            	if(admin){
+            		userType=0;
+            		return;
+            	}
+            	var temp=1;
+            	for(var prop in mapButton){
+            		temp=1;
+            		for(var j=0;j<buttonObject.length;j++){
+            			if(prop==buttonObject[j].resourceCode){
+            				temp=0;
+            				break;
+        				}
+        			}
+        			if(temp==1){
+        				mapButton[prop]=0;
+        			}
+        		}
+            	if(mapButton['search']==0){
+            	  $("#search").hide();
+              	}
+            	if(mapButton['create']==0){
+              	  $("#create").hide();
+                }
+            	if(mapButton['batchDel']==0){
+              	  $("#batchDel").hide();
+                }
+            }
+        }  
+    }); 
+}
+
+//查询数据
+function search(){
+	var condition =$('#condition').val();
+	
+    $.ajax({  
+        type : "POST",  //提交方式  
+        url : "/grms/departmentBusiness/getBusinessTypeList",//路径  
+        dataType : "json",//数据，这里使用的是Json格式进行传输  
+        data:  {"condition":condition},  
+        success : function(result) {//返回数据根据结果进行相应的处理  
+            if ( result.success) {  
+            	dataList = result.data;
+				initDg(1,10);
+				paginationpage();
+            } else {  
+            	infoMask('加载列表失败')
+            }  
+        }  
+    }); 
+}
+
+//刷新表格数据
+function initDg(pageNo,pageSize){
+	var xL=(pageNo-1)*pageSize;
+	var yL=pageNo*pageSize;
+	var data1=dataList.slice(xL,yL);
+//	表格数据渲染
+    $('#dg').datagrid({
+        border:true,
+        scrollbarSize:0,
+        nowrap:false,//允许换行
+        data:data1,
+        emptyMsg:'<span>无记录</span>',
+        onLoadSuccess:function(){ //dom操作
+            $('#dg').datagrid('resize');
+        },
+        columns:[[
+			{
+			    field:'ck',
+			    title:'',
+			    checkbox:true,
+			    width:50,
+			    align:'center'
+			},
+            {
+                field:'businessTypeId',
+                title:'产品资源id',
+                width:50,
+                align:'left',
+                hidden:true
+            },
+            {
+                field:'departmentName',
+                title:'执行部门',
+                width:100,
+                align:'left'
+            },
+            {
+                field:'businessType',
+                title:'执行业务类型',
+                width:100,
+                align:'left',
+                formatter: function(value,row,index){
+					var type = row.businessType;
+					var typeStr = type.split(",");
+					var businessType = '';
+					for(var i=0;i<typeStr.length;i++){
+						if(typeStr[i]=="1"){
+							businessType += '社区运营,';
+						}else if(typeStr[i]=="2"){
+							businessType += '媒管,';
+						}else if(typeStr[i]=="3"){
+							businessType += '用户运营,';
+						}else if(typeStr[i]=="4"){
+							businessType += '电商运营,';
+						}
+					}
+					businessType = businessType.substring(0, businessType.length - 1);
+					return businessType;
+				}
+            },
+            {
+                field:'businessArea',
+                title:'执行区域',
+                width:100,
+                align:'left',
+                formatter: function(value,row,index){
+                	var provinceName = row.provinceName;
+                	var cityName = row.cityName;
+                	var areaFlag = row.areaFlag;
+                	var area = '';
+                	if(areaFlag==0){//全国
+                		area = "全国";
+                	}else if(areaFlag==1){
+                		if(row.provinceName==undefined){
+                			provinceName = '';
+                		}
+                		if(row.cityName==undefined){
+                			cityName = '';
+                		}
+                		area = provinceName + cityName;
+                	}
+					return area;
+				}
+            },
+            {
+                field:'handle',
+                title:'操作',
+                width:100,
+                align:'left',
+                formatter: function(value,row,index){
+                	//处理操作得按钮（根据用户的类型）
+                	//var status = row.status
+                	var detailWorkOrder = '';
+                	var revokeWorkOrder = '';
+                	var workOrder = '';
+                	if(userType!=0){
+                		if(mapButton['edit']==1){
+                    		detailWorkOrder = '<a href="javascript:;" onclick="edit(\''+row.businessTypeId+'\',\''+row.businessType+'\')">修改</a>';
+	        			}
+                		if(mapButton['delete']==1){
+                    		revokeWorkOrder = '<a href="javascript:;" onclick="deleteData(\''+row.businessTypeId+'\')">删除</a> ';
+                		}
+                	}else{
+                		detailWorkOrder = '<a href="javascript:;" onclick="edit(\''+row.businessTypeId+'\',\''+row.businessType+'\')">修改</a>';
+                		revokeWorkOrder = '<a href="javascript:;" onclick="deleteData(\''+row.businessTypeId+'\')">删除</a> ';
+                	}
+                	workOrder = detailWorkOrder+revokeWorkOrder;
+                    return workOrder;
+                }
+            }
+        ]]
+    });
+}
+
+function paginationpage(){
+//  分页
+    $('#pp').pagination({
+        total:dataList.length,
+        layout:['list','first','prev','links','next','last','manual'],
+        emptyMsg: '<span>无记录</span>',
+        showRefresh:true,
+        displayMsg:' ',
+        pageList:[10,20,30],
+        onSelectPage:function (pageNo, pageSize) {
+        	initDg(pageNo,pageSize);
+        }
+    });
+    $(".pagination-page-list").parent().append("条");
+    $(".pagination-page-list").parent().prepend("共计"+dataList.length+"条,每页显示： ");
+
+}
+
+//跳转创建页面
+function jumpToAddPage(){
+	var node = $("#box").tree("getSelected");
+	if(node){
+		var departmentId = node.id;
+		var departmentName = node.text;
+		window.location.href='/grms/departmentBusiness/jumpToAddPage?departmentName='+departmentName+"&departmentId="+departmentId;
+	}else{
+		infoMask('创建失败，请选择需要创建的组织机构');
+	}
+}
+
+//跳转编辑页面
+function edit(businessTypeId,businessType){
+	var values = [];
+	values = businessType.split(",");
+	sessionStorage.setItem("sessionItemsString",values);
+	window.location.href='/grms/departmentBusiness/jumpToEditPage?id='+businessTypeId;
+}
+
+//删除
+function deleteData(businessTypeId){
+	wrapMaskShow();
+	$.messager.confirm('确认','您确认想要删除该选项吗？',function(r){  
+		wrapMaskHide();
+	    if (r){    
+	    	$.ajax({  
+	            type : "POST",  //提交方式  
+	            url : "/grms/departmentBusiness/delDepartmentBusiness",//路径  
+	            dataType : "json",//数据，这里使用的是Json格式进行传输  
+	            data:  {"ids":businessTypeId},  
+	            success : function(result) {//返回数据根据结果进行相应的处理  
+	                if ( result.success) { 
+	                	infoMask("删除成功");
+	                	window.location.reload();
+	                } else {  
+	    	            infoMask("删除失败");
+	                }  
+	            }  
+	        }); 
+	    }    
+	});
+}
+
+//批量删除
+function batchDel(){
+	var hasDataValue = $("#dg").datagrid("getChecked");
+	var orderNumArr = new Array();
+	for(var i=0;i<hasDataValue.length;i++){
+		var orderNum = hasDataValue[i].id;
+		orderNumArr[i]=orderNum;
+	}
+	if(hasDataValue.length<=0){
+		infoMask("操作失败，无勾选项!")
+        return;
+    }else{
+    	$.messager.confirm("确认消息", "确认删除所选项吗？", function (isDelete) {
+    		wrapMaskHide();
+    		if (isDelete) {
+	    		$.ajax({  
+		                type : "POST",  //提交方式  
+		                url : "/grms/departmentBusiness/delDepartmentBusiness?ids="+orderNumArr,//路径  
+		                dataType : "json",//数据，这里使用的是Json格式进行传输  
+		                //data:  {"ids":orderNumArr},  
+		                success : function(result) {//返回数据根据结果进行相应的处理  
+		                    if ( result.success) { 
+		        	            infoMask("删除成功");
+		                    	window.location.reload();
+		                    } else {  
+		        	            infoMask("删除失败");
+		                    }  
+		                }  
+		            });
+	    		}
+    		});
+    	}
+}
+
+//组织架构JS
+function refresh(){
+    $.ajax({  
+        type : "POST",  //提交方式  
+        url : "/ums/organizationAction!getSystemOrganization.html",//路径  
+        dataType : "json",//数据，这里使用的是Json格式进行传输  
+        success : function(result) {//返回数据根据结果进行相应的处理  
+            if ( result.success) {  
+            	var treejson;
+            	treejson=result.obj;
+            	append(treejson);
+            } else {  
+            	
+            }  
+        }  
+    }); 
+}
+
+function append( treejson){
+
+    $('#box').tree({
+        data : treejson,
+        animate : false,
+        checkbox : false,
+        cascadeCheck : false,
+        onlyLeafCheck : true,
+        lines : false,
+        dnd : false,
+        onLoadSuccess:function(node,data){
+        }
+    });
+
+}
+
+

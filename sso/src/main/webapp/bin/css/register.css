@@ -1,0 +1,279 @@
+@charset "utf-8";
+/* CSS Document */
+
+*{ 
+  margin:0 0;
+  }
+body{
+	background:url(../../images/register/bg.png) repeat-x;
+	}
+#content{
+    position:absolute;
+    top:50%;
+    left:50%;
+    margin:-255px 0 0 -303px;
+    width:738px;
+    height:372px;
+	background-color:#adadad;
+	border:1px solid #fff;
+	}
+.title{
+	height:30px;
+	background-color:#03619b;
+	color:#fff;
+	font-family:"微软雅黑";
+	line-height:30px;
+	text-indent:5px;
+	}
+.login_menu{
+	height:112px;
+	background-color:#f0f0f0;
+	}
+.login_menu .div_bg{
+	margin:0 auto;
+	width:465px;
+	height:112px;
+	background:url(../../images/register/login_menu_bg01.png) no-repeat;
+    }
+.login_menu ul{
+	list-style:none;
+	margin-left:0px;
+	padding-left:0px;
+	}
+.login_menu ul li{
+    float:left;
+	display:block;
+	width:155px;
+	height:112px;
+	margin-left:0px;
+	}
+/*2014-01-17 wurb remove
+.login_menu .div_bg ul li a:link{
+	display:block;
+	width:90px;
+	height:90px;
+	font-family:"微软雅黑";
+	font-size:14px;
+	line-height:90px;
+	text-align:center;
+	background:url(../../images/register/step_normal.png);
+	color:#888888;
+	text-decoration:none;
+	}
+.login_menu .div_bg ul li a:visited{
+	display:block;
+	width:90px;
+	height:90px;
+	font-family:"微软雅黑";
+	font-size:14px;
+	line-height:90px;
+	text-align:center;
+	background:url(../../images/register/step_normal.png);
+	color:#888888;
+	text-decoration:none;
+	}
+.login_menu .div_bg ul li a:active{
+	background:url(../../images/register/step_focused.png);
+	color:#fff;
+	font-weight:bold;
+	text-decoration:none;
+	}
+.login_menu .div_bg ul li a:hover{
+	background:url(../../images/register/step_focused.png);
+	color:#fff;
+	font-weight:bold;
+	text-decoration:none;
+	}
+.login_menu .div_bg ul li a{
+	margin-top:11px;
+	margin-left:32px;
+	}
+.login_menu .div_bg ul li a.step_left{
+	margin-left:0px;
+	}
+.login_menu .div_bg ul li a.step_right{
+	float:right;
+	}
+*/
+.login_content{
+	width:100%;
+	height:236px;
+    font-family:"微软雅黑";
+	font-size:14px;
+	color:#000;
+	text-indent:3px;
+	}
+.star{
+	font-size:14px;
+	color:#f00;
+	line-height:14px;
+	}
+.login_content a:link{
+	display:block;
+	width:180px;
+	height:30px;
+	background-color:#e85601;
+	color:#fff;
+	text-decoration:none;
+	line-height:30px;
+	text-align:center;
+	}
+.login_content a:visited{
+	display:block;
+	width:180px;
+	height:30px;
+	background-color:#e85601;
+	color:#fff;
+	text-decoration:none;
+	line-height:30px;
+	text-align:center;
+	}
+.login_content a:active{
+	background-color:#1fa4c7;
+	color:#fff;
+	text-decoration:none;
+	}
+.login_content a:hover{
+	background-color:#1fa4c7;
+	color:#fff;
+	text-decoration:none;
+	}
+.log_input{
+	margin:0px;
+	padding:0px;
+	border:0px;
+	float:left;
+	width:180px;
+	height:24px;
+	line-height:20px;
+	font-size:14px;
+	}
+.login_content table{
+	margin:10px auto;
+	}
+.login_content table td{
+	padding:5px;
+	}
+input.btn{
+	font-family:"微软雅黑";
+	color:#fff;
+	width:88px;
+	height:30px;
+	background-color:#0165a3;
+	border:0px;
+	}
+.registerSuccess{
+	width:100%;
+	height:100px;
+	line-height:50px;
+	padding-top:10px;
+	}
+.registerSuccess p{
+	color:#000;
+	text-align:center;
+	}
+.registerSuccess .yellow{
+	color:yellow;
+	font-weight:bold;
+	}
+.gointo{
+	width:100%;
+	height:40px;
+    text-align:center;
+	line-height:40px;
+	}
+.gointo a{
+	margin:0 auto;
+	}
+/*2014-01-17 wurb add*/
+.leftNormal {
+	margin-top:11px;
+	margin-left:0px;
+	display:block;
+	width:90px;
+	height:90px;
+	font-family:"微软雅黑";
+	font-size:14px;
+	line-height:90px;
+	text-align:center;
+	background:url(../../images/register/step_normal.png);
+	color:#888888;
+	text-decoration:none;
+	}
+.middleNormal {
+	margin-top:11px;
+	margin-left:32px;
+	display:block;
+	width:90px;
+	height:90px;
+	font-family:"微软雅黑";
+	font-size:14px;
+	line-height:90px;
+	text-align:center;
+	background:url(../../images/register/step_normal.png);
+	color:#888888;
+	text-decoration:none;
+	}
+.rightNormal {
+	margin-top:11px;
+	margin-left:32px;
+	float:right;
+	margin-left:0px;
+	display:block;
+	width:90px;
+	height:90px;
+	font-family:"微软雅黑";
+	font-size:14px;
+	line-height:90px;
+	text-align:center;
+	background:url(../../images/register/step_normal.png);
+	color:#888888;
+	text-decoration:none;
+	}
+.leftFocused {
+	margin-top:11px;
+	margin-left:0px;
+	display:block;
+	width:90px;
+	height:90px;
+	font-family:"微软雅黑";
+	font-size:14px;
+	line-height:90px;
+	text-align:center;
+	background:url(../../images/register/step_focused.png);
+	color:#fff;
+	font-weight:bold;
+	text-decoration:none;
+	}
+.middleFocused {
+	margin-top:11px;
+	margin-left:32px;
+	display:block;
+	width:90px;
+	height:90px;
+	font-family:"微软雅黑";
+	font-size:14px;
+	line-height:90px;
+	text-align:center;
+	background:url(../../images/register/step_focused.png);
+	color:#fff;
+	font-weight:bold;
+	text-decoration:none;
+	}
+.rightFocused {
+	margin-top:11px;
+	margin-left:32px;
+	float:right;
+	margin-left:0px;
+	display:block;
+	width:90px;
+	height:90px;
+	font-family:"微软雅黑";
+	font-size:14px;
+	line-height:90px;
+	text-align:center;
+	background:url(../../images/register/step_focused.png);
+	color:#fff;
+	font-weight:bold;
+	text-decoration:none;
+	}

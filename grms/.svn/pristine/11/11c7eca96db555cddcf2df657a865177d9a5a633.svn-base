@@ -1,0 +1,50 @@
+$(".workorder-tabs>div").click(function(){
+	$(this).addClass("workorder-select").siblings().removeClass("workorder-select");
+	$(".addProject-pop>div").eq($(this).index()).addClass("addProject-pop-active").siblings().removeClass("addProject-pop-active");
+	setTimeout(function(){
+		dataFunc();
+	},500);
+});
+
+$("input[type='checkbox']").click(function(){
+	if($(this).is(':checked')){
+		$(this).parent().addClass("checkbox-bg");
+	}else{
+		$(this).parent().removeClass("checkbox-bg");
+	}
+});
+$("input[type='radio']").click(function(){
+	$("input[name='"+ $(this).attr('name') +"']").parent().removeClass("radio-bg");
+	if($(this).is(':checked')){
+		$(this).parent().addClass("radio-bg");
+	}
+});
+
+//格式化时间
+dataFunc();
+function dataFunc(){
+	console.log(3333)
+	$("#startTime").datebox({
+	    value : '2017-05-22',
+	    editable : false,
+	    onSelect : function(beginDate){
+	        $('.datebox-2').datebox('calendar').calendar({
+	            validator: function(date){
+	                return beginDate<=date;//<=
+	            }
+	        });
+	    }
+	});
+	
+	$("#endTime").datebox({
+	    value : '2017-05-22',
+	    editable : false,
+	    onSelect : function(endDate){
+	        $('.datebox-1').datebox('calendar').calendar({
+	            validator: function(date){
+	                return endDate>=date;
+	            }
+	        });
+	    }
+	});
+}

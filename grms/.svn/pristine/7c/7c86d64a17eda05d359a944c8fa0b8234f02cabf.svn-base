@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>合同管理</title>
+    <meta http-equiv="X-UA-Compatible" content="edge" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <link rel="stylesheet" type="text/css" href="../common/css/reset.css" />
+    <link rel="stylesheet" type="text/css" href="../common/css/default.css" />
+    <link rel="stylesheet" type="text/css" href="../common/easyui/themes/default/easyui.css" />
+    <link rel="stylesheet" type="text/css" href="../common/easyui/themes/icon.css" />
+    <link rel="stylesheet" type="text/css" href="../common/css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../contract/css/contract.css" />
+</head>
+<body>
+    <div class="wrap">
+        <div class="topTitle clearfix">
+            <div class="path1 fl">合同管理</div>
+            <div class="path2 fl">合同管理</div>
+        </div>
+        <div class="conditions-select clearfix">
+         <div class="account fl"></div>
+         <div class="account1 fl">
+                <input value="" id="contractOrAccount" placeholder="请输入项目名称/合同名称/客户名称/业务员名称" style="width:320px;" />
+            </div>
+            
+            <div class="time fl">时间：</div>
+            <div class="time-star fl">
+                <div class="datebox-1"></div>
+            </div>
+            <div class="to-line fl">--</div>
+            <div class="time-end fl">
+                <div class="datebox-2"></div>
+            </div>
+         <div class="account fl">合同类型：</div>
+            <div class="account fl">
+                <input id="contractType" value=""/>
+            </div>
+            <div class="account fl">合同状态：</div>
+            <div class="account fl">
+                <input id="contractStatus" value=""/>
+            </div>
+          
+         	<div class="search fl" onclick="findDepart('','')" id="select">查询</div>
+            <div class="create fl" data-id="0" onclick="newContract()" id="create">新建</div>
+        </div>
+        <div class="content-wrap">
+            <table id="dg"></table>
+            <div id="pp" style="position: relative;"></div>
+        </div>
+    </div>
+    <!-- 审批合同 -->
+    <div id="roleWin" style="display: none">
+    <div class="roleWin-wrap" id="roleWin1" >
+            <div class="detail-wrap"> 
+      
+                <div class="role-detail clearfix">
+                    <div class="cl2 fl">
+                        <textarea class="textarea-1" id="approveY" maxlength="300" placeholder="请输入审批意见"></textarea>
+                    </div>
+                </div>
+                
+            </div>
+
+        </div>
+
+  <!-- 审批不通过合同 -->
+    <div id="roleWin2" style="display: none">
+    <div class="roleWin-wrap"  id="roleWin3">
+            <div class="detail-wrap"> 
+      
+                <div class="role-detail clearfix">
+                    <div class="cl2 fl">
+                        <textarea class="textarea-1" id="approveN" maxlength="300" placeholder="请输入审批不通过意见"></textarea>
+                    </div>
+                </div>
+                
+            </div>
+
+        </div>
+    </div>
+    
+         <!-- 审批详情 -->
+    <div id="roleWin4" style="display: none">
+    <div class="roleWin-wrap"  id="roleWin5">
+            <div class="detail-wrap"> 
+      
+                <div class="role-detail clearfix">
+                    <div class="cl2 fl" id="approveDetail">
+                         
+                    </div>
+                </div>
+                
+            </div>
+
+        </div>
+    </div>
+    
+      <!-- 合同详情 -->
+    <div id="roleWin6" style="display: none">
+    <div class="roleWin-wrap"  id="roleWin7">
+            <div class="detail-wrap"> 
+      
+                <div class="role-detail clearfix">
+                    <div class="cl2 fl" id="contractDetail">
+                         
+                    </div>
+                </div>
+                
+            </div>
+
+        </div>
+    </div>
+    <script type="text/javascript"	src="../js/jquery-form.js"></script>
+    <script type="text/javascript"	src="../common/easyui/jquery.min.js"></script>
+    <script type="text/javascript"	src="../common/easyui/jquery.easyui.min.js"></script>
+    <script type="text/javascript"  src="../common/easyui/locale/easyui-lang-zh_CN.js" ></script>
+    <script type="text/javascript"	src="../common/plugin/common.js"></script>
+    <script type="text/javascript"	src="../contract/js/contract.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hori.grms.dao.ContractTemplateMapper" >
+  <resultMap id="BaseResultMap" type="com.hori.grms.model.ContractTemplate" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="url" property="url" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="creater_account" property="createrAccount" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, name, url, create_time, creater_account
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from contract_template
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+   <select id="selectByQueryBean" resultMap="BaseResultMap" parameterType="com.hori.grms.queryBean.ContractTemplateQueryBean" >
+    select 
+    <include refid="Base_Column_List" />
+    from contract_template
+        <where>
+             1=1
+            <if test="queryBean.startTime != null and queryBean.startTime != ''">
+                AND create_time >= #{queryBean.startTime,jdbcType=VARCHAR}
+            </if>
+            <if test="queryBean.endTime != null and queryBean.endTime != ''">
+              <![CDATA[  AND create_time <= #{queryBean.endTime,jdbcType=VARCHAR} ]]> 
+            </if>
+            <if test="queryBean.contractOrAccount != null and queryBean.contractOrAccount != ''">
+               AND ( name like CONCAT(CONCAT('%',
+                #{queryBean.contractOrAccount,jdbcType=VARCHAR}),'%') or creater_account like CONCAT(CONCAT('%',
+                #{queryBean.contractOrAccount,jdbcType=VARCHAR}),'%') )
+            </if>
+             <if test="queryBean.dataArea != 2 ">
+            AND creater_account in (${queryBean.userList})
+            </if>
+        </where>
+        order by create_time desc
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from contract_template
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.hori.grms.model.ContractTemplate" >
+    insert into contract_template (id, name, url, 
+      create_time, creater_account)
+    values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{createrAccount,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.hori.grms.model.ContractTemplate" >
+    insert into contract_template
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="url != null" >
+        url,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createrAccount != null" >
+        creater_account,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null" >
+        #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createrAccount != null" >
+        #{createrAccount,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.hori.grms.model.ContractTemplate" >
+    update contract_template
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null" >
+        url = #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createrAccount != null" >
+        creater_account = #{createrAccount,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.hori.grms.model.ContractTemplate" >
+    update contract_template
+    set name = #{name,jdbcType=VARCHAR},
+      url = #{url,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      creater_account = #{createrAccount,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

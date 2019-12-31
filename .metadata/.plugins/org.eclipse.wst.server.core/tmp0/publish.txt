@@ -1,0 +1,4 @@
+#Tomcat publish data
+#Wed Sep 12 14:11:44 CST 2018
+org.eclipse.jst.jee.server\:grms=D\:\\soft\\apache-tomcat-8.0.37\\wtpwebapps\\grms
+org.eclipse.jst.jee.server\:/binary\:E\:\\hlztCode\\sanweiProject\\grms\\src\\main\\webapp\\WEB-INF\\lib\\spring-web-4.2.0.RELEASE.jar=D\:\\soft\\apache-tomcat-8.0.37\\wtpwebapps\\grms\\WEB-INF\\lib\\spring-web-4.2.0.RELEASE.jar

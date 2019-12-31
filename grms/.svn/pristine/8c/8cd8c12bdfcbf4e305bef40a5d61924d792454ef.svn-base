@@ -1,0 +1,48 @@
+package com.hori.grms.dao;
+
+import com.hori.grms.model.ProjectActionException;
+import com.hori.grms.model.ProjectActionExceptionExample;
+import com.hori.grms.queryBean.PAExceptionQueryBean;
+import com.hori.grms.vo.ProjectActionExceptionVo;
+
+import java.util.List;
+import org.apache.ibatis.annotations.Param;
+
+public interface ProjectActionExceptionMapper {
+    long countByExample(ProjectActionExceptionExample example);
+
+    int deleteByExample(ProjectActionExceptionExample example);
+
+    int deleteByPrimaryKey(String id);
+
+    int insert(ProjectActionException record);
+
+    int insertSelective(ProjectActionException record);
+
+    List<ProjectActionException> selectByExample(ProjectActionExceptionExample example);
+
+    ProjectActionException selectByPrimaryKey(String id);
+
+    int updateByExampleSelective(@Param("record") ProjectActionException record, @Param("example") ProjectActionExceptionExample example);
+
+    int updateByExample(@Param("record") ProjectActionException record, @Param("example") ProjectActionExceptionExample example);
+
+    int updateByPrimaryKeySelective(ProjectActionException record);
+
+    int updateByPrimaryKey(ProjectActionException record);
+
+    /**
+     * 根据参数查询异常列表，按照上报时间倒序
+     * @param queryBean
+     * @return
+     */
+	List<ProjectActionExceptionVo> listException(@Param("queryBean") PAExceptionQueryBean queryBean);
+
+	/**
+	 * 根据异常记录id，修改执行部门确认状态
+	 * @param exceptionRecordId
+	 * @param confirmStatus
+	 * @return
+	 */
+	int changeCSById(@Param("id") String exceptionRecordId, @Param("confirmStatus") Short confirmStatus);
+}

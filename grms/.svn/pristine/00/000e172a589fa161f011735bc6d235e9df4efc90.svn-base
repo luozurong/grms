@@ -1,0 +1,21 @@
+.clearfixed{
+	position: relative;
+	margin-top: 20px;
+}
+.inputfixed{
+	position: absolute;
+	top: 20px;
+	left: 200px;
+	z-index: 1;
+	opacity: 0;
+}
+.pad{
+	padding-bottom: 40px;
+	margin-top:35px;
+}
+.pad>div{
+	display: inline-block;
+} 
+.quxiao{
+	margin-left: 20px;
+}

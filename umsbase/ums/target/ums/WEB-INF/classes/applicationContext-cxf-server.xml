@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<beans xmlns="http://www.springframework.org/schema/beans"  
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"   
+    xmlns:p="http://www.springframework.org/schema/p"  
+    xmlns:jaxws="http://cxf.apache.org/jaxws"  
+    xmlns:cxf="http://cxf.apache.org/core"  
+    xsi:schemaLocation="http://www.springframework.org/schema/beans   
+    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd   
+    http://cxf.apache.org/jaxws   
+    http://cxf.apache.org/schemas/jaxws.xsd">  
+    <import resource="classpath:META-INF/cxf/cxf.xml" />
+    
+    <!-- ws访问点 -->
+    
+	<jaxws:endpoint id="ws_iUserService" implementor="com.hori.ums.webservice.impl.IUserServiceImpl" address="/userService" />  	
+	
+	<bean id="ws_iAuthorizeAreaService" class="com.hori.ums.webservice.impl.IAuthorizeAreaServiceImpl"> </bean>
+	<jaxws:endpoint id="ws_iAuthorizeAreaService_ep" implementor="#ws_iAuthorizeAreaService" address="/authorizeAreaService" />  	
+	
+	<jaxws:endpoint id="ws_iWorkOrderFromUmsService" implementor="com.jlit.vdcs.webservice.impl.IWorkOrderFromUmsServiceImpl" address="/iWorkOrderFromUmsService"/>  	
+
+	<jaxws:endpoint id="ws_iUserValidateService" implementor="com.hori.ums.webservice.impl.IUserValidateServiceImpl" address="/iUserValidateService"/>  	
+
+	<jaxws:endpoint id="ws_iUserInfoService" implementor="com.hori.ums.webservice.impl.IUserInfoServiceImpl" address="/userInfoService" />	
+
+	<jaxws:endpoint id="ws_iUserByAuthorizeAreaService" implementor="com.jlit.vdcs.webservice.impl.IUserByAuthorizeAreaServiceImpl" address="/iUserByAuthorizeAreaService"/>
+</beans>													  					

@@ -1,0 +1,185 @@
+package com.hori.grms.controller;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.alibaba.fastjson.JSON;
+import com.hori.grms.model.Attachment;
+import com.hori.grms.model.ProjectAction;
+import com.hori.grms.model.ProjectProductMenuArea;
+import com.hori.grms.page.AjaxResult;
+import com.hori.grms.page.PageResult;
+import com.hori.grms.queryBean.ProjectActionDetailQueryBean;
+import com.hori.grms.queryBean.ProjectActionQueryBean;
+import com.hori.grms.queryBean.ZhUmbQueryBean;
+import com.hori.grms.service.ProjectActionService;
+import com.hori.grms.service.ProjectService;
+import com.hori.grms.vo.ProjectDetailsVo;
+/**
+ * 综合支持部门执行清单
+ * @author dell
+ *
+ */
+@Controller
+@RequestMapping("/zhongheDepart")
+public class ZhongheDepartController{
+	@Autowired
+	private ProjectActionService projectActionService;
+	
+	@Autowired
+	private ProjectService projectService;
+	
+	//社区首页
+	@RequestMapping("/sq")
+	public String sqIndex(){
+		return "/projectAction/zhongheDepartList.jsp";
+	}
+	//用户媒管电商首页
+	@RequestMapping("/umb")
+	public String index(){
+		return "/projectAction/zhongheUmbList.jsp";
+	}
+	
+	/**
+	 * 用户媒管电商执行清单列表
+	 * @param queryBean
+	 * @return
+	 */
+	@RequestMapping("/umbList")
+	@ResponseBody
+	public PageResult umbList(ZhUmbQueryBean qo){
+		System.out.println(qo.toString());
+		PageResult pageResult = null;
+		pageResult = projectActionService.queryUmbPage(qo);
+		return pageResult;
+	}
+	/**
+	 * 社区运营执行清单列表
+	 * @param queryBean
+	 * @return
+	 */
+	@RequestMapping("/sqList")
+	@ResponseBody
+	public PageResult sqList(ProjectActionQueryBean qo){
+		PageResult pageResult = null;
+		pageResult = projectActionService.queryPage(qo);
+		return pageResult;
+	}
+	
+	//执行清单详情页
+	@RequestMapping("/actionDetail")
+	public String actionDetail(HttpServletRequest request, HttpServletResponse response){
+		String optType = (String) request.getAttribute("optType");
+		if (optType==null||optType=="") {
+			optType = "0";
+		}
+		Byte roleType = (Byte) request.getSession().getAttribute("roleType");
+		String actionCode = request.getParameter("actionCode");//执行清单编码
+		
+		//根据清单编码查出项目编码
+		ProjectAction projectAction = projectActionService.getByCode(actionCode);
+		ProjectDetailsVo projectVo =  projectService.findProjectDetailsVoByProjectCode(projectAction.getProjectCode());
+		request.setAttribute("projectVo", projectVo);
+		request.setAttribute("actionCode", actionCode);
+		
+		if (roleType.equals('0')||roleType.equals('1')) {//业务部门
+			return "/projectAction/projectActionYWDetail.jsp";
+		}else if (roleType.equals('4')||optType=="1") {//社区部门或者综合-社区部门
+			return "/projectAction/projectActionSQDetail.jsp";
+		}else {
+			return "/projectAction/projectActionDetail.jsp";
+		}
+	}
+
+	/**
+	 * 返回资源清单数据
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping("/getActionData")
+	@ResponseBody
+	public PageResult viewProject(ProjectActionDetailQueryBean qb,HttpServletRequest request){
+		Byte roleType = (Byte) request.getSession().getAttribute("roleType");
+		System.out.println(roleType);
+		//业务类型（1社区运营 2 媒管 3用户运营 4电商运营）
+		if (roleType.equals("4")) {//社区运营
+			qb.setBusinessType("1");
+		}else if (roleType.equals("5")) {//电商运营
+			qb.setBusinessType("4");
+		}else if (roleType.equals("6")) {//用户运营
+			qb.setBusinessType("3");
+		}else if (roleType.equals("7")) {//媒管
+			qb.setBusinessType("2");
+		}else if (roleType.equals("8")) {//综合支持
+			qb.setBusinessType("");
+		}else {
+			qb.setBusinessType("");
+			//return null;
+		}
+		PageResult pageResult = null;
+		pageResult = projectActionService.queryActionData(qb);
+		return pageResult;
+	}
+	@RequestMapping("/getActionAttachmentData")
+	@ResponseBody
+	public PageResult viewProjeActionAttachment(ProjectActionDetailQueryBean qb,HttpServletRequest request){
+		PageResult pageResult = null;
+		pageResult = projectActionService.queryAttachmentData(qb);
+		return pageResult;
+	}
+	@RequestMapping("/uploadAttachment")
+	@ResponseBody
+	public AjaxResult update(Attachment attachment){
+		AjaxResult result = null;
+		try{
+			attachment.setId(UUID.randomUUID().toString().replace("-", ""));
+			projectActionService.insert(attachment);
+			result = new AjaxResult(true,"上传成功");
+		}catch(Exception e){
+			e.printStackTrace();
+			result = new AjaxResult(false,"上传失败！");
+		}
+		return result;
+	}
+	@RequestMapping("/showArea")
+	@ResponseBody
+	public String showArea(String projectProductMenuId){
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		try{
+			List<ProjectProductMenuArea> areaList = projectActionService.getShowAreaDataByPPMID(projectProductMenuId);
+			
+			resultMap.put("success", true);
+			resultMap.put("areaList", areaList);
+		}catch(Exception e){
+			e.printStackTrace();
+			resultMap.put("success", false);
+		}
+		return JSON.toJSONString(resultMap);
+	}
+	@RequestMapping("/deleteAttatment")
+	@ResponseBody
+	public AjaxResult deleteAttatment(String id){
+		AjaxResult result = null;
+		try{
+			projectActionService.deleteAttatment(id);
+			result = new AjaxResult(true,"删除成功");
+		}catch(Exception e){
+			e.printStackTrace();
+			result = new AjaxResult(false,"删除失败！");
+		}
+		return result;
+	}
+	
+	
+}

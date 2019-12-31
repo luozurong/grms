@@ -1,0 +1,124 @@
+﻿*{font-size:14px; font-family:Tahoma,Verdana,微软雅黑,新宋体}
+body{/*background:#D2E0F2;*/ }
+a{ color:Black; text-decoration:none;}
+a:hover{  text-decoration:none;}
+.textbox03 {border: #878787 1px solid;padding: 4px 3px;font:Verdana, Geneva, sans-serif,宋体;line-height: 14px; background-color: #fff;  height: auto; font-size: 14px;  font-weight: bold; width: 190px; }
+
+.txt01{font:Verdana, Geneva, sans-serif,宋体;padding:3px 2px 2px 2px; border-width:1px; border-color:#ddd;  color:#000;}
+.txt {border: #878787 1px solid;padding: 4px 3px;font:Verdana, Geneva, sans-serif,宋体;line-height: 14px; background-color: #fff;  height: auto; font-size: 14px;}
+.footer{text-align:center;color:#15428B; margin:0px; padding:0px;line-height:23px; font-weight:bold;}
+
+.head a{color:White;text-decoration:underline;}
+
+.easyui-accordion ul{list-style-type:none;margin:0px; padding:10px;}
+.easyui-accordion ul li{ padding:0px;}
+.easyui-accordion ul li a{line-height:24px;}
+.easyui-accordion ul li div{margin:2px 0px;padding-left:10px;padding-top:2px;}
+.easyui-accordion ul li div.hover{border:1px dashed #99BBE8; background:#E0ECFF;cursor:pointer;}
+.easyui-accordion ul li div.hover a{color:#416AA3;}
+.easyui-accordion ul li div.selected{border:1px solid #99BBE8; background:#E0ECFF;cursor:default;}
+.easyui-accordion ul li div.selected a{color:#416AA3; font-weight:bold;}
+
+
+
+.icon{padding:2px 9px; background:url(../images/tabicons.png) no-repeat; }
+.icon-sys{ background:url(../images/directory.png) no-repeat;}
+.icon-add{background-position: -19px 0px;}
+.icon-nav{background-position: -100px -18px;}
+.icon-users{background-position: -100px -480px;}
+.icon-role{background-position: -360px -200px;}
+.icon-set{background-position: -380px -200px;}
+.icon-log{background-position: -380px -80px;}
+
+.checkbox-icon{
+	position: relative;
+	z-index: 1;
+	background: url(../images/ic_choice-grey_nor.png) no-repeat 0  1px;
+}
+.checkbox-bg{
+	position: relative;
+	background: url(../images/ic_choice_green.png) no-repeat 0  1px;
+	z-index: 1;
+}
+.radio-icon{
+	position: relative;
+	z-index: 1;
+	background: url(../images/ic_choice-grey_nor2.png) no-repeat 0  1px;
+}
+.radio-bg{
+	position: relative;
+	background: url(../images/ic_choice_green2.png) no-repeat 0  1px;
+	z-index: 1;
+}
+label input[type="radio"],label input[type="checkbox"]{
+	opacity: 0;
+	margin-right: 10px;
+}
+.dataCheck{
+	background: url(../images/ic_choice-grey_nor.png) no-repeat center  1px;
+}
+.dataChecked{
+	background: url(../images/ic_choice_green.png) no-repeat center  1px;
+}
+.dialog-button{
+	/*height: 80px;*/
+	/*box-sizing: border-box;*/
+	text-align: center;
+	border-color: #fff !important;
+	background-color: #fff;
+	border-top: 1px solid #eee !important;
+}
+.dialog-button a{
+	margin:0;
+    padding:0;
+    display:inline-block;
+    _display:inline;
+    *display:inline;
+    width: 122px;
+    height: 42px;
+    line-height: 41px;
+    margin: 12px 20px;
+    vertical-align: middle;
+}
+.dialog-button a:active{
+	border: none;
+}
+.window .window-header .panel-tool{
+    display: none;
+}
+.dialog-button a:first-child{
+	background: #fff !important;
+	color: #333;
+}
+.dialog-button a:last-child{
+	background: #51d2b6 !important;
+	color: #fff;
+	border: 1px solid #51d2b6;
+}
+.l-btn-text{
+	display: inline-block;
+	line-height: 42px !important;
+}
+.pagination-page-list, .pagination .pagination-num{
+	border-color: #ccc;
+}
+#pp{
+	padding-left: 10px;
+	padding-right: 10px; 
+	background: #fff !important; 
+	border: 1px solid #eee;
+	height: 50px;
+	margin-top: 20px;
+	position: relative;
+}
+#pp .l-btn-text{
+	line-height: 24px !important;
+}
+#pp td:first-child{
+	position: absolute;
+	left: 20px;
+	top: 0;
+}
+.pagination table{
+	float: right;
+}

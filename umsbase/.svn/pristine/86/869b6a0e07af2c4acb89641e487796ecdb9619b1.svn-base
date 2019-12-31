@@ -1,0 +1,13 @@
+package com.hori.service;
+
+
+/**
+ * 操作记录
+ */
+public interface OperationRecordService extends BaseServiceI{	
+	/**
+	 * 保存操作
+	 */
+	public void save(String operationModule,String operationType);
+	
+}

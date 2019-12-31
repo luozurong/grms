@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>jQuery垂直时间轴样式代码 - 站长素材</title>
+
+<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+
+<link rel="stylesheet" type="text/css" href="css/style.css" />
+
+</head>
+
+<body>
+
+<script type="text/javascript">
+$(document).ready(function(e) {
+	var h = $(".about4_main ul li:first-child").height()/2;<!--第一个li高度的一半-->
+	var h1 = $(".about4_main ul li:last-child").height()/2;<!--最后一个li高度的一半-->
+	$(".line").css("top",h);
+	$(".line").height($(".about4_main").height()-h1-h);
+});
+</script>
+	
+<div class="about4">
+	<div class="about4_ch">成长经历</div>
+	<div class="about4_main">
+		<div class="line"></div>
+			<ul>
+				<li>
+					2011年走进大学的校园
+				</li>
+				<li>
+					2011-2013在学校获得了各种奖项
+				</li>
+				<li>
+					2014年我对大学的想法有了本质的转变
+				</li>
+				<li>
+					2015年我毕业了，开始在互联网的浪潮中艰难生存
+				</li>
+				<li>
+					无论li内容多少，直线都不会超出，并且红点永远居中的
+				</li>
+			</ul>
+		</div>
+	</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,165 @@
+function goback(){
+	window.location.href="communityAction!goCommunityList.html?goback=1";
+}
+
+//添加客户
+function addCustomer(){	
+	 wrapMaskShow();//父级遮罩显示
+	 $('body').css('overflow','hidden');//禁止滚动
+	 
+	 $('#add_Customer').dialog({
+	        width:600,
+	        height:500,
+	        modal:true,
+	        collapsible:false,
+	        minimizable:false,
+	        maximizable:false,
+	        closable:true,
+	        draggable:false,
+	        resizable:false,
+	        inline:false,
+	        title:"选择客户",
+	        ok:"确定",
+	        cancel:"取消",
+	        buttons:[{
+	            text:'确认',
+	            handler:function(){
+	                wrapMaskHide();
+	                
+	                
+	                if($("input[name='customer']:checked").val()){	                	
+	                	var customer_id=$("input[name='customer']:checked").val();
+	                	$("#customerId").val(customer_id);
+	                	var customerInfo=$("#customerList").datagrid("getSelected");	           	                
+	                	$("#customerName").val(customerInfo.contactor+'-'+customerInfo.department+'-'+customerInfo.name);
+	                	$("#customerName").attr("hidden",false);
+	                }
+	            	
+	            	$('#add_Customer').dialog('close');
+	            }
+	        },{
+	            text:'取消',
+	            handler:function(){
+	                wrapMaskHide();
+	                
+	                $('#add_Customer').dialog('close');
+	            }
+	        }],
+
+	        onClose : function(){
+	            wrapMaskHide();//父级遮罩隐藏
+	            $('body').css('overflow','auto');//恢复滚动
+	        }
+	    });
+	    winHiSelfAdaptation($('#roleWin_detail'));//弹窗定位
+	    	    
+}
+
+function initCustomerList(){
+//	表格数据渲染
+    $('#customerList').datagrid({
+    	url:'customer.json',
+    	queryParams:{
+    		pageSize:8,
+        	pageNo:	1
+    	},
+        border:true,
+        pageSize:8,
+        scrollbarSize:0,
+        nowrap:false,//允许换行
+        fitColumns:true,//宽度自适应
+        selectOnCheck:true,
+        singleSelect:true,
+        emptyMsg:'<span>无记录</span>',
+        fitColumns:true,//宽度不自适应
+        checkOnSelect:false,//点击该复选框的时候才会选中或取消
+        onClickRow: function(rowIndex, rowData){
+            //加载完毕后获取所有的checkbox遍历
+            var radio = $("input[name='customer']")[rowIndex].disabled;
+            //如果当前的单选框不可选，则不让其选中
+            if (radio!= true) {
+                //让点击的行单选按钮选中
+                $("input[name='customer']")[rowIndex].checked = true;
+            }
+            else {
+                $("input[name='customer']")[rowIndex].checked = false;
+            }
+        },
+        columns:[[
+          {
+              field:'id',
+              title:'',          
+              width:10,
+              align:'center',
+              formatter: function (value, row, index) {  
+                  return "<input name='customer' type='radio' value='"+row.id+"'/> ";  
+              }  
+          },{
+                field:'contactor',
+                title:'主要联系人',                
+                width:50,
+                align:'center'
+            },{
+                field:'dutyName',
+                title:'负责人名称',
+                width:50,
+                align:'center'
+            }/*,{
+                field:'id',
+                title:'客户id',
+                checkbox:true,
+                width:50,
+                align:'center'
+            }*/,{
+            	 field:'name',
+                 title:'客户名称',                 
+                 width:50,
+                 align:'center'
+            },{
+           	 field:'department',
+             title:'所属部门',
+             width:50,
+             align:'center'
+        }
+        ]],
+        onLoadSuccess: function (data) {   
+        	paginationpage(data.total);
+        }
+    });
+    
+}
+
+function paginationpage(total){
+	
+    //分页
+    $('#pp').pagination({
+        total:total,
+        layout:['first','prev','links','next','last','manual'],
+        emptyMsg: '<span>无记录</span>',
+        showRefresh:true,
+        displayMsg:' ',
+        onSelectPage:function (pageNo, pageSize) {
+        	pageNoAll=pageNo;
+        	pageSizeAll=pageSize;
+            $("#customerList").datagrid('load', {    
+            	pageSize:8,
+            	pageNo:	pageNo
+             });
+       }
+      });
+}
+
+
+
+
+
+
+
+
+
+
+$(function(){ 
+	initCustomerList();
+
+});
+

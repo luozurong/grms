@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hori.grms.dao.CustomerMapper" >
+    <resultMap id="BaseResultMap" type="com.hori.grms.model.Customer" >
+        <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="customer_type_id" property="customerTypeId" jdbcType="VARCHAR" />
+        <result column="industry" property="industry" jdbcType="VARCHAR" />
+        <result column="department" property="department" jdbcType="VARCHAR" />
+        <result column="province" property="province" jdbcType="VARCHAR" />
+        <result column="province_name" property="provinceName" jdbcType="VARCHAR" />
+        <result column="city" property="city" jdbcType="VARCHAR" />
+        <result column="city_name" property="cityName" jdbcType="VARCHAR" />
+        <result column="area" property="area" jdbcType="VARCHAR" />
+        <result column="area_name" property="areaName" jdbcType="VARCHAR" />
+        <result column="address" property="address" jdbcType="VARCHAR" />
+        <result column="duty_name" property="dutyName" jdbcType="VARCHAR" />
+        <result column="duty_phone" property="dutyPhone" jdbcType="VARCHAR" />
+        <result column="contactor" property="contactor" jdbcType="VARCHAR" />
+        <result column="contactor_phone" property="contactorPhone" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="creator_name" property="creatorName" jdbcType="VARCHAR" />
+        <result column="creator_account" property="creatorAccount" jdbcType="VARCHAR" />
+        <result column="creator_level" property="creatorLevel" jdbcType="VARCHAR" />
+        <result column="owner_name" property="ownerName" jdbcType="VARCHAR" />
+        <result column="owner_account" property="ownerAccount" jdbcType="VARCHAR" />
+        <result column="owner_level" property="ownerLevel" jdbcType="VARCHAR" />
+        <result column="remark" property="remark" jdbcType="VARCHAR" />
+    </resultMap>
+	
+	<select id = "getAll" parameterType="java.lang.String" resultType="java.util.HashMap">
+		SELECT 
+			c.id as custId,c.create_time as createTime,c.industry as industry,ct.name as customerType,
+			c.name as name,c.address as address,c.department as department,c.province_name as province,
+			c.contactor as contactor,c.contactor_phone as contactorPhone,c.city_name as city,c.area_name as district
+			FROM customer c left join customer_type ct 
+			on c.customer_type_id = ct.id 
+		where 1=1 
+		
+		<if test="userAccount != null and userAccount != ''">
+			AND c.owner_account = #{userAccount} 
+		</if>
+		
+		<if test="condition != null and condition !=''">
+		
+			and concat(c.name,c.contactor,c.duty_name,c.contactor_phone) LIKE CONCAT(CONCAT( '%', #{condition} ), '%' )
+		
+	<!-- 		and c.name LIKE CONCAT(CONCAT('%',#{condition}),'%')
+			OR
+			c.contactor LIKE CONCAT(CONCAT('%',#{condition}),'%')
+			OR
+			c.duty_name LIKE CONCAT( CONCAT( '%', #{condition} ), '%' ) 
+			OR
+			c.contactor_phone LIKE concat( concat( '%', #{condition} ), '%' ) -->
+		</if>
+		order by c.create_time desc
+	</select>
+	
+	<select id="fetchCustomerById" parameterType="java.lang.String" resultType="java.util.HashMap">
+		SELECT 
+			c.id as custId,c.industry as industry,ct.name as customerType,c.province_name as province,c.province as provinceId,
+			c.name as name,c.address as address,c.department as department,c.city_name as city,c.area_name as district,c.city as cityId,
+			c.contactor as contactor,c.contactor_phone as contactorPhone,c.owner_name as salesman,c.area as districtId,ct.id as customerTypeId,
+			c.duty_name as dutyName,c.duty_phone as dutyPhone,c.remark as remark,c.owner_account as account
+			FROM customer c left join customer_type ct 
+			on c.customer_type_id = ct.id 
+		where 1=1 and c.id = #{id}
+	</select>
+	
+	<select id="getExport" parameterType="java.lang.String" resultType="java.util.HashMap">
+		select
+			c.name as name,c.province_name as province,c.city_name as city,c.area_name as district,c.address as address,
+			ct.name as customerType,c.industry as industry,c.department as department,c.contactor as contactor,
+			c.contactor_phone as contactorPhone,c.duty_name as dutyName,c.duty_phone as dutyPhone,c.owner_name as salesman
+			FROM customer c left join customer_type ct 
+			on c.customer_type_id = ct.id 
+		where 1=1
+		
+		<if test="userAccount != null and userAccount != ''">
+			AND c.owner_account = #{userAccount} 
+		</if>
+		
+		<if test="condition != null and condition !=''">
+			and concat(c.name,c.contactor,c.duty_name,c.contactor_phone) LIKE CONCAT(CONCAT( '%', #{condition} ), '%' )
+			<!-- and c.name LIKE CONCAT(CONCAT('%',#{condition}),'%')
+			OR
+			c.contactor LIKE CONCAT(CONCAT('%',#{condition}),'%')
+			OR
+			c.duty_name LIKE CONCAT( CONCAT( '%', #{condition} ), '%' ) 
+			OR
+			c.contactor_phone LIKE concat( concat( '%', #{condition} ), '%' ) -->
+		</if>
+		order by c.create_time desc
+	</select>
+	
+	<delete id="deleteById" parameterType="java.lang.String" >
+        delete from customer where id in
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">   
+            #{item}   
+         </foreach>
+    </delete>
+	
+	<select id="fetchCompanyByName" parameterType="java.lang.String" resultType="java.util.HashMap">
+		SELECT
+			c.name as name,c.owner_name as salesman 
+		FROM customer c where 1=1 and c.name LIKE CONCAT(CONCAT('%',#{condition}),'%')
+	</select>
+	
+	<select id="transferInfoById" parameterType="java.lang.String" resultType="java.util.HashMap">
+		SELECT 
+			create_time as time,former_name as formerName,accepter_name as accepterName,creater_name as createName
+		FROM customer_turn_log where 1=1 and customer_id = #{id} order by create_time desc
+	</select>
+	
+    
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+        select 
+        *
+        from customer
+        where id = #{id,jdbcType=VARCHAR}
+    </select>
+
+    <insert id="insert" parameterType="com.hori.grms.model.Customer" >
+        insert into customer (id, name, customer_type_id, 
+            industry, department, province, 
+            province_name, city, city_name, 
+            area, area_name, address, 
+            duty_name, duty_phone, contactor, 
+            contactor_phone, create_time, update_time, 
+            creator_name, creator_account, creator_level, 
+            owner_name, owner_account, owner_level, 
+            remark)
+        values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{customerTypeId,jdbcType=VARCHAR}, 
+            #{industry,jdbcType=VARCHAR}, #{department,jdbcType=VARCHAR}, #{province,jdbcType=VARCHAR}, 
+            #{provinceName,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR}, #{cityName,jdbcType=VARCHAR}, 
+            #{area,jdbcType=VARCHAR}, #{areaName,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, 
+            #{dutyName,jdbcType=VARCHAR}, #{dutyPhone,jdbcType=VARCHAR}, #{contactor,jdbcType=VARCHAR}, 
+            #{contactorPhone,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+            #{creatorName,jdbcType=VARCHAR}, #{creatorAccount,jdbcType=VARCHAR}, #{creatorLevel,jdbcType=VARCHAR}, 
+            #{ownerName,jdbcType=VARCHAR}, #{ownerAccount,jdbcType=VARCHAR}, #{ownerLevel,jdbcType=VARCHAR}, 
+            #{remark,jdbcType=VARCHAR})
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.hori.grms.model.Customer">
+        update customer
+        <set >
+            <if test="name != null" >
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="customerTypeId != null" >
+                customer_type_id = #{customerTypeId,jdbcType=VARCHAR},
+            </if>
+            <if test="industry != null" >
+                industry = #{industry,jdbcType=VARCHAR},
+            </if>
+            <if test="department != null" >
+                department = #{department,jdbcType=VARCHAR},
+            </if>
+            <if test="province != null" >
+                province = #{province,jdbcType=VARCHAR},
+            </if>
+            <if test="provinceName != null" >
+                province_name = #{provinceName,jdbcType=VARCHAR},
+            </if>
+            <if test="city != null" >
+                city = #{city,jdbcType=VARCHAR},
+            </if>
+            <if test="cityName != null" >
+                city_name = #{cityName,jdbcType=VARCHAR},
+            </if>
+            <if test="area != null" >
+                area = #{area,jdbcType=VARCHAR},
+            </if>
+            <if test="areaName != null" >
+                area_name = #{areaName,jdbcType=VARCHAR},
+            </if>
+            <if test="address != null" >
+                address = #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="dutyName != null" >
+                duty_name = #{dutyName,jdbcType=VARCHAR},
+            </if>
+            <if test="dutyPhone != null" >
+                duty_phone = #{dutyPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="contactor != null" >
+                contactor = #{contactor,jdbcType=VARCHAR},
+            </if>
+            <if test="contactorPhone != null" >
+                contactor_phone = #{contactorPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creatorName != null" >
+                creator_name = #{creatorName,jdbcType=VARCHAR},
+            </if>
+            <if test="creatorAccount != null" >
+                creator_account = #{creatorAccount,jdbcType=VARCHAR},
+            </if>
+            <if test="creatorLevel != null" >
+                creator_level = #{creatorLevel,jdbcType=VARCHAR},
+            </if>
+            <if test="ownerName != null" >
+                owner_name = #{ownerName,jdbcType=VARCHAR},
+            </if>
+            <if test="ownerAccount != null" >
+                owner_account = #{ownerAccount,jdbcType=VARCHAR},
+            </if>
+            <if test="ownerLevel != null" >
+                owner_level = #{ownerLevel,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null" >
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+    
+    <select id="selectByOwnerAccount"  resultMap="BaseResultMap">
+      select * from  customer where creator_account=#{ownerAccount}
+    </select>
+    
+    
+</mapper>

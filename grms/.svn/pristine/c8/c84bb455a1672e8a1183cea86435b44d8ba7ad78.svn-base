@@ -1,0 +1,125 @@
+var i = 2;
+//初始化按钮
+$(function(){
+	
+});
+
+
+//提交
+function submit(){
+	var param = packageFrom();
+	console.log(JSON.stringify(param));
+	var contractCode = $("#contractCode").val();
+	$.ajax({  
+        type : "POST",  //提交方式  
+        url : "/grms/backMoneyPlan/editBackMoneyPlan",//路径  
+        dataType : "json",//数据，这里使用的是Json格式进行传输  
+        data: JSON.stringify(param),  
+        contentType:'application/json;charset=utf-8',
+        success : function(result) {//返回数据根据结果进行相应的处理  
+            if ( result.success) {  
+            	infoMask('提交成功');
+            } else {  
+            	infoMask('提交失败');
+            }  
+        }  
+    }); 
+}
+
+
+//删除模板
+function removeTemplate(str){
+	$("#template"+str).nextAll().remove();
+	i--;
+}
+
+//继续添加模板
+function copyTemplate(){
+	var htl = '';
+	htl += '<div class="newTemplate">';
+	htl += '<div class="table-wrap">';
+	htl +=	'<div  class="table-wrap-a">';
+	htl +=		'<span class="wrap-span">第'+i+'期：</span>';
+	htl +=		'<span><a href="javascript:void(0);" onclick="copyTemplate()">继续添加</a></span>';
+	htl +=		'<span  style="margin-left: 20px;"><a href="javascript:void(0);" onclick="removeTemplate('+i+')">删除</a></span>'	;
+	htl +=	'</div>	';
+	htl +=  '</div>';
+	htl += '<div class="table-wrap">';
+	htl +=	'<div>';
+	htl +=		'<span class="wrap-span">款项属性：</span>';
+	htl +=		'<span>';
+	htl +=			'<label class="radio-icon"><input type="checkbox" class="planType" checked="checked">进度款</label>';
+	htl +=			'<label class="radio-icon" style="margin-left: 20px;"><input type="checkbox" class="planType" ">结算款</label>';
+	htl +=		'</span>	';
+	htl +=	'</div>	';
+	htl += '</div>	';
+	htl += '<div class="table-wrap">';
+	htl +=	'<div>';
+	htl +=		'<span class="wrap-span">计划收款时间：</span>';
+	htl +=		'<span>';
+	htl +=		'	<input id="planTime" name="planTime" style="height: 32px;" type="text" class="easyui-datebox planTimes"/>';
+	htl +=		'</span>	';
+	htl +=	'</div>	';
+	htl += '</div>	';
+	htl += '<div class="table-wrap">';
+	htl += 	'<div>';
+	htl +=		'<span  class="wrap-span">计划回款金额：</span>';
+	htl +=		'<span>';
+	htl +=			'<input id="planMoney" class="planMoneys" name="planMoney" type="text"/>';
+	htl +=		'</span>	';
+	htl +=	'</div>	';
+	htl += '</div>	';
+	htl += '<div class="table-wrap"  style="padding-bottom: 20px;">';
+	htl +=	'<div>';
+	htl +=	'	<span  class="wrap-span">备注：</span>';
+	htl +=		'<span>';
+	htl +=		'	<input class="remarks" id="remark" name="remark" type="text"/>';
+	htl +=		'</span>	';
+	htl +=	'</div>	';
+	htl +=	'</div>	';
+	var targetObj = $("#template").append(htl);
+	$.parser.parse(targetObj);
+
+	readonlyFunc();
+		
+
+	i++;
+	
+}
+
+
+//获取表单数据并封装
+function packageFrom(){
+	/*params.description=description;*/
+	//收款计划信息
+	var listLink=[];
+		
+	$(".newTemplate").each(function(index,element){
+		var plan={};		
+		
+		type=$(element).find('input[name="planType"]:checked').val();	
+		
+		backMoneyPlanCode= $('#backMoneyPlanCode').val();
+		planBackTime =$(element).find('.planTimes').eq(0).datebox('getValue');
+		planBackMoney=$(element).find('.planMoneys').val();
+		remark       =$(element).find('.remarks').val();
+		id = $(element).find('#id').val();
+		plan.id=id;
+		plan.type=type;
+		plan.planBackTime=planBackTime;
+		plan.planBackMoney=planBackMoney;
+		plan.remark=remark;
+		plan.backMoneyPlanCode=backMoneyPlanCode;
+		listLink.push(plan);
+	});
+	return listLink;
+}
+
+
+function changeType(s){
+	if(s=='1'){//进度款
+		
+	}else if(s=='2'){//结算款
+		
+	}
+}

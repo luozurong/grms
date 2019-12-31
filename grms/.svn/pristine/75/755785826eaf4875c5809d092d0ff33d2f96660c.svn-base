@@ -1,0 +1,557 @@
+/**
+ * 
+ */
+package com.hori.grms.controller;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.github.pagehelper.PageInfo;
+import com.hori.grms.model.Attachment;
+import com.hori.grms.model.Customer;
+import com.hori.grms.model.ProductMenu;
+import com.hori.grms.pageModel.Json;
+import com.hori.grms.queryBean.ProjectQueryBean;
+import com.hori.grms.service.AreaDataService;
+import com.hori.grms.service.ProductMenuService;
+import com.hori.grms.service.ProjectProductService;
+import com.hori.grms.vo.AreaDataReqVo;
+import com.hori.grms.vo.AreaDataRspVo;
+import com.hori.grms.vo.AreaDataRspVo.AreaData;
+import com.hori.grms.vo.project.ProductMenuVo;
+import com.hori.grms.vo.project.ProjectMenuVo;
+import com.hori.grms.vo.project.ProjectVo;
+
+/**
+ * @ClassName: ProjectProductController
+ * @Description: 项目清单
+ * @author zhuqiang
+ * @date 2018年8月13日 下午5:11:15
+ */
+@Controller
+@RequestMapping("/projectProduct")
+public class ProjectProductController extends BaseController {
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+	@Autowired
+	private ProjectProductService projectProductService;
+	@Autowired
+	private AreaDataService areaDataService;
+	@Autowired
+	private ProductMenuService productMenuService;
+
+	/**
+	 * operate:0-新增,1-修改 businessType:修改类型: 1社区运营 2 媒管 3用户运营 4电商运营 非必须 id:
+	 * 社区类型需要 场次id获取信息
+	 * 
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/goProjectProduct", produces = "text/html;charset=UTF-8;")
+	public String goProjectProduct(HttpServletRequest request,
+			@RequestParam(value = "operate", required = false) Integer operate,
+			@RequestParam(value = "businessType", required = false) Integer businessType,
+			@RequestParam(value = "id", required = false) String id,
+			@RequestParam(value = "projectVoStr") String projectVoStr) {
+		String projectVoStr2 = projectVoStr.replaceAll("&quot;", "\"");
+		ProjectVo projectVo = JSON.parseObject(projectVoStr2, ProjectVo.class);
+
+		request.getSession().setAttribute("projectVoStr", JSON.toJSONString(projectVo));
+
+		request.setAttribute("operate", operate);
+		if (operate == 1) {
+			request.setAttribute("businessType", businessType);
+		}
+
+		HttpSession session = request.getSession();
+
+		if (operate == 1 && businessType == 1) {
+			// 将1 的信息保存到request1中
+			List<ProjectMenuVo> project1List = JSON.parseArray((String) session.getAttribute("project1Str"),
+					ProjectMenuVo.class);
+			for (ProjectMenuVo projectMenuVo : project1List) {
+				if (projectMenuVo.getId().equals(id)) {
+					request.setAttribute("project1", projectMenuVo);
+					for (ProductMenuVo productMenuVo : projectMenuVo.getProjectMenus()) {
+						request.setAttribute("p" + productMenuVo.getId(), productMenuVo);
+					}
+				}
+			}
+		}
+
+		// 将 2 的信息保存
+		String project2Str = (String) session.getAttribute("project2Str");
+		if (StringUtils.isNotBlank(project2Str)) {
+			ProjectMenuVo projectMenuVo2 = JSON.parseObject(project2Str, ProjectMenuVo.class);
+			request.setAttribute("project2", projectMenuVo2);
+			for (ProductMenuVo productMenuVo : projectMenuVo2.getProjectMenus()) {
+				request.setAttribute("p" + productMenuVo.getId(), productMenuVo);
+			}
+		}
+		
+		List<ProductMenuVo>  listNums=new ArrayList<>();
+		// 将 3 的信息保存
+		String project3Str = (String) session.getAttribute("project3Str");
+		if (StringUtils.isNotBlank(project3Str)) {
+			ProjectMenuVo projectMenuVo3 = JSON.parseObject(project3Str, ProjectMenuVo.class);
+			request.setAttribute("project3", projectMenuVo3);
+			for (ProductMenuVo productMenuVo : projectMenuVo3.getProjectMenus()) {
+				request.setAttribute("p" + productMenuVo.getId(), productMenuVo);				
+				listNums.add(productMenuVo);
+			}
+		}
+
+		// 将 4 的信息保存
+		String project4Str = (String) session.getAttribute("project4Str");
+		if (StringUtils.isNotBlank(project4Str)) {
+			ProjectMenuVo projectMenuVo4 = JSON.parseObject(project4Str, ProjectMenuVo.class);
+			request.setAttribute("project4", projectMenuVo4);
+			for (ProductMenuVo productMenuVo : projectMenuVo4.getProjectMenus()) {
+				request.setAttribute("p" + productMenuVo.getId(), productMenuVo);
+				listNums.add(productMenuVo);
+			}
+		}
+		
+		//封装3,4 清单对应的剩余次数
+	    Map<String, Integer>  mapNum=productMenuService.findAddMeas(listNums);
+		
+         request.setAttribute("addNum",JSON.toJSON(mapNum));
+		return "project/addProjectProdect.jsp";
+	}
+
+	/**
+	 * 返回
+	 */
+	@RequestMapping(value = "/backAddProject", produces = "text/html;charset=UTF-8;")
+	public String backAddProject() {
+		HttpSession session = getSession();
+		HttpServletRequest request = getRequest();
+		String projectVoStr = (String) session.getAttribute("projectVoStr"); // 项目信息
+		if (StringUtils.isNotBlank(projectVoStr)) {
+			ProjectVo projectVo = JSON.parseObject(projectVoStr, ProjectVo.class);
+			request.setAttribute("projectVo", projectVo);
+		}
+
+		String attchmentsFromStr = (String) session.getAttribute("attchmentsFromStr"); // 要添加的附件
+		if (StringUtils.isNotBlank(projectVoStr)) {
+			List<Attachment> attachments = JSON.parseArray(attchmentsFromStr, Attachment.class);
+			request.setAttribute("attchmentsFrom", attachments);
+		}
+
+		return "project/addProject.jsp";
+	}
+
+	/**
+	 * 删除清单
+	 * 
+	 * @param id
+	 *            清单id
+	 * @param type
+	 *            清单类型
+	 * @return
+	 */
+	@RequestMapping(value = "/deleteProductMean", produces = "text/html;charset=utf-8")
+	@ResponseBody
+	public String deleteProductMean(@RequestParam(value = "id", required = false) String id,
+			@RequestParam(value = "type", required = true) String type) {
+		Json json = new Json();
+		try {
+			Integer businessType = Integer.parseInt(type.trim());
+
+			HttpSession session = getSession();
+
+			String project1Str = (String) session.getAttribute("project1Str");
+
+			List<ProjectMenuVo> project1 = null;
+			if (StringUtils.isNotBlank(project1Str)) {
+				project1 = JSON.parseArray(project1Str, ProjectMenuVo.class);
+			}
+
+			switch (businessType) {
+			case 1:
+				for (int i = 0; i < project1.size(); i++) {
+					if (project1.get(i).getId().equals(id)){
+						project1.remove(i);
+					    break;
+					}
+				}
+				if (project1.size() > 0) {
+					session.setAttribute("project1Str", JSON.toJSONString(project1));
+				} else {
+					session.removeAttribute("project1Str");
+				}
+				break;
+			case 2:
+				session.removeAttribute("project2Str");
+				break;
+			case 3:
+				session.removeAttribute("project3Str");
+				break;
+			case 4:
+				session.removeAttribute("project4Str");
+				break;
+			default:
+				break;
+			}
+
+			String project2Str = (String) session.getAttribute("project2Str");
+			String project3Str = (String) session.getAttribute("project3Str");
+			String project4Str = (String) session.getAttribute("project4Str");
+
+			ProjectMenuVo project2 = getProjectMenuVo(project2Str);
+			ProjectMenuVo project3 = getProjectMenuVo(project3Str);
+			ProjectMenuVo project4 = getProjectMenuVo(project4Str);
+
+			// 更改 projectMeauList
+			List<ProjectMenuVo> list = new ArrayList<>();
+			if (project1 != null && project1.size() > 0) {
+				for (ProjectMenuVo projectMenuVo : project1) {
+					list.add(projectMenuVo);
+				}
+			}
+			if (project2 != null) {
+				list.add(project2);
+			}
+			if (project3 != null) {
+				list.add(project3);
+			}
+			if (project4 != null) {
+				list.add(project4);
+			}
+			// System.out.println(list.size());
+			// System.out.println(JSON.toJSONStringWithDateFormat(list,
+			// "yyyy年MM月dd日 HH:mm:ss"));
+			session.setAttribute("projectMeauList", JSON.toJSONStringWithDateFormat(list, "yyyy年MM月dd日   HH:mm:ss",
+					SerializerFeature.DisableCircularReferenceDetect));
+
+			json.setSuccess(true);
+			json.setMsg("删除清单成功");
+		} catch (Exception e) {
+			e.printStackTrace();
+			json.setSuccess(true);
+			json.setMsg("删除清单失败");
+		} finally {
+			return JSON.toJSONString(json);
+		}
+	}
+
+	/**
+	 * 查看小区信息
+	 * 
+	 * @param pageNo
+	 * @param pageSize
+	 * @param areaName
+	 * @param province
+	 * @param city
+	 * @param country
+	 * @return
+	 */
+	@RequestMapping(value = "/getCommunityList", produces = "text/html;charset=UTF-8;")
+	@ResponseBody
+	public String getCommunityList(@RequestParam(value = "pageNo", required = false) Integer pageNo, // 第几页
+			@RequestParam(value = "pageSize", required = false) Integer pageSize, // 一页的记录数
+			@RequestParam(value = "areaName", required = false) String areaName, // 小区的名称
+			@RequestParam(value = "province", required = false) String province, // 省
+			@RequestParam(value = "city", required = false) String city, // 市
+			@RequestParam(value = "country", required = false) String country // 区
+
+	) {
+		Map<String, Object> resultMap = new HashMap<>();
+		try {
+			Integer page_no = 1;
+			Integer page_size = 10;
+			// 封装查询小区信息数据
+			AreaDataReqVo areaDataReq = new AreaDataReqVo();
+
+			if (pageNo != null && pageNo > 0) {
+				page_no = pageNo;
+				areaDataReq.setPageNum(page_no);
+			}
+			if (pageSize != null && pageSize > 0) {
+				page_size = pageNo;
+				areaDataReq.setPageNum(page_size);
+			}
+			if (StringUtils.isNotBlank(areaName)) {
+				areaDataReq.setAreaName(areaName);
+			}
+			if (StringUtils.isNotBlank(province)) {
+				areaDataReq.setProvince(province);
+			}
+			if (StringUtils.isNotBlank(city)) {
+				areaDataReq.setCity(city);
+			}
+			if (StringUtils.isNotBlank(country)) {
+				areaDataReq.setCountry(country);
+			}
+
+			AreaDataRspVo areaDataRspVo = areaDataService.searchAreaDataList(areaDataReq);
+			
+			resultMap.put("page", page_no);
+			resultMap.put("total", areaDataRspVo.getTotalCount());
+			resultMap.put("rows", areaDataRspVo.getList());
+			resultMap.put("success", true);
+		} catch (Exception e) {
+
+			logger.info("错误原因：" + e.getMessage());
+			resultMap.put("success", false);
+
+		} finally {
+			return JSON.toJSONString(resultMap);
+		}
+	}
+
+	private ProjectMenuVo getProjectMenuVo(String projectMenuVo) {
+		if (StringUtils.isBlank(projectMenuVo)) {
+			return null;
+		}
+		return JSON.parseObject(projectMenuVo, ProjectMenuVo.class);
+	}
+    
+	/**
+	 * 清单保存操作
+	 * @param projectMenuVo
+	 * @return
+	 */
+	@RequestMapping(value = "/saveProjectProdect", produces = "text/html;charset=utf-8")
+	@ResponseBody
+	public String saveProjectProdect(@RequestBody ProjectMenuVo projectMenuVo) {
+		Json json = new Json();
+		try {
+			HttpSession session = getSession();
+
+			// 获取productMenuVo并补全
+			List<ProductMenuVo> productMenuVos = projectMenuVo.getProjectMenus();
+			for (ProductMenuVo pmv : productMenuVos) {
+				ProductMenu productMenu = productMenuService.findProductMenuById(pmv.getId());
+				pmv.setProductType(productMenu.getProductType()); // 类型
+				// 产品清单 类型 product_menu
+				pmv.setProductMenu(productMenu.getProductMenu());
+				// 产品规格
+				pmv.setProductSpec(productMenu.getProductSpec());
+				if(projectMenuVo.getBusinessType().trim().equals("1")){
+					pmv.setBeginTime(projectMenuVo.getBeginTime());
+					pmv.setEndTime(projectMenuVo.getEndTime());
+					pmv.setAreaNames(projectMenuVo.getAreaName());
+					pmv.setAreaIds(projectMenuVo.getOrganizationSeq());
+				}
+			}
+			if (StringUtils.isBlank(projectMenuVo.getId())) {
+				projectMenuVo.setId(UUID.randomUUID().toString().replace("-", ""));
+			}
+			Integer type = Integer.parseInt(projectMenuVo.getBusinessType().trim());
+
+			String project1Str = (String) session.getAttribute("project1Str");
+
+			List<ProjectMenuVo> project1 = null;
+			if (StringUtils.isNotBlank(project1Str)) {
+				project1 = JSON.parseArray(project1Str, ProjectMenuVo.class);
+			}
+
+			String project2Str = (String) session.getAttribute("project2Str");
+			String project3Str = (String) session.getAttribute("project3Str");
+			String project4Str = (String) session.getAttribute("project4Str");
+
+			ProjectMenuVo project2 = getProjectMenuVo(project2Str);
+			ProjectMenuVo project3 = getProjectMenuVo(project3Str);
+			ProjectMenuVo project4 = getProjectMenuVo(project4Str);
+
+			if (type == 1) {
+				if (project1 == null) {
+					project1 = new ArrayList<>();
+				}else if(project1.size()>0){
+					for(int i=0;i<project1.size();i++){
+						if(project1.get(i).getId().equals(projectMenuVo.getId())){
+							project1.remove(i);
+							break;
+						}
+					}
+				}
+				
+				project1.add(0, projectMenuVo);
+				session.setAttribute("project1Str", JSON.toJSONString(project1));
+			}
+			if (type == 2) {
+				project2 = projectMenuVo;
+				project2.setBusinessName("煤管");
+				session.setAttribute("project2Str", JSON.toJSONString(project2));
+			}
+			if (type == 3) {
+				project3 = projectMenuVo;
+				project3.setBusinessName("用户运营");
+				session.setAttribute("project3Str", JSON.toJSONString(project3));
+			}
+			if (type == 4) {
+				project4 = projectMenuVo;
+				project4.setBusinessName("电商运营");
+				session.setAttribute("project4Str", JSON.toJSONString(project4));
+			}
+
+			// 更改 projectMeauList
+			List<ProjectMenuVo> list = new ArrayList<>();
+			if (project1 != null && project1.size() > 0) {
+				for (ProjectMenuVo pmvo : project1) {
+					list.add(pmvo);
+				}
+			}
+			if (project2 != null) {
+				list.add(project2);
+			}
+			if (project3 != null) {
+				list.add(project3);
+			}
+			if (project4 != null) {
+				list.add(project4);
+			}	
+			//System.out.println(JSON.toJSONStringWithDateFormat(list, "yyyy年MM月dd日   HH:mm:ss",SerializerFeature.DisableCircularReferenceDetect));
+			
+			session.setAttribute("projectMeauList", JSON.toJSONStringWithDateFormat(list, "yyyy年MM月dd日   HH:mm:ss",
+					SerializerFeature.DisableCircularReferenceDetect));
+
+			json.setSuccess(true);
+			json.setMsg("保存清单成功");
+		} catch (Exception e) {
+			e.printStackTrace();
+			json.setSuccess(false);
+			json.setMsg("保存清单失败");
+		} finally {
+			return JSON.toJSONString(json);
+		}
+	}
+
+	/**
+	 *  点击煤管 :默认小区按钮触发事件  ---2
+	 * @param organizationSeqs
+	 * @param beginTime
+	 * @param endTime
+	 * @return
+	 */
+	@RequestMapping(value = "/screen2Prodect", produces = "text/html;charset=utf-8")
+	@ResponseBody
+	public String screen2Prodect(@RequestParam("organizationSeqs") String organizationSeqs,
+			@RequestParam("beginTime") Date beginTime,
+			@RequestParam("endTime") Date endTime			
+			){
+		Json json = new Json();
+		try {						
+			List<Map<String, Object>> list=productMenuService.screen2Prodect(organizationSeqs,beginTime,endTime);
+			json.setObj(list);
+			json.setSuccess(true);
+			json.setMsg("点击煤管 :默认小区按钮触发事件成功");
+		}catch (Exception e) {
+			e.printStackTrace();
+			json.setSuccess(false);
+			json.setMsg("点击煤管 :默认小区按钮触发事件失败");
+		} finally {
+			return JSON.toJSONString(json);
+		}
+	}
+	
+	
+	@RequestMapping(value = "/findBAreaListByMeanId", produces = "text/html;charset=utf-8")
+	@ResponseBody
+	public String findBAreaListByMeanId(
+			@RequestParam(value = "pageNo", required = false) Integer pageNo, // 第几页
+			@RequestParam(value = "pageSize", required = false) Integer pageSize, // 一页的记录数
+			@RequestParam(value = "areaName", required = false) String areaName, // 小区的名称
+			@RequestParam(value = "province", required = false) String province, // 省
+			@RequestParam(value = "city", required = false) String city, // 市
+			@RequestParam(value = "country", required = false) String country, // 区
+			@RequestParam(value = "id") String id, // 清单id
+			@RequestParam(value = "beginTime") Date beginTime, //开始时间
+			@RequestParam(value = "endTime") Date endTime // 结束时间
+			){
+		Map<String, Object> resultMap=new HashMap<>();
+		try{
+		
+		Integer page_no = 1;
+		Integer page_size = 10;
+		// 封装查询小区信息数据
+		AreaDataReqVo areaDataReq = new AreaDataReqVo();
+
+		if (pageNo != null && pageNo > 0) {
+			page_no = pageNo;
+			areaDataReq.setPageNum(page_no);
+		}
+		if (pageSize != null && pageSize > 0) {
+			page_size = pageNo;
+			areaDataReq.setPageNum(page_size);
+		}
+		if (StringUtils.isNotBlank(areaName)) {
+			areaDataReq.setAreaName(areaName);
+		}
+		if (StringUtils.isNotBlank(province)) {
+			areaDataReq.setProvince(province);
+		}
+		if (StringUtils.isNotBlank(city)) {
+			areaDataReq.setCity(city);
+		}
+		if (StringUtils.isNotBlank(country)) {
+			areaDataReq.setCountry(country);
+		}
+
+		AreaDataRspVo areaDataRspVo = areaDataService.searchAreaDataList(areaDataReq);
+		List<AreaData> areaDatas=areaDataRspVo.getList();
+		List<String> orGList=new ArrayList<>(); //小区机构编号列表
+		for (AreaData areaData : areaDatas) {
+			orGList.add(areaData.getOrganizationSeq());
+		}
+		if (orGList!=null&&orGList.size()>0) {
+			List<Map<String, Object>>  listOrGResult=productMenuService.findAreaByTimeMeanId(id,orGList,beginTime,endTime);
+			Map<String,Object> map=new HashMap<>();
+			for (AreaData area : areaDatas) {
+				for (int i = 0; i <=listOrGResult.size(); i++) {
+					map=listOrGResult.get(i);
+					if(map.get("org").equals(area.getOrganizationSeq())){
+						area.setResult((Boolean)map.get("result"));
+						listOrGResult.remove(i);
+						i--;
+						break;
+					}
+				}
+			}
+		}		
+		
+		resultMap.put("page", page_no);
+		resultMap.put("total", areaDataRspVo.getTotalCount());
+		resultMap.put("rows", areaDataRspVo.getList());
+		resultMap.put("success", true);
+		}catch(Exception e){
+			e.printStackTrace();
+			resultMap.put("success", false);
+		}
+		return JSON.toJSONString(resultMap);
+	}
+	
+	@RequestMapping(value = "/checkProduc2tByMeadId", produces = "text/html;charset=utf-8")
+	@ResponseBody
+	public String checkProduc2tByMeadId(
+			@RequestParam(value = "meanId") String meanId,
+			@RequestParam(value = "startTime") Date startTime,
+			@RequestParam(value = "endTime") Date endTime,
+			@RequestParam(value = "orsQ") String orsQ
+			){
+		return productMenuService.checkProduc2tByMeadId(meanId,startTime,endTime,orsQ)?"true":"false";
+	}
+}

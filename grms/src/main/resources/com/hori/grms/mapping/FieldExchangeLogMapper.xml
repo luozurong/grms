@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hori.grms.dao.FieldExchangeLogMapper" >
+    <resultMap id="BaseResultMap" type="com.hori.grms.model.FieldExchangeLog" >
+        <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="project_action_code" property="projectActionCode" jdbcType="VARCHAR" />
+        <result column="creater_account" property="createrAccount" jdbcType="VARCHAR" />
+        <result column="creater_name" property="createrName" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <sql id="Example_Where_Clause" >
+        <where >
+            <foreach collection="oredCriteria" item="criteria" separator="or" >
+                <if test="criteria.valid" >
+                    <trim prefix="(" suffix=")" prefixOverrides="and" >
+                        <foreach collection="criteria.criteria" item="criterion" >
+                            <choose >
+                                <when test="criterion.noValue" >
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue" >
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue" >
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue" >
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+
+    <sql id="Update_By_Example_Where_Clause" >
+        <where >
+            <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+                <if test="criteria.valid" >
+                    <trim prefix="(" suffix=")" prefixOverrides="and" >
+                        <foreach collection="criteria.criteria" item="criterion" >
+                            <choose >
+                                <when test="criterion.noValue" >
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue" >
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue" >
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue" >
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+
+    <sql id="Base_Column_List" >
+        id, project_action_code, creater_account, creater_name, create_time
+    </sql>
+
+    <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.hori.grms.model.FieldExchangeLogExample" >
+        select
+        <if test="distinct" >
+            distinct
+        </if>
+        'true' as QUERYID,
+        <include refid="Base_Column_List" />
+        from field_exchange_log
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+        <if test="orderByClause != null" >
+            order by ${orderByClause}
+        </if>
+    </select>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+        select 
+        <include refid="Base_Column_List" />
+        from field_exchange_log
+        where id = #{id,jdbcType=VARCHAR}
+    </select>
+
+    <insert id="insert" parameterType="com.hori.grms.model.FieldExchangeLog" >
+        insert into field_exchange_log (id, project_action_code, creater_account, 
+            creater_name, create_time)
+        values (#{id,jdbcType=VARCHAR}, #{projectActionCode,jdbcType=VARCHAR}, #{createrAccount,jdbcType=VARCHAR}, 
+            #{createrName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP})
+    </insert>
+
+    <select id="countByExample" parameterType="com.hori.grms.model.FieldExchangeLogExample" resultType="java.lang.Integer" >
+        select count(*) from field_exchange_log
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+    </select>
+
+    <update id="updateByExampleSelective" parameterType="map" >
+        update field_exchange_log
+        <set >
+            <if test="record.id != null" >
+                id = #{record.id,jdbcType=VARCHAR},
+            </if>
+            <if test="record.projectActionCode != null" >
+                project_action_code = #{record.projectActionCode,jdbcType=VARCHAR},
+            </if>
+            <if test="record.createrAccount != null" >
+                creater_account = #{record.createrAccount,jdbcType=VARCHAR},
+            </if>
+            <if test="record.createrName != null" >
+                creater_name = #{record.createrName,jdbcType=VARCHAR},
+            </if>
+            <if test="record.createTime != null" >
+                create_time = #{record.createTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        <if test="_parameter != null" >
+            <include refid="Update_By_Example_Where_Clause" />
+        </if>
+    </update>
+
+    <update id="updateByExample" parameterType="map" >
+        update field_exchange_log
+        set id = #{record.id,jdbcType=VARCHAR},
+            project_action_code = #{record.projectActionCode,jdbcType=VARCHAR},
+            creater_account = #{record.createrAccount,jdbcType=VARCHAR},
+            creater_name = #{record.createrName,jdbcType=VARCHAR},
+            create_time = #{record.createTime,jdbcType=TIMESTAMP}
+        <if test="_parameter != null" >
+            <include refid="Update_By_Example_Where_Clause" />
+        </if>
+    </update>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.hori.grms.model.FieldExchangeLog" >
+        update field_exchange_log
+        <set >
+            <if test="projectActionCode != null" >
+                project_action_code = #{projectActionCode,jdbcType=VARCHAR},
+            </if>
+            <if test="createrAccount != null" >
+                creater_account = #{createrAccount,jdbcType=VARCHAR},
+            </if>
+            <if test="createrName != null" >
+                creater_name = #{createrName,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+        delete from field_exchange_log
+        where id = #{id,jdbcType=VARCHAR}
+    </delete>
+
+    <delete id="deleteByExample" parameterType="com.hori.grms.model.FieldExchangeLogExample" >
+        delete from field_exchange_log
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+    </delete>
+
+</mapper>

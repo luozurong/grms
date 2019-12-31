@@ -1,0 +1,22 @@
+/**
+ * 
+ */
+package com.hori.grms.service.impl;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.hori.grms.dao.ProjectProductMapper;
+import com.hori.grms.service.ProjectProductService;
+
+/** 
+ * @ClassName: ProjectProductServiceImpl 
+ * @Description: 项目清单表
+ * @author zhuqiang
+ * @date 2018年8月8日 下午7:05:55 
+ */
+@Service("projectProductService")
+public class ProjectProductServiceImpl implements ProjectProductService{
+	@Autowired
+	private ProjectProductMapper projectProductMapper;
+}

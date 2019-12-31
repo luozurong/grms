@@ -1,0 +1,67 @@
+/*
+ * ProjectActionMapper.java
+ * Copyright(C) 20xx-2015 xxxxxx公司
+ * All rights reserved.
+ * -----------------------------------------------
+ * 2018-08-10 Created
+ */
+package com.hori.grms.dao;
+
+import com.github.pagehelper.Page;
+import com.hori.grms.model.ProjectAction;
+import com.hori.grms.model.ProjectActionExample;
+import com.hori.grms.queryBean.ProjectActionQueryBean;
+import com.hori.grms.vo.CommunityProjectActionVo;
+
+import javafx.scene.control.Pagination;
+
+import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.annotations.Param;
+
+public interface ProjectActionMapper {
+    int countByExample(ProjectActionExample example);
+
+    int deleteByExample(ProjectActionExample example);
+
+    int deleteByPrimaryKey(String id);
+
+    int insert(ProjectAction record);
+
+    int insertSelective(ProjectAction record);
+
+    List<ProjectAction> selectByExample(ProjectActionExample example);
+
+    ProjectAction selectByPrimaryKey(String id);
+
+    int updateByExampleSelective(@Param("record") ProjectAction record, @Param("example") ProjectActionExample example);
+
+    int updateByExample(@Param("record") ProjectAction record, @Param("example") ProjectActionExample example);
+
+    int updateByPrimaryKeySelective(ProjectAction record);
+
+    int updateByPrimaryKey(ProjectAction record);
+
+    /**
+     * 查询社区运营执行清单列表
+     * @param queryBean
+     * @return
+     */
+	List<CommunityProjectActionVo> listCommunityAction(@Param("queryBean") ProjectActionQueryBean queryBean);
+	
+	/**
+	 * 根据id修改执行清单状态
+	 * @param projectActionId
+	 * @param actionStatus
+	 * @return
+	 */
+	int changeStatusById(@Param("id") String projectActionId, @Param("actionStatus") Integer actionStatus);
+	
+	/**
+	 * 获取项目执行清单
+	 * @param queryBean
+	 * @return
+	 */
+	List<Map<String, Object>> listProjectAction(@Param("queryBean")ProjectActionQueryBean queryBean);
+}

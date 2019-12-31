@@ -1,0 +1,1284 @@
+//	表格数据渲染
+var data2 ;
+
+var systemId="1";
+//需要隐藏的按钮
+var mapButton = {};
+var userType;
+var pageNoAll='1';
+var pageSizeAll='10';
+var contractType = [{"id":'',"text":"全部"},{"id":1,"text":"执行合同"},{"id":2,"text":"框架合同"}];
+var contractStatus=[{"id":'',"text":"全部"},{"id":1,"text":"未提交"},{"id":2,"text":"待审批-业务管理"},
+                    {"id":3,"text":"待审批-合同管理"},{"id":4,"text":"待审批-业务管理"},{"id":4,"text":"待审批-财务管理"},{"id":5,"text":"审批通过"},
+                    {"id":6,"text":"审批不通过"},{"id":7,"text":"已完成"}];
+
+$(function(){
+    configMenuItem("合同管理","合同管理");
+    initButton();
+    //格式化时间
+    $(".datebox-1").datebox({
+        value : '',
+        editable : false,
+        onSelect : function(beginDate){
+            $('.datebox-2').datebox('calendar').calendar({
+                validator: function(date){
+                    return beginDate<=date;//<=
+                }
+            });
+        }
+    });
+    //格式化时间
+    $(".datebox-2").datebox({
+        value : '',
+        editable : false,
+        onSelect : function(endDate){
+            $('.datebox-1').datebox('calendar').calendar({
+                validator: function(date){
+                    return endDate>=date;//<=
+                }
+            });
+        }
+    });
+    $('#contractType').combobox({
+	       limitToList:true,
+	       value : '',
+	       data:contractType,
+	       valueField:'id',
+	       textField:'text',
+	       editable : false,
+	       panelHeight:"auto"
+	   });
+    $('#contractStatus').combobox({
+	       limitToList:true,
+	       value : '',
+	       data:contractStatus,
+	       valueField:'id',
+	       textField:'text',
+	       editable : false,
+	       panelHeight:"auto"
+	   });
+    var args=GetUrlParms();
+    var contractCode='';
+    if (args["contractCode"] != undefined){
+    		contractCode=args["contractCode"];
+    		findDepart('','',contractCode);
+    	
+
+    }else{
+        findDepart('','');
+
+    }
+    $("#uploadFile").click(function(){
+     	 upload();
+     });
+});
+////获取URL所有参数
+function GetUrlParms() {
+    var args = new Object();
+    var query = location.search.substring(1); //获取查询串   
+    var pairs = query.split("&"); //在逗号处断开   
+    for (var i = 0; i < pairs.length; i++) {
+        var pos = pairs[i].indexOf('='); //查找name=value   
+        if (pos == -1) continue; //如果没有找到就跳过   
+        var argname = pairs[i].substring(0, pos); //提取name   
+        var value = pairs[i].substring(pos + 1); //提取value   
+        args[argname] = unescape(value); //存为属性   
+    }
+    return args;
+}
+function initButton(){
+	//
+	mapButton['contractSelect'] = 1;
+	mapButton['contractNew'] = 1;
+	mapButton['contractAppDetail'] = 1;
+	mapButton['contractEdit'] = 1;
+	mapButton['contractUpload'] = 1;
+	mapButton['contractDelUpload'] = 1;
+	mapButton['contractCommit'] = 1;
+	mapButton['contractDel'] = 1;
+	mapButton['contractCancel'] = 1;
+	mapButton['contractApprove'] = 1;
+	mapButton['contractApproveNo'] = 1;
+	mapButton['contractEdit'] = 1;
+	mapButton['contractFinish'] = 1;
+	var menuUrl="/grms/contract/contract.html";
+    $.ajax({  
+        type : "POST",  //提交方式  
+        url : "/ums/initButtonAction!initMenuButton.html",//路径  
+        data:{"menuUrl":menuUrl},
+        dataType : "json",//数据，这里使用的是Json格式进行传输  
+        success : function(result) {//返回数据根据结果进行相应的处理  
+            if ( result.success) {
+            	
+            	//比较需要隐藏的按钮
+            	var buttonObject= result.obj;
+            	var admin=result.msg;
+            	if(admin!="admin"){
+            	var temp=1;
+            	for(var prop in mapButton){
+            		temp=1;
+            		for(var j=0;j<buttonObject.length;j++){
+            			if(prop==buttonObject[j].resourceCode){
+            				temp=0;
+            				break;
+            				}
+            			}
+            			if(temp==1){
+            				mapButton[prop]=0;
+            			}
+            		}
+            	if(mapButton['contractSelect']==0){
+            	  $("#contractSelect").hide();
+              	}
+              	if(mapButton['contractNew']==0){
+              		$("#contractNew").hide();
+              	}
+             
+            }else{
+            	userType=0;
+            }
+            } else {  
+            	
+            }  
+        }  
+    }); 
+  
+}
+
+//查询
+function findDepart(pageSize,pageNo,contractCode){
+	var createTimeBegin= $(".datebox-1").datebox('getValue');
+	var createTimeEnd=$(".datebox-2").datebox('getValue');
+	var contractOrAccount=$('#contractOrAccount').val();
+	var contractType=$('#contractType').val();
+	var contractStatus=$('#contractStatus').val();
+
+	pageSize=pageSizeAll;
+	pageNo=pageNoAll;
+	var data=new Object();
+	data.startTime=createTimeBegin;
+	data.endTime=createTimeEnd;
+	data.queryName=contractOrAccount;
+	data.pageSize=pageSize;
+	data.pageNumber=pageNo;
+	data.contractType=contractType;
+	data.contractStatus=contractStatus;
+	if(contractCode!=''&&contractCode!=undefined&&contractCode!=null){
+		data.contractCode=contractCode;
+	}
+    $.ajax({  
+        type : "POST",  //提交方式  
+        contentType : "application/json;charset=utf-8", 
+        url : "/grms/contract/getContractListData",//路径  
+        dataType : "json",//数据，这里使用的是Json格式进行传输  
+        data:  JSON.stringify(data),  
+        success : function(result) {//返回数据根据结果进行相应的处理  
+            if ( result.success) {  
+            	var data2=result.obj.list;
+            	var total=result.obj.size;
+            	refresh(data2);
+            	paginationpage(total,data2);
+            } else {  
+            	
+            }  
+        }  
+    }); 
+	
+}
+
+
+function refresh(data2){
+//	表格数据渲染
+    $('#dg').datagrid({
+        border:true,
+        scrollbarSize:0,
+        nowrap:false,//允许换行
+        selectOnCheck:false,
+        data:data2,
+/*        rownumbers:true,
+*/        emptyMsg:'<span>无记录</span>',
+        fitColumns:true,//宽度不自适应
+        columns:[[
+           {     field:'num',
+                title:'序号',
+                width:150,
+                align:'left',
+                formatter: function(value,row,index){
+                	index=index+(pageNoAll-1)*pageSizeAll
+                 	return 	index+1;
+                }
+            },
+            {
+                field:'id',
+                title:'合同id',
+                width:220,
+                align:'left',
+                hidden:'true'
+            },
+            {
+                field:'customerResource',
+                title:'客户资源系数',
+                width:220,
+                align:'left',
+                hidden:'true'
+            },
+            {
+                field:'projectName',
+                title:'项目名称',
+                width:150,
+                align:'left'
+            },
+            {
+                field:'contractCode',
+                title:'合同ID',
+                width:150,
+                align:'left',
+                hidden:'true'  
+            },
+            {
+                field:'contractType',
+                title:'合同类型',
+                width:150,
+                align:'left',
+                formatter: function(value){
+                	//合同类型（1：执行合同 2：框架合同）',
+                	if(value==1){
+                		return "执行合同 ";
+                	}else if(value==2){
+                		return "框架合同";
+                	}
+                
+                }
+               
+            },
+            {
+                field:'contractName',
+                title:'合同名称(点击查看详情)',
+                width:280,
+                align:'left',  
+                formatter: function(value,row,index){
+                		return '<a href="javascript:;"  onclick="contractWinDetail(\''+row.contractCode+'\',\''+row.contractType+'\',\''+row.contractName+'\',\''+row.fromContractName+'\',\''+row.money+'\',\''+row.customerResource+'\')">' + value + '</a>';
+                 }
+            },
+            {
+                field:'fromContractCode',
+                title:'是否关联框架合同',
+                width:220,
+                align:'left',
+                formatter: function(value,row,index){
+                	if(row.fromContractCode==''||row.fromContractCode==null){
+                		return "否";
+                	}else{
+                		return "是";
+                	}
+                }
+            },
+            
+            {
+                field:'fromContractName',
+                title:'关联框架合同名称',
+                width:220,
+                align:'left',
+                hidden:'true'
+            },
+            {
+                field:'attachmentDetail',
+                title:'合同附件(点击可下载)',
+                width:280,
+                align:'center',
+                formatter: function(value,row,index){
+                	var allUrl='';
+                	if(row.attachmentDetail!=''&&row.attachmentDetail!=null){
+                	var urlArray=row.attachmentDetail.split("#");
+                	for(var i=0;i<urlArray.length;i++){
+                		if(i==0){
+                			var short=urlArray[i].split("/");
+                			
+/*                			a.replace(/\[.*?\]/g,'');
+*/                			var name=short[short.length-1].replace(/\([\d)]*\)/g,"");
+                			allUrl = '<div href="javascript:;" style="color: #51d2b6" onclick="download2(\''+urlArray[i]+'\',\''+name+'\')">' + 
+                			name+ '</div>';
+                		}else{
+                			var short=urlArray[i].split("/");
+                			var name=short[short.length-1].replace(/\([\d)]*\)/g,"");
+                			allUrl=allUrl+'<div href="javascript:;" style="color: #51d2b6" onclick="download2(\''+urlArray[i]+'\',\''+name+'\')">' + 
+                			name+ '</div>';
+                		}
+                	}
+                }
+                 	return allUrl;	
+                }
+            },
+            {
+                field:'money',
+                title:'合同金额',
+                width:150,
+                align:'left'
+            },
+            {
+                field:'createrAccount',
+                title:'业务员',
+                width:150,
+                align:'left'
+            },
+            {
+                field:'createrTime',
+                title:'创建时间',
+                width:150,
+                align:'left'
+            },
+            {
+                field:'status',
+                title:'合同状态',
+                width:150,
+                align:'left',
+                formatter: function(value){
+                	//'合同状态（1：未提交 2：待审批-业务管理 3:待审批-合同管理 4:待审批-财务管理 5:审批通过 6:审批不通过 7:已完成 
+                	if(value==1){
+                		return "未提交";
+                	}else if(value==2){
+                		return "待审批-业务管理";
+                	}else if(value==3){
+                		return "待审批-合同管理";
+                	}else if(value==4){
+                		return "待审批-财务管理";
+                	}else if(value==5){
+                		return "审批通过";
+                	}else if(value==6){
+                		return "审批不通过";
+                	}else if(value==7){
+                		return "已完成";
+                	}
+                }
+            },
+            {
+                field:'approve',
+                title:'审批意见',
+                width:150,
+                align:'left',  
+                formatter: function(value,row,index){
+                	if(row.status>1){
+                		return '<a href="javascript:;"  onclick="approveDetail(\''+row.contractCode+'\')">查看详情</a>';
+                	}
+                	
+                }
+            },
+            {
+                field:'handle',
+                title:'操作',
+                width:574,
+                align:'left',
+                formatter: function(value,row,index){
+                	var buttonChoice='';
+                	if(row.status==1){
+                		var contractEdit = '<a href="javascript:;"  onclick="editContract(\''+row.id+'\')">编辑</a>';
+                		var contractUpload = '<a href="javascript:;"  onclick="upLoadFilesWin(\''+row.id+'\',\''+row.attachmentDetail+'\')">上传附件</a>';
+                		var contractDelUpload = '<a href="javascript:;"  onclick="upLoadFilesWinDel(\''+row.id+'\',\''+row.attachmentDetail+'\')">删除附件</a>';
+                		var contractCommit = '<a href="javascript:;"  onclick="commitContract(\''+row.id+'\')">提交</a>';
+                		var contractDel = '<a href="javascript:;"  onclick="checkDel(\''+row.id+'\')">删除合同</a>';
+                		if(userType!=0){
+                    		if(mapButton['contractEdit']==1){
+                    			buttonChoice=contractEdit;
+                    		}
+                    		if(mapButton['contractUpload']==1){
+                    			buttonChoice=buttonChoice+contractUpload;
+                    		}
+                    		if(mapButton['contractDelUpload']==1){
+                    			buttonChoice=buttonChoice+contractDelUpload
+                    		}
+                    		if(mapButton['contractCommit']==1){
+                    			buttonChoice=buttonChoice+contractCommit
+                    		}
+                    		if(mapButton['contractDel']==1){
+                    			buttonChoice=buttonChoice+contractDel
+                    		}
+                    	}else{
+                    		buttonChoice=contractEdit+contractUpload+contractDelUpload+contractCommit+contractDel;
+                    	}
+                		
+                	}
+                	if(row.status==2||row.status==3||row.status==4){
+                		var contractCancel = '<a href="javascript:;"  onclick="revoke(\''+row.id+'\')">撤回</a>';
+                		var contractApprove = '<a href="javascript:;"  onclick="approve(\''+row.id+'\')">审批通过</a>';
+                		var contractApproveNo = '<a href="javascript:;"  onclick="approve2(\''+row.id+'\')">审批不通过</a>';
+                		
+                		if(userType!=0){
+                    		if(mapButton['contractCancel']==1){
+                    			buttonChoice=contractCancel;
+                    		}
+                    		if(mapButton['contractApprove']==1){
+                    			buttonChoice=buttonChoice+contractApprove;
+                    		}
+                    		if(mapButton['contractApproveNo']==1){
+                    			buttonChoice=buttonChoice+contractApproveNo
+                    		}
+                    		
+                    	}else{
+                    		buttonChoice=contractCancel+contractApprove+contractApproveNo;
+                    	}
+                		
+                	}
+                	if(row.status==5){
+                		var contractCancel = '<a href="javascript:;"  onclick="revoke(\''+row.id+'\')">撤回</a>';
+                		var contractUpload = '<a href="javascript:;"  onclick="upLoadFilesWin(\''+row.id+'\',\''+row.attachmentDetail+'\')">上传附件</a>';
+                		var contractEdit = '<a href="javascript:;"  onclick="editContract(\''+row.id+'\')">修改合同</a>';
+                		var contractFinish = '<a href="javascript:;"  onclick="finishContract(\''+row.id+'\')">完成</a>';
+                		if(userType!=0){
+                    		if(mapButton['contractCancel']==1){
+                    			buttonChoice=contractCancel;
+                    		}
+                    		if(mapButton['contractUpload']==1){
+                    			buttonChoice=buttonChoice+contractUpload;
+                    		}
+                    		if(mapButton['contractEdit']==1){
+                    			buttonChoice=buttonChoice+contractEdit
+                    		}
+                    		if(mapButton['contractFinish']==1){
+                    			buttonChoice=buttonChoice+contractFinish
+                    		}
+                    	}else{
+                    		buttonChoice=contractCancel+contractUpload+contractEdit+contractFinish;
+                    	}
+                	} 
+                	if(row.status==6){
+                		var contractEdit = '<a href="javascript:;"  onclick="editContract(\''+row.id+'\')">修改合同</a>';
+                		var contractDel = '<a href="javascript:;"  onclick="checkDel(\''+row.id+'\')">删除合同</a>';
+                		
+                		if(userType!=0){
+                    		if(mapButton['contractEdit']==1){
+                    			buttonChoice=contractEdit;
+                    		}
+                    		if(mapButton['contractDel']==1){
+                    			buttonChoice=buttonChoice+contractDel;
+                    		}         		
+                    	}else{
+                    		buttonChoice=contractEdit+contractDel;
+                    	}
+                	} 
+                	if(row.status==7){
+                		var contractUpload = '<a href="javascript:;"  onclick="upLoadFilesWin(\''+row.id+'\',\''+row.attachmentDetail+'\')">上传附件</a>';
+                		var contractDelUpload = '<a href="javascript:;"  onclick="upLoadFilesWinDel(\''+row.id+'\',\''+row.attachmentDetail+'\')">删除附件</a>';
+                		
+                		if(userType!=0){
+                    		if(mapButton['contractUpload']==1){
+                    			buttonChoice=contractUpload;
+                    		}
+                    		if(mapButton['contractDelUpload']==1){
+                    			buttonChoice=buttonChoice+contractDelUpload;
+                    		}         		
+                    	}else{
+                    		buttonChoice=contractUpload+contractDelUpload;
+                    	}
+                	} 
+                    return buttonChoice;
+                }
+            },
+
+        ]],
+        onLoadSuccess: function (data) {
+            //去掉表格底部多出的19px
+            $('#dg').datagrid('resize');
+            var dataHeight =  $(".datagrid-view").height()-19;
+            $(".datagrid-view").css("height",dataHeight );
+        }
+    });
+// 
+
+}
+function paginationpage(total,data2){
+    //分页
+    $('#pp').pagination({
+        total:total,
+        layout:['list','first','prev','links','next','last','manual'],
+        emptyMsg: '<span>无记录</span>',
+        showRefresh:true,
+        displayMsg:' ',
+        pageList:[10,20,30],
+        onSelectPage:function (pageNo, pageSize) {
+        	pageNoAll=pageNo;
+        	pageSizeAll=pageSize;
+            findDepart('','') ;   
+           
+        }
+    });
+    $(".pagination-page-list").parent().append("条");
+    $(".pagination-page-list").parent().prepend("共计"+data2.length+"条,每页显示： ");
+}
+/*点击创建*/
+function approve(id){
+	wrapMaskShow();//父级遮罩显示
+	 $('body').css('overflow','hidden');//禁止滚动
+	 
+	 $('#roleWin').dialog({
+	        width:580,
+	        height:305,
+	        modal:true,
+	        collapsible:false,
+	        minimizable:false,
+	        maximizable:false,
+	        closable:true,
+	        draggable:false,
+	        resizable:false,
+	        inline:false,
+	        title:"审批通过",
+	        ok:"取消",
+	        cancel:"确定",
+	        buttons:[{
+	            text:'取消',
+	            handler:function(){
+	                wrapMaskHide();	                
+	                $('#roleWin').dialog('close');
+	            }
+	        },{
+	            text:'确认',
+	            handler:function(){
+	                wrapMaskHide();
+	                var desc=$('#approveY').val();
+	            	approveContract(id,desc,'y');
+	            	$('#roleWin').dialog('close');
+	            }
+	        }],
+	        onClose : function(){
+	            wrapMaskHide();//父级遮罩隐藏
+	            $('body').css('overflow','auto');//恢复滚动
+	        }
+	    });
+	    winHiSelfAdaptation($('#roleWin_detail'));//弹窗定位
+	
+	
+   /* var title = "审批通过";
+    addbutton();
+    $("#button").css({"display":"block"});
+    wrapMaskShow();//父级遮罩显示
+    $('body').css('overflow','hidden');//禁止滚动
+    $('#roleWin').window({
+        width:580,
+        height:250,
+        modal:true,
+        collapsible:false,
+        minimizable:false,
+        maximizable:false,
+        cache : false ,
+        closable:true,
+        draggable:false,
+        resizable:false,
+        inline:false,
+        title:title,
+        onClose : function(){
+            wrapMaskHide();//父级遮罩隐藏
+            $('body').css('overflow','auto');//恢复滚动
+        }
+    });
+    winHiSelfAdaptation($('#roleWin'));//弹窗定位
+    $('.quxiao').click(function(){
+        $('#roleWin').window('close');
+    })
+
+    $('.comfirm').click(function(){
+    	var desc=$('#approveY').val();
+    	approveContract(id,desc,'y');
+        $('#roleWin').window('close');
+    })*/
+
+}
+
+/*点击创建*/
+function approve2(id){
+	wrapMaskShow();//父级遮罩显示
+	 $('body').css('overflow','hidden');//禁止滚动
+	 
+	 $('#roleWin2').dialog({
+	        width:580,
+	        height:305,
+	        modal:true,
+	        collapsible:false,
+	        minimizable:false,
+	        maximizable:false,
+	        closable:true,
+	        draggable:false,
+	        resizable:false,
+	        inline:false,
+	        title:"审批不通过",
+	        ok:"取消",
+	        cancel:"确定",
+	        buttons:[{
+	            text:'取消',
+	            handler:function(){
+	                wrapMaskHide();	                
+	                $('#roleWin2').dialog('close');
+	            }
+	        },{
+	            text:'确认',
+	            handler:function(){
+	                wrapMaskHide();
+	                var desc=$('#approveN').val();
+	            	approveContract(id,desc,'n');
+	            	$('#roleWin2').dialog('close');
+	            }
+	        }],
+	        onClose : function(){
+	            wrapMaskHide();//父级遮罩隐藏
+	            $('body').css('overflow','auto');//恢复滚动
+	        }
+	    });
+	    winHiSelfAdaptation($('#roleWin_detail'));//弹窗定位
+	
+	
+	
+	
+   /* var title = "审批不通过";
+    addbutton2();
+    $("#button").css({"display":"block"});
+    wrapMaskShow();//父级遮罩显示
+    $('body').css('overflow','hidden');//禁止滚动
+    $('#roleWin2').window({
+        width:580,
+        height:250,
+        modal:true,
+        collapsible:false,
+        minimizable:false,
+        maximizable:false,
+        cache : false ,
+        closable:true,
+        draggable:false,
+        resizable:false,
+        inline:false,
+        title:title,
+        onClose : function(){
+            wrapMaskHide();//父级遮罩隐藏
+            $('body').css('overflow','auto');//恢复滚动
+        }
+    });
+    winHiSelfAdaptation($('#roleWin'));//弹窗定位
+    $('.quxiao').click(function(){
+        $('#roleWin2').window('close');
+    })
+
+    $('.comfirm').click(function(){
+    	var desc=$('#approveN').val();
+    	approveContract(id,desc,'n');
+        $('#roleWin2').window('close');
+    })*/
+
+}
+/*审批已经*/
+function approveDetail(contracCode){
+	  $("#approveDetail").empty();
+	 var type=initApproveDetail(contracCode);
+
+	 wrapMaskShow();
+	 $('#roleWin4').dialog({
+	        width:580,
+	        /*height:250,*/
+	        modal:true,
+	        collapsible:false,
+	        minimizable:false,
+	        maximizable:false,
+	        closable:true,
+	        draggable:false,
+	        resizable:false,
+	        inline:false,
+	        title:"审批意见详情",
+	        ok:"确定",
+	        //cancel:"取消",
+	        buttons:[{
+	            text:'确定',
+	            handler:function(){
+	                wrapMaskHide();
+	                //dataList(name);
+	                $('#roleWin4').dialog('close');
+	            }
+	        
+	        }],
+	        onClose : function(){
+	            wrapMaskHide();//父级遮罩隐藏
+	            $('body').css('overflow','auto');//恢复滚动
+	        }
+	    });
+	
+/*	
+	
+    var title = "审批意见详情";
+  
+    addbutton3();
+    $("#button").css({"display":"block"});
+    wrapMaskShow();//父级遮罩显示
+    $('body').css('overflow','hidden');//禁止滚动
+    $('#roleWin4').window({
+        width:580,
+        height:250,
+        modal:true,
+        collapsible:false,
+        minimizable:false,
+        maximizable:false,
+        cache : false ,
+        closable:true,
+        draggable:false,
+        resizable:false,
+        inline:false,
+        title:title,
+        onClose : function(){
+            wrapMaskHide();//父级遮罩隐藏
+            $('body').css('overflow','auto');//恢复滚动
+        }
+    });
+    winHiSelfAdaptation($('#roleWin'));//弹窗定位
+    
+    $('.comfirm').click(function(){
+        $('#roleWin4').window('close');
+    })*/
+
+}
+
+function download2(url,fileName) {
+		//下载附件
+			window.location.href="../attachment/downloadUrl?url="+url+"&fileName="+fileName;
+
+		}  
+
+function initApproveDetail(contractCode){
+    $.ajax({  
+        type : "GET",  //提交方式  
+        url : "/grms/contract/approveContractLog",//路径  
+        data: {"contractCode":contractCode} ,  
+        dataType : "json",//数据，这里使用的是Json格式进行传输  
+        success : function(result) {//返回数据根据结果进行相应的处理  
+            if (result.success) {  
+            	var apporveDetail=result.obj;
+            	var temp="";
+            	if(apporveDetail.length==0){
+            	    
+            		temp='<div>没有审批记录</div>';
+            	}
+            	for(var i=0;i<apporveDetail.length;i++){
+            		var end;
+            		if(apporveDetail[i].approveStatus!=6){
+            			end="审批通过"
+            		}else{
+            			end="审批不通过"
+            		}
+            		temp=temp+'<div>审批角色：'+ apporveDetail[i].approveRoleName +' 审批人员：'+ apporveDetail[i].approveName +'</div>'
+            		+'<div>审批操作：'+ end +' 审批时间：'+ apporveDetail[i].approveTime +'</div>'
+            		+ '<div>审批意见：'+ apporveDetail[i].approveDesc +'</div>';
+            	}
+            	$("#approveDetail").append(temp); 
+           } else {
+        	   warnMask('加载详情错误');  
+        	   return 1;
+            }  
+        }  
+    }); 
+	
+}
+function approveContract(id,desc,status){
+    $.ajax({  
+        type : "POST",  //提交方式  
+        url : "/grms/contract/approveContract",//路径  
+        data: {"id":id,"desc":desc,"status":status} ,  
+        dataType : "json",//数据，这里使用的是Json格式进行传输  
+        success : function(result) {//返回数据根据结果进行相应的处理  
+            if (result.success) {  
+            	if(status=='y'){
+                    $('#roleWin').window('close');
+                    $('#approveY').val('');
+            	}else{
+                    $('#roleWin2').window('close');
+                    $('#approveN').val('');
+            	}
+         	    infoMask('审批成功');  
+         	    findDepart('','');
+           } else {
+        	   warnMask('审批错误');  
+        	   return 1;
+            }  
+        }  
+    }); 
+	
+}
+
+function newContract(){
+    window.location.href="/grms/contract/contractEdit.html?status=new";
+
+}
+
+function editContract(id){
+    window.location.href="/grms/contract/contractEdit.html?status=edit&id="+id;
+
+}
+function checkDel(id){
+    createConfirm("消息提醒","确定删除该合同？",true,false,"删除","取消",okCallbakFunciton,"",id,"");
+    function okCallbakFunciton(){
+        $.ajax({
+            type : "GET",  //提交方式
+            url : "/grms/contract/delContract",//路径
+            async: false,
+            data:  {"id":id},
+            dataType : "json",//数据，这里使用的是Json格式进行传输
+            success : function(result) {//返回数据根据结果进行相应的处理
+                if ( result.success) {
+                        infoMask("删除成功");
+                        findDepart('','');
+                } else {
+
+                }
+            }
+        });
+
+    }	
+}
+
+function revoke(id){
+	var status="c";
+	var desc="";
+    createConfirm("消息提醒","确定撤回操作？",true,false,"确定","取消",okCallbakFunciton,"",id,"");
+    function okCallbakFunciton(){
+        $.ajax({
+            type : "POST",  //提交方式
+            url : "/grms/contract/approveContract",//路径
+            async: false,
+            data:  {"id":id,"desc":desc,"status":status} ,
+            dataType : "json",//数据，这里使用的是Json格式进行传输
+            success : function(result) {//返回数据根据结果进行相应的处理
+                if ( result.success) {
+                        infoMask("撤回成功");
+                        findDepart('','');
+                } else {
+                    infoMask("撤回错误");
+
+                }
+            }
+        });
+
+    }	
+}
+function commitContract(id){
+    createConfirm("消息提醒","确定提交审核？",true,false,"提交","取消",okCallbakFunciton,"",id,"");
+    function okCallbakFunciton(){
+        $.ajax({
+            type : "GET",  //提交方式
+            url : "/grms/contract/commitContract",//路径
+            async: false,
+            data:  {"id":id},
+            dataType : "json",//数据，这里使用的是Json格式进行传输
+            success : function(result) {//返回数据根据结果进行相应的处理
+                if ( result.success) {
+                        infoMask("提交成功");
+                        findDepart('','');
+                } else {
+                    infoMask("提交错误");
+
+                }
+            }
+        });
+
+    }	
+}
+function finishContract(id){
+    createConfirm("消息提醒","确定该合同已完成？",true,false,"确定","取消",okCallbakFunciton,"",id,"");
+    function okCallbakFunciton(){
+        $.ajax({
+            type : "GET",  //提交方式
+            url : "/grms/contract/commitContract",//路径
+            async: false,
+            data:  {"id":id},
+            dataType : "json",//数据，这里使用的是Json格式进行传输
+            success : function(result) {//返回数据根据结果进行相应的处理
+                if ( result.success) {
+                        infoMask("提交成功");
+                        findDepart('','');
+                } else {
+                    infoMask("提交错误");
+
+                }
+            }
+        });
+
+    }	
+}
+/*合同详情*/
+function contractWinDetail(id,contractType,contractName,fromContractName,money,customerResource){
+    $("#contractDetail").empty();
+    contractDetail(id,contractType,contractName,fromContractName,money,customerResource)
+
+	 wrapMaskShow();
+	if(contractType=='2'){
+		$('#roleWin6').dialog({
+	        width:580,
+	        /*height:250,*/
+	        modal:true,
+	        collapsible:false,
+	        minimizable:false,
+	        maximizable:false,
+	        closable:true,
+	        draggable:false,
+	        resizable:false,
+	        inline:false,
+	        title:"框架类合同详情",
+	        ok:"确定",
+	        //cancel:"取消",
+	        buttons:[{
+	            text:'确定',
+	            handler:function(){
+	                wrapMaskHide();
+	                //dataList(name);
+	                $('#roleWin6').dialog('close');
+	            }
+	        
+	        }],
+	        onClose : function(){
+	            wrapMaskHide();//父级遮罩隐藏
+	            $('body').css('overflow','auto');//恢复滚动
+	        }
+	    });		
+	}else{
+			 $('#roleWin6').dialog({
+			        width:580,
+			        /*height:250,*/
+			        modal:true,
+			        collapsible:false,
+			        minimizable:false,
+			        maximizable:false,
+			        closable:true,
+			        draggable:false,
+			        resizable:false,
+			        inline:false,
+			        title:"执行类合同详情",
+			        ok:"确定",
+			        //cancel:"取消",
+			        buttons:[{
+			            text:'确定',
+			            handler:function(){
+			                wrapMaskHide();
+			                //dataList(name);
+			                $('#roleWin6').dialog('close');
+			            }
+			        
+			        }],
+			        onClose : function(){
+			            wrapMaskHide();//父级遮罩隐藏
+			            $('body').css('overflow','auto');//恢复滚动
+			        }
+			    });			
+	}			
+
+}
+function contractDetail(id,contractType,contractName,fromContractName,money,customerResource){
+	var temp="";
+	if(customerResource==''||customerResource=="null"){
+		customerResource="无";
+	}
+	if(fromContractName==''||fromContractName=="null"){
+		fromContractName="无";
+	}
+	if(money==''||money=="null"){
+		money="0.00";
+	}
+	if(contractType=="1"){
+		temp=temp+'<div>执行合同名称：'+contractName +'</div>'
+		+'<div>关联框架合同名称：'+ fromContractName +'</div>'
+		+ '<div>关联框架合同金额：'+ money+'</div>'
+		+ '<div>客户资源系数：'+ customerResource+'</div>';
+
+		$("#contractDetail").append(temp); 
+	}else{
+		//查找出框架合同的其他执行合同
+		 $.ajax({
+	            type : "GET",  //提交方式
+	            url : "/grms/contract/getContractOther",//路径
+	            async: false,
+	            data:  {"id":id},
+	            dataType : "json",//数据，这里使用的是Json格式进行传输
+	            success : function(result) {//返回数据根据结果进行相应的处理
+	                if ( result.success) {
+	                	var contract=result.obj;
+	            		temp=temp+'<div>框架合同名称：'+contractName +'</div>'
+	            			+ '<div>客户资源系数：'+ customerResource+'</div>';
+	            		
+	            		var table='<table  border="1">'
+					      +'<tr> <td>关联执行合同名称    </td><td>关联执行合同金额</td></tr>';
+	                	for(var i=0;i<contract.length;i++){
+	                		table=table+'<tr> <td>'+contract[i].contractName +'</td><td>  '+contract[i].money +'</td></tr>'
+	                	}
+	                     table=table+'</table>';
+	            		$("#contractDetail").append(temp+table); 
+	                } else {
+	                    infoMask("查看错误");
+
+	                }
+	            }
+	        });
+	}
+}
+
+//上传附件
+
+/**
+ * 页面单按钮上传
+ */
+function upload(){
+	var formData = new FormData($("#upfile")[0]);
+	//formData.set('file', document.getElementById("upload").files[0]);
+    var url = "/grms/fileUpload/upload";
+	$.ajax({
+        url: url,
+        type: 'POST',
+        cache: false,
+        data:formData,
+        processData: false,
+        contentType: false,
+        dataType: "json"
+    }).done(function(data) {
+        if(data.result=='true'){//文件上传成功
+        	//文件url
+        	var pathTemp=data.path;
+        	var path=$('#urlUploadFile').val();
+        	if(path!=''&&path!=null){
+        		path=path+"#"+pathTemp;
+        	}else{
+            	path=pathTemp
+        	}
+        	$('#urlUploadFile').val(path);//显示图片，demo
+        	
+        	var short=pathTemp.split("/");
+     		$("#filesUploadUrl").append('<div >"'+short[short.length-1]+'" </div>');
+    		infoMask('文件上传成功');
+
+        }else{
+    		infoMask('文件上传失败');
+
+        }
+    });
+}
+
+/*上传文件弹窗*/
+function upLoadFilesWin(id,urlOld){
+	$('#urlUploadFile').val('');
+    $("#filesUploadUrl").empty();
+	if(urlOld!=''&&urlOld!=null){
+		var urlArray=urlOld.split("#");
+		for(var i=0;i<urlArray.length;i++){
+				var short=urlArray[i].split("/");
+	     		$("#filesUploadUrl").append('<div >"'+short[short.length-1]+'" </div>');
+			}
+		}
+	wrapMaskShow();//父级遮罩显示
+	 $('body').css('overflow','hidden');//禁止滚动
+	 
+	 $('#roleWin8').dialog({
+	        width:580,
+	        height:250,
+	        modal:true,
+	        collapsible:false,
+	        minimizable:false,
+	        maximizable:false,
+	        closable:true,
+	        draggable:false,
+	        resizable:false,
+	        inline:false,
+	        title:"上传附件",
+	        ok:"取消",
+	        cancel:"确定",
+	        buttons:[{
+	            text:'取消',
+	            handler:function(){
+	                wrapMaskHide();	                
+	                $('#roleWin8').dialog('close');
+	            }
+	        },{
+	            text:'确认',
+	            handler:function(){
+	                wrapMaskHide();
+	                var urlNew=$('#urlUploadFile').val();
+	                var url=urlNew+'#'+urlOld;
+	                updateUrl(id,url);
+	            	$('#roleWin8').dialog('close');
+	            }
+	        }],
+	        onClose : function(){
+	            wrapMaskHide();//父级遮罩隐藏
+	            $('body').css('overflow','auto');//恢复滚动
+	        }
+	    });
+	    winHiSelfAdaptation($('#roleWin_detail'));//弹窗定位
+				
+	
+   /* var title = "上传附件";
+    $('#urlUploadFile').val('');
+    $("#filesUploadUrl").empty();
+    addbutton5();
+    $("#button").css({"display":"block"});
+    wrapMaskShow();//父级遮罩显示
+    $('body').css('overflow','hidden');//禁止滚动
+    $('#roleWin8').window({
+        width:580,
+        height:250,
+        modal:true,
+        collapsible:false,
+        minimizable:false,
+        maximizable:false,
+        cache : false ,
+        closable:true,
+        draggable:false,
+        resizable:false,
+        inline:false,
+        title:title,
+        onClose : function(){
+            wrapMaskHide();//父级遮罩隐藏
+            $('body').css('overflow','auto');//恢复滚动
+        }
+    });
+    
+	
+
+	$('.quxiao').click(function(){
+        $('#roleWin8').window('close');
+    })
+
+    winHiSelfAdaptation($('#roleWin'));//弹窗定位
+    $('.comfirm').click(function(){
+        
+        $('#roleWin8').window('close');
+    })*/
+
+}  
+
+/*删除文件弹窗*/
+function upLoadFilesWinDel(id,urlOld){
+	 $("#filesDelUrl").empty();
+	 if(urlOld!=''&&urlOld!=null){
+			var urlArray=urlOld.split("#");
+			for(var i=0;i<urlArray.length;i++){
+				var short=urlArray[i].split("/");
+	     		$("#filesDelUrl").append('<div > <input type="checkbox" id="checkUrl" checked="checked"  value="'+urlArray[i]+'" > "<span>'+short[short.length-1]+'</span>" </div>');
+				}
+		}
+	 
+	wrapMaskShow();//父级遮罩显示
+	 $('body').css('overflow','hidden');//禁止滚动
+	 
+	 $('#roleWin10').dialog({
+	        width:580,
+	        height:250,
+	        modal:true,
+	        collapsible:false,
+	        minimizable:false,
+	        maximizable:false,
+	        closable:true,
+	        draggable:false,
+	        resizable:false,
+	        inline:false,
+	        title:"删除附件",
+	        ok:"取消",
+	        cancel:"确定",
+	        buttons:[{
+	            text:'取消',
+	            handler:function(){
+	                wrapMaskHide();	                
+	                $('#roleWin10').dialog('close');
+	            }
+	        },{
+	            text:'确认',
+	            handler:function(){
+	                wrapMaskHide();
+	                var i=0;
+	            	var url="";
+	            	var length=$('input[type=checkbox]:checked');
+	            	 $.each($('input:checkbox:checked'),function(){
+	            		 if(i==0){
+	            			 url=$(this).val();
+	            			 i++;
+	            		 }else{
+	            			 url=url+'#'+$(this).val();
+
+	            		 }
+	                 });
+	                  updateUrl(id,url);
+	            	$('#roleWin10').dialog('close');
+	            }
+	        }],
+	        onClose : function(){
+	            wrapMaskHide();//父级遮罩隐藏
+	            $('body').css('overflow','auto');//恢复滚动
+	        }
+	    });
+	    winHiSelfAdaptation($('#roleWin_detail'));//弹窗定位
+	
+	
+/*	
+    var title = "删除附件";
+    $("#filesDelUrl").empty();
+    addbutton6();
+    $("#button").css({"display":"block"});
+    wrapMaskShow();//父级遮罩显示
+    $('body').css('overflow','hidden');//禁止滚动
+    $('#roleWin10').window({
+        width:580,
+        height:250,
+        modal:true,
+        collapsible:false,
+        minimizable:false,
+        maximizable:false,
+        cache : false ,
+        closable:true,
+        draggable:false,
+        resizable:false,
+        inline:false,
+        title:title,
+        onClose : function(){
+            wrapMaskHide();//父级遮罩隐藏
+            $('body').css('overflow','auto');//恢复滚动
+        }
+    });
+    
+	if(urlOld!=''&&urlOld!=null){
+		var urlArray=urlOld.split("#");
+		for(var i=0;i<urlArray.length;i++){
+			var short=urlArray[i].split("/");
+     		$("#filesDelUrl").append('<div > <input type="checkbox" id="checkUrl" checked="checked"  value="'+urlArray[i]+'" > "'+short[short.length-1]+'" </div>');
+			}
+	}
+
+	$('.quxiao').click(function(){
+        $('#roleWin10').window('close');
+    })
+
+    winHiSelfAdaptation($('#roleWin'));//弹窗定位
+    $('.comfirm').click(function(){
+    	var i=0;
+    	var url="";
+    	var length=$('input[type=checkbox]:checked');
+    	 $.each($('input:checkbox:checked'),function(){
+    		 if(i==0){
+    			 url=$(this).val();
+    			 i++;
+    		 }else{
+    			 url=url+'#'+$(this).val();
+
+    		 }
+         });
+          updateUrl(id,url);
+        $('#roleWin10').window('close');
+    })*/
+
+} 
+//更新附件url
+function updateUrl(id,url){
+     alert(url);
+	//查找出框架合同的其他执行合同
+	 $.ajax({
+           type : "POST",  //提交方式
+           url : "/grms/contract/updateContractUrl",//路径
+           async: false,
+           data:  {"id":id,"url":url},
+           dataType : "json",//数据，这里使用的是Json格式进行传输
+           success : function(result) {//返回数据根据结果进行相应的处理
+               if ( result.success) {
+                   infoMask("更新附件成功");
+                   findDepart('','');
+               } else {
+                   infoMask("更新附件失败");
+
+               }
+           }
+       });
+}

@@ -1,0 +1,146 @@
+html,body {
+    background-color: #f8f8f8;
+}
+
+.workorder-breadcrumb{
+    margin-left:24px;
+    min-width: 1130px;
+}
+
+.workorder-breadcrumb{
+    line-height: 50px;
+}
+.workorder-breadcrumb-icon{
+    display: inline-block;
+    width:16px;
+    height:22px;
+    float:left;
+    margin-top:15px;
+    margin-right:10px;
+    background:url(../images/ic_location.png) no-repeat;
+}
+.system-set{
+    box-sizing: border-box;
+    margin: 20px 24px 60px 25px;
+    line-height:50px;
+    background: #fff;
+    color:#fff;
+    border: 1px solid #d7d7d7;
+    box-shadow: 0 2px 2px #eee;
+}
+.system-setWord{
+    padding-left:24px;
+    line-height:50px;
+    height:50px;
+    background: #4d525a;
+    color:#fff;
+}
+.system-setChoose{
+    color:#666;
+    padding-top:15px;
+    padding-left:25px;
+    min-width: 900px;
+    height: 540px;
+}
+.system-setChoose>div>span{
+    display: inline-block;
+    width: 385px;
+    color:#222;
+}
+.system-setChoose>div>label{
+    display: inline-block;
+}
+.system-setShow{
+    margin-right: 150px;
+
+}
+.system-setChoose>div>label input{
+    margin-top:17px;
+    margin-right:12px;
+    float:left;
+    display: inline-block;
+    width:16px;
+    height:16px;
+    border-radius: 100%;
+}
+/*.system-setOK>button{
+    width:120px;
+    height:40px;
+    margin:30px auto 0;
+    line-height:40px;
+    text-align: center;
+    color:#fff;
+    border-radius: 3px;
+    background: #51d2b6;
+}*/
+.system-set input[type=checkbox]:checked::after ,input[type=radio]:checked::after{
+    content: url(../images/inputradio.png);
+    display: block;
+    position: absolute;
+    top: -1px;
+    right: -1px;
+}
+
+
+.time-alarm {
+    margin-left: 24px;
+    margin-right: 25px;
+}
+.title1 {
+    padding-left: 24px;
+    height: 50px;
+    line-height: 50px;
+    font-size: 14px;
+    color: #ffffff;
+    background-color: #4d525a;
+}
+.alarm-body {
+    height: 160px;
+    background: #fff;
+    border: 1px solid #d7d7d7;
+    box-shadow: 0 2px 2px #eee;
+}
+.setips {
+    margin-left: 26px;
+    margin-top: 20px;
+    height: 34px;
+    line-height: 34px;
+    font-size: 12px;
+    color: #222222;
+}
+.select1 {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+.combo {
+    width: 80px !important;
+    height: 32px;
+    line-height: 34px;
+}
+.textbox .textbox-text{
+    width: 60px !important;
+    text-align: center;
+
+}
+.comfirm {
+    margin:48px auto;
+    width: 120px;
+    height: 40px;
+    line-height: 38px;
+    text-align: center;
+    font-size: 14px;
+    background-color: #51d2b6;
+    color: #FFFFFF;
+    border:1px solid #51d2b6;
+    border-radius: 4px;
+}
+.comfirm1{
+    margin-top: 20px;
+}
+
+.time-over {
+    margin-top: 24px;
+}
+.time-over .alarm-body{
+    height: 276px;
+}

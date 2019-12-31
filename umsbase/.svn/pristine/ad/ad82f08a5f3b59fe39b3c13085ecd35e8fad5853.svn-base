@@ -1,0 +1,132 @@
+package com.hori.action;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.commons.lang.math.NumberUtils;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Result;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.hori.db.support.DataGridPage;
+import com.hori.jobtask.SynchronizCommunityTask;
+import com.hori.jobtask.SynchronizTerminalTask;
+import com.hori.pageModel.SLogPage;
+import com.hori.service.SynchronizationLogService;
+import com.opensymphony.xwork2.ModelDriven;
+
+import net.sf.json.JSONArray;
+
+@Action(value = "synchronizationLogAction", results = {
+		@Result(name = "list", location = "/system/synchronizationLog.jsp") })
+public class SynchronizationLogAction extends BaseAction implements ModelDriven<SLogPage> {
+
+	private static final long serialVersionUID = 1L;
+
+	private SLogPage sLogPage;
+
+	@Autowired
+	private SynchronizationLogService synchronizationLogService;
+     
+	@Autowired
+	private SynchronizCommunityTask synchronizCommunityTask;
+	
+	@Autowired
+	private SynchronizTerminalTask synchronizTerminalTask;
+	
+	private String pageSize = "";
+
+	private String pageNo = "";
+
+	@Override
+	public SLogPage getModel() {
+		if (sLogPage == null) {
+			sLogPage = new SLogPage();
+		}
+		return sLogPage;
+	}
+
+	public String goList() {
+		return "list";
+	}
+
+	public void synchronizationLogList() {
+		int _pageNo =1;
+		int _pageSize = 7;
+		if( true == NumberUtils.isNumber(pageNo) ){
+			_pageNo = Integer.valueOf(pageNo);
+		}
+		if( true == NumberUtils.isNumber(pageSize) ){
+			_pageSize = Integer.valueOf(pageSize);
+		}
+		sLogPage.setPageNumber(_pageNo);
+		sLogPage.setPageSize(_pageSize);
+		DataGridPage list  = this.synchronizationLogService.getByPage(sLogPage);
+		super.writeJson(list);
+	}
+	
+	/**
+	 * 执行定时任务的逻辑
+	 */
+	public void executeJob(){
+		Map<String, String> map = new HashMap<String, String>();
+		String type = this.getRequest().getParameter("type");
+		try {
+			Integer jobType =Integer.valueOf(type);
+			switch (jobType) {
+			case 1:
+				synchronizTerminalTask.synchronizedTerminal();
+				break;
+			case 2:
+				synchronizTerminalTask.synchronizedTerminal();
+				break;
+			case 3:
+				synchronizTerminalTask.synchronizedTerminal();
+				break;
+			case 4:
+				synchronizCommunityTask.synchronizedCommunity();
+				break;
+			case 5:
+				synchronizCommunityTask.synchronizedCommunity();
+				break;
+			default:
+				break;
+			}
+			map.put("result", "success");
+			map.put("success", "操作成功！");
+		} catch (Exception e) {
+			e.printStackTrace();
+			map.put("result", "false");
+			map.put("error", "系统遇到一点麻烦，请稍后重试！");
+		}
+		writeJson(map);
+	}
+	
+
+	public String getPageSize() {
+		return pageSize;
+	}
+
+	public void setPageSize(String pageSize) {
+		this.pageSize = pageSize;
+	}
+
+	public String getPageNo() {
+		return pageNo;
+	}
+
+	public void setPageNo(String pageNo) {
+		this.pageNo = pageNo;
+	}
+
+	public SLogPage getsLogPage() {
+		return sLogPage;
+	}
+
+	public void setsLogPage(SLogPage sLogPage) {
+		this.sLogPage = sLogPage;
+	}
+
+}

@@ -1,0 +1,125 @@
+package com.hori.grms.service.impl;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.hori.grms.dao.BackMoneyPlanMapper;
+import com.hori.grms.dao.BackMoneyPlanPeriodsMapper;
+import com.hori.grms.model.BackMoneyPlan;
+import com.hori.grms.model.BackMoneyPlanPeriods;
+import com.hori.grms.service.BackMoneyPlanService;
+import com.hori.grms.vo.BackMoneyPlanVo;
+import com.hori.grms.vo.ContractVo;
+@Service
+public class BackMoneyPlanServiceImpl implements BackMoneyPlanService {
+
+	@Autowired
+	private BackMoneyPlanMapper backMoneyPlanMapper;
+	
+	@Autowired
+	private BackMoneyPlanPeriodsMapper backMoneyPlanPeriodsMapper;
+	@Override
+	public List<BackMoneyPlanVo> getBackMoneyPlanListByCondition(String selectCondition, String condition, String backMoneyStatus, String startTime, String endTime) {
+		// TODO Auto-generated method stub
+		
+		List<BackMoneyPlanVo> list = backMoneyPlanMapper.getBackMoneyPlanListByCondition(selectCondition,condition,backMoneyStatus,startTime,endTime);
+		if(list!=null&&list.size()>0){
+	
+			for (BackMoneyPlanVo backMoneyPlanVo : list) {
+				//通过计划code查询子计划
+				List<BackMoneyPlanPeriods> periodsList = backMoneyPlanPeriodsMapper.getPeriodsListByPlanCode(backMoneyPlanVo.getBackMoneyPlanCode());
+				List<String> listid = new ArrayList<String>();
+				//合同总金额
+				Double money = backMoneyPlanVo.getMoney();
+				//合同实收金额
+				Double collectedMoney = 0.00;
+				//扣款 
+				Double reduceMoney = 0.00;
+				//每个子计划
+				if(periodsList!=null&&periodsList.size()>0){
+					for (BackMoneyPlanPeriods backMoneyPlanPeriods : periodsList) {
+						/**TODO**/
+						//获取每个子计划状态
+						listid.add(backMoneyPlanPeriods.getStatus().toString());
+						//子计划实收金额
+						collectedMoney = collectedMoney+backMoneyPlanPeriods.getRealBackMoney();
+						//扣款
+						if(backMoneyPlanPeriods.getType()==3){
+							reduceMoney = reduceMoney+backMoneyPlanPeriods.getRealBackMoney();
+						}
+					}
+					//回款计划状态
+					backMoneyPlanVo.setPlanStatus("0");
+					
+					//回款金额
+					backMoneyPlanVo.setCollectedMoney(collectedMoney);
+					backMoneyPlanVo.setUnCollectedMoney(money-collectedMoney);
+					backMoneyPlanVo.setReduceMoney(reduceMoney);
+				}
+			}
+		}
+		return list;
+	}
+
+
+	@Override
+	public void insertSelective(BackMoneyPlan backMoneyPlan) {
+		// TODO Auto-generated method stub
+		backMoneyPlanMapper.insertSelective(backMoneyPlan);
+	}
+
+
+	@Override
+	public List<ContractVo> getContractList(String condition) {
+		// TODO Auto-generated method stub
+		return backMoneyPlanMapper.getContractList(condition);
+	}
+
+
+	@Override
+	public ContractVo getContractDetail(String contractCode) {
+		// TODO Auto-generated method stub
+		return backMoneyPlanMapper.getContractDetail(contractCode);
+	}
+
+
+	@Override
+	public BackMoneyPlan getBackMoneyPlanByCode(String backMoneyPlanCode) {
+		// TODO Auto-generated method stub
+		return backMoneyPlanMapper.getBackMoneyPlanByCode(backMoneyPlanCode);
+	}
+
+
+	@Override
+	public void updateByPrimaryKeySelective(BackMoneyPlan backMoneyPlan) {
+		// TODO Auto-generated method stub
+		backMoneyPlanMapper.updateByPrimaryKeySelective(backMoneyPlan);
+	}
+
+
+	@Override
+	public List<BackMoneyPlanVo> getBackMoneyPlanListByProjectCode(String projectCode) {
+		return this.getBackMoneyPlanListByCondition("1", projectCode, null, null, null);
+	}
+
+
+
+	@Override
+	public BackMoneyPlan getBackMoneyPlanByContractCode(String contractCode) {
+		// TODO Auto-generated method stub
+		return backMoneyPlanMapper.getBackMoneyPlanByContractCode(contractCode);
+	}
+
+
+	@Override
+	public List<BackMoneyPlanVo> getBackMoneyPlanList() {
+		// TODO Auto-generated method stub
+		return backMoneyPlanMapper.getBackMoneyPlanList();
+	}
+
+
+}

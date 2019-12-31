@@ -1,0 +1,236 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!--框架必需start-->
+<script type="text/javascript" src="../js/jquery-1.4.js"></script>
+<script type="text/javascript" src="../js/framework.js"></script>
+<link href="../css/import_basic.css" rel="stylesheet" type="text/css"/>
+<link  rel="stylesheet" type="text/css" id="skin"/>
+<!--框架必需end-->
+
+<!--入场特效start-->
+<script type="text/javascript" src="../js/pic/jomino.js"></script>
+<!--入场特效end-->
+
+<!--图片弹窗start-->
+<script type="text/javascript" src="../js/highslide/highslide-with-gallery.js"></script>
+<link rel="stylesheet" type="text/css" href="../js/highslide/highslide.css" />
+<!--图片弹窗end-->
+<script>
+//图片弹窗
+hs.graphicsDir = '../js/highslide/graphics/';
+hs.align = 'center';
+hs.transitions = ['expand', 'crossfade'];
+hs.outlineType = 'rounded-white';
+hs.fadeInOut = true;
+
+hs.addSlideshow({
+	interval: 5000,
+	repeat: false,
+	useControls: true,
+	fixedControls: 'fit',
+	overlayOptions: {
+		opacity: .75,
+		position: 'bottom center',
+		hideOnMouseOut: true
+	}
+});	
+
+//标题特效
+$(function(){
+	$('.framegrid.nocaption').each(function(){
+		$(".framegrid_cover", this).css({
+			top:"128px",
+			height:"0px"
+		})
+		$(".framegrid_title", this).hide()
+		$(".framegrid_con", this).hide()
+	})
+	$('.framegrid.nocaption').hover(function(){
+		$(".framegrid_cover", this).stop().animate({top:'68px',height:'60px'},{queue:false,duration:160});
+		$(".framegrid_title", this).show()
+		$(".framegrid_con", this).show()
+	}, function() {
+		$(".framegrid_cover", this).stop().animate({top:'125px',height:'0px'},{queue:false,duration:160});
+		$(".framegrid_title", this).hide()
+		$(".framegrid_con", this).hide()
+	});
+	
+	//入场特效
+	$("#imgList .framegrid").jomino();
+})
+</script>
+<body>
+<div class="position">
+	<div class="center">
+	<div class="left">
+	<div class="right">
+		<span>当前位置：图片列表综合模板</span>
+	</div>	
+	</div>	
+	</div>
+</div>	
+<div id="scrollContent">
+<div class="box1"  id="imgList" panelHeight="650">
+	<div class="framegrid nocaption" style="display:none;">
+		<a href="../images/demo/1.jpg" class="highslide" onclick="return hs.expand(this)">
+		<div class="picItem3"><img src="../images/demo/1s.jpg"/></div>	
+		<div class="framegrid_cover">
+			<div class="framegrid_title">图片标题</div>
+			<div class="framegrid_con">这里是图片文字说明部分<br />这里是图片文字说明部分</div>
+		</div>	
+		</a>
+	</div>
+	
+	<div class="framegrid nocaption" style="display:none;">
+		<a href="../images/demo/2.jpg" class="highslide" onclick="return hs.expand(this)">
+		<div class="picItem3"><img src="../images/demo/2s.jpg"/></div>	
+		<div class="framegrid_cover">
+			<div class="framegrid_title">图片标题</div>
+			<div class="framegrid_con">这里是图片文字说明部分<br />这里是图片文字说明部分</div>
+		</div>
+		</a>
+	</div>
+	<div class="framegrid nocaption" style="display:none;">
+		<a href="../images/demo/3.jpg" class="highslide" onclick="return hs.expand(this)">
+		<div class="picItem3"><img src="../images/demo/3s.jpg"/></div>	
+		<div class="framegrid_cover">
+			<div class="framegrid_title">图片标题</div>
+			<div class="framegrid_con">这里是图片文字说明部分<br />这里是图片文字说明部分</div>
+		</div>	
+		</a>
+	</div>
+	
+	<div class="framegrid nocaption" style="display:none;">
+		<a href="../images/demo/4.jpg" class="highslide" onclick="return hs.expand(this)">
+		<div class="picItem3"><img src="../images/demo/4s.jpg"/></div>	
+		<div class="framegrid_cover">
+			<div class="framegrid_title">图片标题</div>
+			<div class="framegrid_con">这里是图片文字说明部分<br />这里是图片文字说明部分</div>
+		</div>
+		</a>
+	</div>
+	
+	<div class="framegrid nocaption" style="display:none;">
+		<a href="../images/demo/1.jpg" class="highslide" onclick="return hs.expand(this)">
+		<div class="picItem3"><img src="../images/demo/1s.jpg"/></div>	
+		<div class="framegrid_cover">
+			<div class="framegrid_title">图片标题</div>
+			<div class="framegrid_con">这里是图片文字说明部分<br />这里是图片文字说明部分</div>
+		</div>	
+		</a>
+	</div>
+	
+	<div class="framegrid nocaption" style="display:none;">
+		<a href="../images/demo/2.jpg" class="highslide" onclick="return hs.expand(this)">
+		<div class="picItem3"><img src="../images/demo/2s.jpg"/></div>	
+		<div class="framegrid_cover">
+			<div class="framegrid_title">图片标题</div>
+			<div class="framegrid_con">这里是图片文字说明部分<br />这里是图片文字说明部分</div>
+		</div>
+		</a>
+	</div>
+	<div class="framegrid nocaption" style="display:none;">
+		<a href="../images/demo/3.jpg" class="highslide" onclick="return hs.expand(this)">
+		<div class="picItem3"><img src="../images/demo/3s.jpg"/></div>	
+		<div class="framegrid_cover">
+			<div class="framegrid_title">图片标题</div>
+			<div class="framegrid_con">这里是图片文字说明部分<br />这里是图片文字说明部分</div>
+		</div>	
+		</a>
+	</div>
+	
+	<div class="framegrid nocaption" style="display:none;">
+		<a href="../images/demo/4.jpg" class="highslide" onclick="return hs.expand(this)">
+		<div class="picItem3"><img src="../images/demo/4s.jpg"/></div>	
+		<div class="framegrid_cover">
+			<div class="framegrid_title">图片标题</div>
+			<div class="framegrid_con">这里是图片文字说明部分<br />这里是图片文字说明部分</div>
+		</div>
+		</a>
+	</div>
+	
+	<div class="framegrid nocaption" style="display:none;">
+		<a href="../images/demo/1.jpg" class="highslide" onclick="return hs.expand(this)">
+		<div class="picItem3"><img src="../images/demo/1s.jpg"/></div>	
+		<div class="framegrid_cover">
+			<div class="framegrid_title">图片标题</div>
+			<div class="framegrid_con">这里是图片文字说明部分<br />这里是图片文字说明部分</div>
+		</div>	
+		</a>
+	</div>
+	
+	<div class="framegrid nocaption" style="display:none;">
+		<a href="../images/demo/2.jpg" class="highslide" onclick="return hs.expand(this)">
+		<div class="picItem3"><img src="../images/demo/2s.jpg"/></div>	
+		<div class="framegrid_cover">
+			<div class="framegrid_title">图片标题</div>
+			<div class="framegrid_con">这里是图片文字说明部分<br />这里是图片文字说明部分</div>
+		</div>
+		</a>
+	</div>
+	<div class="framegrid nocaption" style="display:none;">
+		<a href="../images/demo/3.jpg" class="highslide" onclick="return hs.expand(this)">
+		<div class="picItem3"><img src="../images/demo/3s.jpg"/></div>	
+		<div class="framegrid_cover">
+			<div class="framegrid_title">图片标题</div>
+			<div class="framegrid_con">这里是图片文字说明部分<br />这里是图片文字说明部分</div>
+		</div>	
+		</a>
+	</div>
+	
+	<div class="framegrid nocaption" style="display:none;">
+		<a href="../images/demo/4.jpg" class="highslide" onclick="return hs.expand(this)">
+		<div class="picItem3"><img src="../images/demo/4s.jpg"/></div>	
+		<div class="framegrid_cover">
+			<div class="framegrid_title">图片标题</div>
+			<div class="framegrid_con">这里是图片文字说明部分<br />这里是图片文字说明部分</div>
+		</div>
+		</a>
+	</div>
+	
+	<div class="framegrid nocaption" style="display:none;">
+		<a href="../images/demo/1.jpg" class="highslide" onclick="return hs.expand(this)">
+		<div class="picItem3"><img src="../images/demo/1s.jpg"/></div>	
+		<div class="framegrid_cover">
+			<div class="framegrid_title">图片标题</div>
+			<div class="framegrid_con">这里是图片文字说明部分<br />这里是图片文字说明部分</div>
+		</div>	
+		</a>
+	</div>
+	
+	<div class="framegrid nocaption" style="display:none;">
+		<a href="../images/demo/2.jpg" class="highslide" onclick="return hs.expand(this)">
+		<div class="picItem3"><img src="../images/demo/2s.jpg"/></div>	
+		<div class="framegrid_cover">
+			<div class="framegrid_title">图片标题</div>
+			<div class="framegrid_con">这里是图片文字说明部分<br />这里是图片文字说明部分</div>
+		</div>
+		</a>
+	</div>
+	<div class="framegrid nocaption" style="display:none;">
+		<a href="../images/demo/3.jpg" class="highslide" onclick="return hs.expand(this)">
+		<div class="picItem3"><img src="../images/demo/3s.jpg"/></div>	
+		<div class="framegrid_cover">
+			<div class="framegrid_title">图片标题</div>
+			<div class="framegrid_con">这里是图片文字说明部分<br />这里是图片文字说明部分</div>
+		</div>	
+		</a>
+	</div>
+	
+	<div class="framegrid nocaption" style="display:none;">
+		<a href="../images/demo/4.jpg" class="highslide" onclick="return hs.expand(this)">
+		<div class="picItem3"><img src="../images/demo/4s.jpg"/></div>	
+		<div class="framegrid_cover">
+			<div class="framegrid_title">图片标题</div>
+			<div class="framegrid_con">这里是图片文字说明部分<br />这里是图片文字说明部分</div>
+		</div>
+		</a>
+	</div>
+	<div class="clear"></div>
+</div>
+	
+</div>	
+			
+</body>
+</html>

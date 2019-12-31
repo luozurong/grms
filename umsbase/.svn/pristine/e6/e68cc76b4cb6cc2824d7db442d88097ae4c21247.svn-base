@@ -1,0 +1,68 @@
+package com.hori.service.impl;
+
+import java.util.Date;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.apache.struts2.ServletActionContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.hori.dao.UserDao;
+import com.hori.model.OperationRecord;
+import com.hori.service.OperationRecordService;
+import com.hori.service.UserService;
+import com.jlit.vdcs.webservice.IOperationRecordService;
+
+import eu.bitwalker.useragentutils.Browser;
+import eu.bitwalker.useragentutils.OperatingSystem;
+import eu.bitwalker.useragentutils.UserAgent;
+
+
+/**
+ * 操作记录service实现类
+ */
+@Service("operationRecordService")
+public class OperationRecordServiceImpl extends BaseServiceImpl implements OperationRecordService {
+
+	@Autowired
+	private IOperationRecordService iOperationRecordService;
+	@Autowired
+	private UserService userService;
+	@Override
+	public void save(String operationModule,String operationType) {
+	/*	// TODO Auto-generated method stub
+		HttpServletRequest request = ServletActionContext.getRequest(); 
+		 //获取用户账号
+		 HttpSession session = request.getSession();//从session中获取用户信息
+		 String userAccount = (String) session.getAttribute("userAccount");
+		 if(userAccount!=null){
+			//获得IP地址
+			String ip = request.getRemoteAddr();
+			//获取客户端浏览器
+			UserAgent userAgent = UserAgent.parseUserAgentString(request.getHeader("User-Agent"));  
+		    Browser userbrowser = userAgent.getBrowser();  
+		    OperatingSystem useros = userAgent.getOperatingSystem();
+			UserDao userDao = new UserDao();
+			Map roleMap = userService.findUserDetailByUserAccount(userAccount);
+			String role = (String) roleMap.get("role_name");
+			String userName = (String) roleMap.get("user_name");
+			OperationRecord operationRecord = new OperationRecord();
+		    operationRecord.setAccount(userAccount);
+		    operationRecord.setClient("浏览器 : "+userbrowser+" ; 系统 : "+useros);
+		    operationRecord.setIpAddress(ip);
+		    operationRecord.setOperationContent("{"+userName+"对"+operationModule+"模块，进行了"+operationType+"操作}");
+		    operationRecord.setOperationModule(operationModule);
+		    operationRecord.setOperationResult("成功");
+		    operationRecord.setOperationTime(new Date());
+		    operationRecord.setOperationType(operationType);
+		    operationRecord.setRole(role);
+		    iOperationRecordService.saveOperationRecord(operationRecord);
+		 }
+		 
+		 */
+	}
+
+}

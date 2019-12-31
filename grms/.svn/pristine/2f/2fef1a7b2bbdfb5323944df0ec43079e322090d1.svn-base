@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hori.grms.dao.ProjectProductMenuMapper" >
+    <resultMap id="BaseResultMap" type="com.hori.grms.model.ProjectProductMenu" >
+        <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="project_product_id" property="projectProductId" jdbcType="VARCHAR" />
+        <result column="product_menu_id" property="productMenuId" jdbcType="VARCHAR" />
+        <result column="buy_num" property="buyNum" jdbcType="INTEGER" />
+        <result column="project_code" property="projectCode" jdbcType="VARCHAR" />
+        <result column="begin_time" property="beginTime" jdbcType="TIMESTAMP" />
+        <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+        <result column="area_names" property="areaNames" jdbcType="LONGVARCHAR" />
+    </resultMap>
+
+    <sql id="Example_Where_Clause" >
+        <where >
+            <foreach collection="oredCriteria" item="criteria" separator="or" >
+                <if test="criteria.valid" >
+                    <trim prefix="(" suffix=")" prefixOverrides="and" >
+                        <foreach collection="criteria.criteria" item="criterion" >
+                            <choose >
+                                <when test="criterion.noValue" >
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue" >
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue" >
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue" >
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+
+    <sql id="Update_By_Example_Where_Clause" >
+        <where >
+            <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+                <if test="criteria.valid" >
+                    <trim prefix="(" suffix=")" prefixOverrides="and" >
+                        <foreach collection="criteria.criteria" item="criterion" >
+                            <choose >
+                                <when test="criterion.noValue" >
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue" >
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue" >
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue" >
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+
+    <sql id="Base_Column_List" >
+        id, project_product_id, product_menu_id, buy_num, project_code, begin_time, end_time, 
+        area_names
+    </sql>
+
+    <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.hori.grms.model.ProjectProductMenuExample" >
+        select
+        <if test="distinct" >
+            distinct
+        </if>
+        'true' as QUERYID,
+        <include refid="Base_Column_List" />
+        from project_product_menu
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+        <if test="orderByClause != null" >
+            order by ${orderByClause}
+        </if>
+    </select>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+        select 
+        <include refid="Base_Column_List" />
+        from project_product_menu
+        where id = #{id,jdbcType=VARCHAR}
+    </select>
+
+    <insert id="insert" parameterType="com.hori.grms.model.ProjectProductMenu" >
+        insert into project_product_menu (id, project_product_id, product_menu_id, 
+            buy_num, project_code, begin_time, 
+            end_time, area_names)
+        values (#{id,jdbcType=VARCHAR}, #{projectProductId,jdbcType=VARCHAR}, #{productMenuId,jdbcType=VARCHAR}, 
+            #{buyNum,jdbcType=INTEGER}, #{projectCode,jdbcType=VARCHAR}, #{beginTime,jdbcType=TIMESTAMP}, 
+            #{endTime,jdbcType=TIMESTAMP}, #{areaNames,jdbcType=LONGVARCHAR})
+    </insert>
+
+    <select id="countByExample" parameterType="com.hori.grms.model.ProjectProductMenuExample" resultType="java.lang.Integer" >
+        select count(*) from project_product_menu
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+    </select>
+
+    <update id="updateByExampleSelective" parameterType="map" >
+        update project_product_menu
+        <set >
+            <if test="record.id != null" >
+                id = #{record.id,jdbcType=VARCHAR},
+            </if>
+            <if test="record.projectProductId != null" >
+                project_product_id = #{record.projectProductId,jdbcType=VARCHAR},
+            </if>
+            <if test="record.productMenuId != null" >
+                product_menu_id = #{record.productMenuId,jdbcType=VARCHAR},
+            </if>
+            <if test="record.buyNum != null" >
+                buy_num = #{record.buyNum,jdbcType=INTEGER},
+            </if>
+            <if test="record.projectCode != null" >
+                project_code = #{record.projectCode,jdbcType=VARCHAR},
+            </if>
+            <if test="record.beginTime != null" >
+                begin_time = #{record.beginTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.endTime != null" >
+                end_time = #{record.endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.areaNames != null" >
+                area_names = #{record.areaNames,jdbcType=LONGVARCHAR},
+            </if>
+        </set>
+        <if test="_parameter != null" >
+            <include refid="Update_By_Example_Where_Clause" />
+        </if>
+    </update>
+
+    <update id="updateByExample" parameterType="map" >
+        update project_product_menu
+        set id = #{record.id,jdbcType=VARCHAR},
+            project_product_id = #{record.projectProductId,jdbcType=VARCHAR},
+            product_menu_id = #{record.productMenuId,jdbcType=VARCHAR},
+            buy_num = #{record.buyNum,jdbcType=INTEGER},
+            project_code = #{record.projectCode,jdbcType=VARCHAR},
+            begin_time = #{record.beginTime,jdbcType=TIMESTAMP},
+            end_time = #{record.endTime,jdbcType=TIMESTAMP},
+            area_names = #{record.areaNames,jdbcType=LONGVARCHAR}
+        <if test="_parameter != null" >
+            <include refid="Update_By_Example_Where_Clause" />
+        </if>
+    </update>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.hori.grms.model.ProjectProductMenu" >
+        update project_product_menu
+        <set >
+            <if test="projectProductId != null" >
+                project_product_id = #{projectProductId,jdbcType=VARCHAR},
+            </if>
+            <if test="productMenuId != null" >
+                product_menu_id = #{productMenuId,jdbcType=VARCHAR},
+            </if>
+            <if test="buyNum != null" >
+                buy_num = #{buyNum,jdbcType=INTEGER},
+            </if>
+            <if test="projectCode != null" >
+                project_code = #{projectCode,jdbcType=VARCHAR},
+            </if>
+            <if test="beginTime != null" >
+                begin_time = #{beginTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="endTime != null" >
+                end_time = #{endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="areaNames != null" >
+                area_names = #{areaNames,jdbcType=LONGVARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+        delete from project_product_menu
+        where id = #{id,jdbcType=VARCHAR}
+    </delete>
+
+    <delete id="deleteByExample" parameterType="com.hori.grms.model.ProjectProductMenuExample" >
+        delete from project_product_menu
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+    </delete>
+
+</mapper>

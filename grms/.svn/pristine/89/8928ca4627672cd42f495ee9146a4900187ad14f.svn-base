@@ -1,0 +1,14 @@
+/**
+ * 
+ */
+package com.hori.grms.service;
+
+/** 
+ * @ClassName: ProjectProductService 
+ * @Description:项目清单表
+ * @author zhuqiang
+ * @date 2018年8月8日 下午7:05:15 
+ */
+public interface ProjectProductService {
+
+}

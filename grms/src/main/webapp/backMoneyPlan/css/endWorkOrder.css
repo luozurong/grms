@@ -1,0 +1,88 @@
+.workorder-end{
+	background-color: #FFFFFF;
+	height: 335px;
+	box-sizing: border-box;
+	margin: 0 24px;
+	padding: 20px;
+	color: #222222;
+}
+.explain{
+	position: relative;
+}
+.explainTxt{
+	position: absolute;
+	left: 0px;
+	top: 2px;
+}
+.explainVal{
+	margin-left: 80px;
+	width: 400px;
+	height: 110px;
+	border: 1px solid #cccccc;
+	border-radius: 2px;
+	padding: 2px 5px;
+	box-sizing: border-box;
+}
+.explainVal::-webkit-input-placeholder{
+  height: 93px;line-height: 93px;color: #CCCCCC;
+  text-align: center;
+}    /* 使用webkit内核的浏览器 */
+.explainVal:-moz-placeholder{
+  height: 93px;line-height: 93px;color: #CCCCCC;
+  text-align: center;
+}                  /* Firefox版本4-18 */
+.explainVal::-moz-placeholder{
+  height: 93px;line-height: 93px;color: #CCCCCC;
+  text-align: center;
+}                  /* Firefox版本19+ */
+.explainVal:-ms-input-placeholder{
+  height: 93px;line-height: 93px;color: #CCCCCC;
+  text-align: center;
+}
+.speedQuality{
+	margin-top: 20px;
+	padding-left: 80px;
+}
+.evaluate li{
+	float: left;
+	display: inline-block;
+	width: 12px;
+	height: 24px;
+	cursor: pointer;
+}
+.evaluate li:nth-child(odd){
+	background: url(../images/star_grey.png) left center no-repeat;
+}
+.evaluate li.light:nth-child(odd){
+	background: url(../images/star_gold.png) left center no-repeat;
+}
+.evaluate li:nth-child(even){
+	background: url(../images/star_grey.png) right center no-repeat;
+	margin-right: 10px;
+}
+.evaluate li.light:nth-child(even){
+	background: url(../images/star_gold.png) right center no-repeat;
+}
+.endFooter{
+	text-align: center;
+	margin-top: 40px;
+}
+.endFooter span{
+	display: inline-block;
+	font-size: 16px;
+	width: 120px;
+	height: 40px;
+	line-height: 40px;
+	box-sizing: border-box;
+	border-radius: 4px;
+	cursor: pointer;
+	margin: 0 25px;
+}
+.endBtn{
+	color: #FFFFFF;
+	background-color: #51d2b6;
+}
+.cancelBtn{
+	color: #666666;
+	border: 1px solid #C2C2C2;
+}

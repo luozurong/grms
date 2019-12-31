@@ -1,0 +1,39 @@
+<div class="add_community">
+	<div class="add_body">
+		<!--筛选条件-->
+		<div class="filter">
+			<input name="sheng" id="province_selt"/>
+			<input name="shi" id="city_selt"/>
+			<input name="qu" id="area_selt" />
+				
+			<a id="my-btn" class="easyui-linkbutton" data-options="width:90,height:34,plain:true" onclick="filtrate()">筛选</a>
+			<span class="fr">
+				<input id="keyword" class="easyui-searchbox" data-options="prompt:'请输入关键词',height:34,width:180,searcher:filtrate">
+			</span>
+		</div>
+		
+		<!--数据表-->
+		<div class="dataTable">
+			<table id="communityDg" class="easyui-datagrid">
+				<thead>
+					<tr>
+						<th data-options="field:'ck',width:50,checkbox:true"></th>
+						<th data-options="field:'id'" hidden="hidden">id</th>
+						<th data-options="field:'organizationSeq'" hidden="hidden">机构编号</th>
+						<th data-options="field:'areaName',width:204">小区名称</th>
+						<th data-options="field:'address',width:500">地址</th>
+					</tr>
+				</thead>
+			</table>
+		</div>
+		<div class="dataTotal clearfix">
+			<div class="fr">
+				共<span id='total'>0</span>条，已选<span id='selNum'>0</span>条
+			</div>
+		</div>
+	</div>
+	<div class="add_footer">
+		<a id="btn" class="easyui-linkbutton" data-options="width:120,height:40,plain:true" onclick="communitySure()">确定</a>
+	</div>
+</div>
+<script src="../dialog/js/addCommunity.js" type="text/javascript" charset="utf-8"></script>

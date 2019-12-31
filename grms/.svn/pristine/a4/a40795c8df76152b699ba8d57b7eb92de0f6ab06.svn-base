@@ -1,0 +1,713 @@
+var business_type=1;
+
+$(".workorder-tabs>div").click(function(){
+	if($(this).hasClass("workorder-tabs1")){
+		business_type=1;
+	}
+	if($(this).hasClass("workorder-tabs2")){
+		business_type=2;
+	}
+	if($(this).hasClass("workorder-tabs3")){
+		business_type=3;
+	}
+	if($(this).hasClass("workorder-tabs4")){
+		business_type=4;
+	}
+	if($("#operate").val()==1){
+		return false;
+	}
+	$(this).addClass("workorder-select").siblings().removeClass("workorder-select");
+	$(".addProject-pop>div").eq($(this).index()).addClass("addProject-pop-active").siblings().removeClass("addProject-pop-active");
+	setTimeout(function(){
+		//dataFunc();
+	},500);
+});
+
+
+//格式化时间
+/*dataFunc();*/
+/*function dataFunc(){	
+	$("#startTime").datebox({
+	    value : '2017-05-22',
+	    editable : false,
+	    onSelect : function(beginDate){
+	        $('.datebox-2').datebox('calendar').calendar({
+	            validator: function(date){
+	                return beginDate<=date;//<=
+	            }
+	        });
+	    }
+	});
+	
+	$("#endTime").datebox({
+	    value : '2017-05-22',
+	    editable : false,
+	    onSelect : function(endDate){
+	        $('.datebox-1').datebox('calendar').calendar({
+	            validator: function(date){
+	                return endDate>=date;
+	            }
+	        });
+	    }
+	});
+}*/
+
+
+// 1：社区运营=================================================================================================================================================
+function saveProject1(){
+	var project1={};
+	project1.id=$("#project1Id").val();
+	//场次名称
+	project1.fieldName=$("#field_name").val();
+	//开始时间
+	project1.beginTime=$("#startTime1").val();
+	//结束时间
+	project1.endTime=$("#endTime1").val();
+	//选择小区id	
+	project1.organizationSeq=$("#project1AreaO").val();
+	//选择小区名称
+	project1.areaName=$("#project1AreaName").val();
+	//是否服从场次分配
+	project1.isDistributionField=$("#isDistributionField").is(".checkbox-bg")?"1":"0";
+	
+	//是否服从时间调配
+	project1.isDistributionTime=$("#isDistributionTime").is(".checkbox-bg")?"1":"0";
+	
+	//标准场地（3米*3米，必须加基础引流）
+	var productList=[];
+	var product1011={};
+	
+	product1011.id="1011";
+	product1011.buyNum=$("#p1011").val();	
+	
+	productList[0]=product1011;
+	var product1012={};
+	
+	/*product1012.id="1021";
+	product1012.buyNum=$("#p1011").val();
+	
+	
+	productList[1]=product1012;*/
+	
+	//单选	
+	var ddbg=$(".radio-bg");
+	if(ddbg.length>0){
+		dd=ddbg.find('input');
+		productdd={};
+		productdd.id=dd.val();				
+		productdd.buyNum=$("#ddNum").val();
+		
+		productList.push(productdd);
+	}
+	
+	project1.projectMenus=productList;
+	project1.businessType="1";
+	project1.businessName="社区运营";
+	
+	//追加游戏
+	$(".project1 .checkbox-bg").each(
+		function(index,element){
+			var num=$(this).parent().next().find("input").val();
+			console.log("数据："+num);
+			if(num>0){
+				prodect={};
+				prodect.id=$(this).find("input").val();
+				prodect.buyNum=$(this).parent().next().find("input").val();
+				
+				productList.push(prodect);
+			}
+		}
+	);
+	
+	showShade(true,"保存项目清单中,请稍后......");
+	
+	console.log(JSON.stringify(project1));
+	
+	$.ajax({
+        url: "../projectProduct/saveProjectProdect.html",
+        type:"POST",
+        data:JSON.stringify(project1),
+        dataType:"json",
+        contentType:'application/json;charset=utf-8',
+        success: function (data) {	        	        	
+            if(true == data.success){                		                        	
+            	successMask('保存成功',"/grms/projectProduct/backAddProject.html");                 
+                
+            }else{
+            	infoMask('保存失败:' +data.msg);
+            }
+        },
+        error: function () {
+        	infoMask('保存失败:' +"服务器响应异常");
+        },
+        complete : function (XHR, TS){
+            showShade(false);
+        }
+    });
+	
+}
+
+//煤管选择默认小区触事件
+function selectCustomer1(){
+	if($("input[name='organizationSeq1']:checked").val()){	                	    	  
+    	var area=$("#infoDg").datagrid("getSelected");
+    	console.log(area.organizationSeq+":"+area.areaName);
+    	$("#project1AreaO").val(area.organizationSeq);  
+    	$("#project1AreaName").val(area.areaName);
+    	$("#project1AreaSh").text(area.areaName);
+    }
+}
+
+// 2：煤管=====================================================================================================================================================
+
+function selectCustomer2(areaDeault){
+	
+	//判断煤管不可勾选的帧位
+	$.ajax({
+        url: "../projectProduct/deleteProductMean.html",
+        type:"POST",
+        data:{
+        	organizationSeqs:areaDeault.organizationSeqs,
+        	beginTime:$("#start2Time").val(),
+        	endTime:$("#end2Time").val()
+        },
+        success: function (data) {	 
+        	var result=JSON.parse(data);
+            if(true == result.success){                		                        	
+            	//筛选成功,对表格进行处理
+            	
+            }else{
+            	infoMask('筛选有误:' +result.msg);
+            }
+        },
+        error: function () {
+        	infoMask('筛选有误:' +"服务器响应异常");
+        },
+        complete : function (XHR, TS){
+            showShade(false);
+        }
+       });
+}
+
+// 3：用户运营=================================================================================================================================================
+function selectCustomer3(){
+	
+}
+
+// 4：电商运营=================================================================================================================================================
+
+
+
+// 添加小区
+
+
+/**
+ * 三级弹框联动
+ */
+function initAddress(){
+	var cityAreaTownInitValue=[
+	                           {
+	                               "id":0,
+	                               "code":"",
+	                               "name":"请选择",
+	                               "parentId":"",
+	                               "selected":true
+	                           }
+	 ];
+	 $('#city,#country').combobox({
+		 	width:100,
+		 	height:30,
+	        limitToList:true,
+	        data:cityAreaTownInitValue,
+	        valueField:'code',
+	        textField:'name',
+	        editable:false,
+	        panelHeight:"auto"
+	    });
+	
+	//省份的数据初始化,4级联动
+	$('#province').combobox({
+        url:'/ums/communityAction!initProvince.html',
+        method:'post',
+        value : '请选择',
+        valueField:'code',
+        textField:'name',
+        editable:false,
+        onSelect:function(newValue){
+        	provinceCode = newValue.code;
+        	$("#provinceCode").val(provinceCode);
+        	$("#cityCode").val("");
+        	$("#countryCode").val("");
+            $('#city').combobox({
+                url:'/ums/communityAction!getChildSelectData.html?code='+provinceCode,
+                method:'post',
+                value : '请选择',
+                valueField:'code',
+                textField:'name',
+                onSelect:function(newValue){
+                	cityCode = newValue.code;
+                	$("#cityCode").val(cityCode);
+                	$("#countryCode").val("");
+                	$('#country').combobox({
+            	        url:'/ums/communityAction!getChildSelectData.html?code='+cityCode,
+            	        method:'post',
+            	        value : '请选择',
+            	        valueField:'code',
+            	        textField:'name',
+            	        onSelect:function(newValue){
+            	        	countryCode = newValue.code;
+            	        	$("#countryCode").val(countryCode);           	        	
+							var self = $(this);
+							comboboxOnSelect(self,newValue);
+            	        }
+            	    });
+					var self = $(this);
+					comboboxOnSelect(self,newValue);
+                }
+            });
+			var self = $(this);
+			comboboxOnSelect(self,newValue);						
+					
+        }
+    });
+    
+	
+}
+
+
+//公共分页方法 带元素ID、 页数、 selectPage方法、s按钮数防止弹窗宽度不够
+function comPagination(Id,pagesize,selectPage,s){
+//	按钮数不带默认10个
+	var links = 0;
+	if( s == undefined ){
+		links = 10;
+	}else{
+		links = s;
+	}
+	$(Id).pagination({
+		layout:['first','prev','links','next','last','manual'],
+		pageSize:pagesize,
+		links:links,
+		onSelectPage:selectPage
+	})
+}
+
+//分页按钮根据数据显示或隐藏 带分页选择器ID，返回的列表数据
+function pageBtnShowOrHide(selector,data){
+	if(data.total == 0 || data.total == undefined){
+		$(selector).find('table').hide();
+		$(selector).css('height','36px');
+	}else{
+		$(selector).find('table').show();
+	}
+}
+
+
+$(function(){		
+	var num = $("#businessType").val();
+	if(num == '') {
+		num = 1;
+		business_type=1;
+	}else{
+		business_type=num;
+	}
+	
+		$(".workorder-tabs .workorder-tabs"+num).addClass("workorder-select").siblings().removeClass("workorder-select");
+	$(".addProject-pop>div").eq(num-1).addClass("addProject-pop-active").siblings().removeClass("addProject-pop-active");
+	
+	
+});
+
+//点击返回立项
+function getBackProject(){
+	window.location.href="../projectProduct/backAddProject.html";
+}
+
+
+function selectArea(){
+	wrapMaskShow();//父级遮罩显示
+	 $('body').css('overflow','hidden');//禁止滚动
+	 
+	 initAddress();	
+	 
+	 init();
+	 
+	//对于煤管选择时间
+	 if(business_type==2){
+		 if($("#start2Time").val().trim()==""||$("#end2Time").val().trim()==""){
+			 infoMask("默认时间不能为空");
+			 return;
+		 }
+	 }
+	 
+	 $("#infoDg").datagrid('load',
+			  {
+		  		pageNo:1
+		  		}); 
+	 
+	 $('#select_Area').dialog({
+	        width:1000,
+	        height:600,
+	        modal:true,
+	        collapsible:false,
+	        minimizable:false,
+	        maximizable:false,
+	        closable:true,
+	        draggable:false,
+	        resizable:false,
+	        inline:false,
+	        title:"选择小区",
+	        ok:"确定",
+	        cancel:"取消",
+	        buttons:[{
+	            text:'确认',
+	            handler:function(){
+	                wrapMaskHide();
+	                
+	                var areaDeault={};
+	                //获取选择的小区
+	                if(business_type!=1){
+	                	areaDeault=getAreaDeault();
+	                }
+	                
+	                //1
+	                switch (business_type) {
+					case 1:
+						selectCustomer1();
+						break;
+					case 2:
+						selectCustomer2(areaDeault);
+						break;
+					case 3:
+						selectCustomer3(areaDeault);
+						break;
+					case 4:
+						selectCustomer4(areaDeault);
+						break;
+					default:
+						break;
+					}
+	                
+	                //清空
+	                select_cell_list=[];
+	                page_num=1;
+	                
+	                $("#provinceCode").val("");
+	            	$("#cityCode").val("");
+	            	$("#countryCode").val("");
+	            	$("#communityName").val("");
+	                //将三级联动至于 请选择
+	                $('#select_Area').dialog('close');
+	                	              
+	            }
+	        },{
+	            text:'取消',
+	            handler:function(){
+	                wrapMaskHide();
+	                
+	                select_cell_list=[];
+	                page_num=1;
+	                
+	                $("#provinceCode").val("");
+	            	$("#cityCode").val("");
+	            	$("#countryCode").val("");
+	            	$("#communityName").val("");	           
+	                //将三级联动至于 请选择
+	                $('#select_Area').dialog('close');
+	                	                	               	                
+	            }
+	        }],
+
+	        onClose : function(){
+	        	
+	        	select_cell_list=[];
+                page_num=1;
+	        	
+	        	$("#provinceCode").val("");
+	        	$("#cityCode").val("");
+	        	$("#countryCode").val("");
+	        	$("#communityName").val("");
+	            wrapMaskHide();//父级遮罩隐藏
+	            $('body').css('overflow','auto');//恢复滚动
+	        }
+	    });
+	    winHiSelfAdaptation($('#roleWin_detail'));//弹窗定位
+}
+
+/**
+ * 点击默认选择小区按钮
+ */
+function getAreaDeault(){
+	var select_cell={};
+	select_cell.page=page_num;
+	select_cell.selectRows=$("#infoDg").datagrid("getSelections");
+	
+	for(var i=0;i<select_cell_list.length;i++){
+		if(select_cell_list[i].pae_num==page_num){
+			select_cell_list[i].splice(i,1);
+			break;
+		}
+ 	}	
+ 	select_cell_list.push(select_cell);
+ 	
+ 	var organizationSeqs=[];
+ 	var areaNames=[];
+ 	
+ 	for(var i=0;i<select_cell_list.length;i++){
+ 		for (var j=0;j<select_cell_list[i].selectRows.length;j++) {
+ 			organizationSeqs.push(select_cell_list[i].selectRows[j].organizationSeq);
+ 			areaNames.push(select_cell_list[i].selectRows[j].areaName);
+ 		}
+ 	}
+ 	var a={};
+ 	a.organizationSeqs=organizationSeqs.join();
+ 	a.areaName=organizationSeqs.join();
+ 	return a;
+}
+
+
+function init(){	
+	
+	 $('#infoDg').datagrid({
+			collapsible:true,
+			emptyMsg:'<span>无记录</span>',		    
+			method:'get',
+			scrollbarSize:0,
+			url:"../projectProduct/getCommunityList.html",			
+	        nowrap:false,//允许换行
+	        fitColumns:true,//宽度自适应
+	        singleSelect:business_type==1?true:false ,  //如果为true，则只允许选择一行
+	        onBeforeLoad:function(){
+	        	
+	        },
+			onLoadSuccess : function(data) {// Fires when data is
+			
+				//对选中元素进行回显
+				if(business_type!=1){
+					for (var i=0;i<select_cell_list.length;i++) {
+						console.log(select_cell_list[i]);
+						if(select_cell_list[i].page==data.page){
+							//回显						
+							for(var j=0;j<data.rows.length;j++){
+								for(var k=0;k<select_cell_list[i].selectRows.length;k++){
+									if(data.rows[j].organizationSeq==select_cell_list[i].selectRows[k].organizationSeq){									
+										$("#infoDg").datagrid("selectRow",j);
+									break;
+								}
+								}																											
+							}
+							break;
+						}
+					}
+				}
+				
+				page_num=data.page;
+	        	pageBtnShowOrHide('#infoPp',data);	        	
+				$('#infoPp').pagination('refresh', {
+					total : data.total,
+					pageNumber : data.page
+				});
+				 $('#infoDg').datagrid('resize');
+			},
+			onLoadError:function(){
+				$('#infoDg').datagrid('resize');
+	        },	       
+	        onClickRow: function(rowIndex, rowData){
+	        	if(business_type==1){
+		            //加载完毕后获取所有的checkbox遍历
+		            var radio = $("input[name='organizationSeq1']")[rowIndex].disabled;
+		            //如果当前的单选框不可选，则不让其选中
+		            if (radio!= true) {
+		                //让点击的行单选按钮选中
+		                $("input[name='organizationSeq1']")[rowIndex].checked = true;
+		            }
+		            else {
+		                $("input[name='organizationSeq1']")[rowIndex].checked = false;
+		            }
+	        	}
+	        },
+			columns : [ [
+			{
+				field : 'province',
+				width : 5,	
+				hidden:business_type==1?false:true,
+				align : 'center',
+				formatter: function (value, row, index) {  
+	                  return "<input name='organizationSeq1' type='radio' value='"+row.organizationSeq+"'/> ";  
+	            }  
+			},         
+			{
+				field : 'organizationSeq',
+				title:"选择",
+				align : 'center',
+				checkbox:business_type==1?false:true,
+				hidden:business_type==1?true:false				
+			},
+			{
+				field : 'cityName',
+				title : '城市',
+				width : 100,
+				halign : 'center',
+				align : 'center'
+			},              
+			{
+				field : 'countryName',
+				title : '区域',
+				width : 100,
+				halign : 'center',
+				align : 'center'
+			}, {
+				field : 'areaName',
+				title : '楼盘名称',
+				width : 100,
+				halign : 'center',
+				align : 'center'
+			}, {
+				field : 'town',
+				title : '小区编码',
+				width : 120,
+				halign : 'center',
+				align : 'center',
+				formatter:function(value,row,index){
+					return row.organizationSeq;
+				}
+			}, {
+				field : 'areaCategory',
+				title : '小区类型',
+				width : 80,
+				halign : 'center',
+				align : 'center',
+				formatter:function(value,row,index){
+					
+						switch (value) {
+						case "0":							
+							return "测试小区";
+							break;
+	                    case "1":	
+	                    	return "云对讲项目";
+							break;
+						case "2":
+							return "工程项目";
+							break;
+	                    case "3":	
+	                    	return "样板演示小区";
+							break;						
+						default:
+							break;
+						}
+					  }
+			    }, {
+				field : 'translateStatus',
+				title : '转化情况',
+				width : 80,
+				halign : 'center',
+				align : 'center',
+				formatter:function(value,row,index){
+					switch (value) {
+					case "0":
+						return "未转化";
+						break;
+                    case "1":	
+                 	return "已完成转化";
+						break;
+					case "2":
+						return "部分转化(试点转化)";
+						break;                    					
+					default:
+						break;
+					}
+				  }
+	        	},{
+					field : 'householdNum',
+					title : '实际户数',
+					width : 80,
+					halign : 'center',
+					align : 'center'
+		        },{
+					field : 'areaAddress',
+					title : '地址',
+					width : 170,
+					halign : 'center',
+					align : 'center'
+		        }
+			 ] ]
+		});
+		// 分页
+		comPagination('#infoPp',10,infoPpSelectPage);
+}
+
+//搜索按钮
+function detailSearch(){
+	select_cell_list=[];
+    page_num=1;
+	
+	var provinceCode=$("#provinceCode").val();
+	var cityCode=$("#cityCode").val()=="请选择"?"":$("#cityCode").val();
+	var countryCode=$("#countryCode").val()?"":$("#countryCode").val();
+	var communityName=$("#communityName").val();
+	
+	$("#infoDg").datagrid("reload", {
+		pageNo:1,
+		province:provinceCode,
+		city:cityCode,
+		country:countryCode,
+		areaName:communityName
+	});
+} 
+
+var select_cell_list=[];
+var page_num=1;
+//详情的表格分页
+function infoPpSelectPage(pageNo, pageSize){
+	//console.log($("#infoDg").datagrid("getSelections"));
+	//console.log(page_num);
+	if(business_type!==1){
+		var select_cell={};
+		select_cell.page=page_num;
+		select_cell.selectRows=$("#infoDg").datagrid("getSelections");
+		
+		for(var i=0;i<select_cell_list.length;i++){
+			if(select_cell_list[i].pae_num==page_num){
+				select_cell_list[i].splice(i,1);
+				break;
+			}
+	 	}	
+	 	select_cell_list.push(select_cell);
+	}	
+	
+	var provinceCode=$("#provinceCode").val();
+	var cityCode=$("#cityCode").val()=="请选择"?"":$("#cityCode").val();
+	var countryCode=$("#countryCode").val()?"":$("#countryCode").val();
+	var communityName=$("#communityName").val();
+	
+	var start = (pageNo - 1) * pageSize; 
+    var end = start + pageSize; 	
+    $("#infoDg").datagrid("reload", {
+		pageNo:pageNo,
+		province:provinceCode,
+		city:cityCode,
+		country:countryCode,
+		areaName:communityName
+	}); 
+}
+
+
+/*
+显示遮罩
+*/
+function showShade(show , text){
+   if(true == show){
+       if(text){
+           $('.shadeBox .tipsInfo p').html(text);
+       }     	
+	    wrapMaskShow();//父级遮罩显示
+	    $('body').css('overflow','hidden');//禁止滚动	    
+        $('.shadeBox').show();
+   }else{
+       wrapMaskHide();//父级遮罩隐藏
+       $('body').css('overflow','auto');//恢复滚动
+       $('.shadeBox').hide();
+   }
+
+}
+

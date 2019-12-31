@@ -1,0 +1,37 @@
+/*
+ * ProjectRoleMapper.java
+ * Copyright(C) 20xx-2015 xxxxxx公司
+ * All rights reserved.
+ * -----------------------------------------------
+ * 2018-08-10 Created
+ */
+package com.hori.grms.dao;
+
+import com.hori.grms.model.ProjectRole;
+import com.hori.grms.model.ProjectRoleExample;
+import java.util.List;
+import org.apache.ibatis.annotations.Param;
+
+public interface ProjectRoleMapper {
+    int countByExample(ProjectRoleExample example);
+
+    int deleteByExample(ProjectRoleExample example);
+
+    int deleteByPrimaryKey(String id);
+
+    int insert(ProjectRole record);
+
+    int insertSelective(ProjectRole record);
+
+    List<ProjectRole> selectByExample(ProjectRoleExample example);
+
+    ProjectRole selectByPrimaryKey(String id);
+
+    int updateByExampleSelective(@Param("record") ProjectRole record, @Param("example") ProjectRoleExample example);
+
+    int updateByExample(@Param("record") ProjectRole record, @Param("example") ProjectRoleExample example);
+
+    int updateByPrimaryKeySelective(ProjectRole record);
+
+    int updateByPrimaryKey(ProjectRole record);
+}

@@ -1,0 +1,198 @@
+<%
+	String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() ;
+%>
+<%@ page language="java" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>账号管理</title>
+    <meta http-equiv="X-UA-Compatible" content="edge" />
+    <link rel="stylesheet" type="text/css" href="<%=basePath%>/ums/common/css/reset.css" />
+    <link rel="stylesheet" type="text/css" href="<%=basePath%>/ums/common/css/default.css" />
+    <link rel="stylesheet" type="text/css" href="<%=basePath%>/ums/common/easyui/themes/default/easyui.css" />
+    <link rel="stylesheet" type="text/css" href="<%=basePath%>/ums/common/easyui/themes/icon.css" />
+    <link rel="stylesheet" type="text/css" href="<%=basePath%>/ums/common/css/common.css" />
+    <link rel="stylesheet" type="text/css" href="<%=basePath%>/ums/peopleManagement/css/people-common.css" />
+    <link rel="stylesheet" type="text/css" href="<%=basePath%>/ums/peopleManagement/css/accountManagement.css" />
+
+</head>
+<body>
+<div class="wrap">
+    <div class="topTitle clearfix">
+        <div class="path1 fl">人员管理</div>
+        <div class="path2 fl">账号管理</div>
+    </div>
+    <div class="conditions-select">
+        <div class="clearfix">
+            <div class="account adjust1 fl">账号：</div>
+            <div class="account1 fl">
+                <input value="" id="userAccount"/>
+            </div>
+            <div class="account fl">姓名：</div>
+            <div class="account1 fl">
+                <input value="" id="name"/>
+            </div>
+            <div class="account fl">手机号：</div>
+            <div class="account1 fl">
+                <input value="" id="mobile"/>
+            </div>
+            <div class="account fl">角色：</div>
+            <div class="account1 fl">
+                <input value="" id="roleName"/>
+            </div>
+        </div>
+
+        <div class="clearfix">
+            <div class="time fl">时间：</div>
+            <div class="time-star fl">
+                <div class="datebox-1"></div>
+            </div>
+            <div class="to-line fl">--</div>
+            <div class="time-end fl">
+                <div class="datebox-2"></div>
+            </div>
+            <div class="create fl" id="create" data-id="0"  onclick="roleWin(this)">创建</div>
+            <div class="search fl" id="select" onclick="selectAll()">搜索</div>
+            <div class="delete fl" id="deleteAll"  onclick="dealDeleteMany(this)">删除</div>
+        </div>
+
+
+    </div>
+    <div class="body-wrap">
+        <div class="menuL">
+            <div class="tree-wrap">
+                <ul id="box"></ul>
+            </div>
+        </div>
+        <div class="content">
+            <div class="content-wrap">
+                <table id="dg"></table>
+                <div id="pp" style="position: relative;width: 100%;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="roleWin" style="display: none">
+    <div class="roleWin-wrap">
+        <div class="detail-wrap">
+            <div class="role-name clearfix">
+                <div class="cl1 fl"><span class="cl1-1">*</span>角色名称</div>
+                <div class="cl2 fl cc-tree">
+                    <input class="cc-tree" id="roleSelect" type="text"  maxlength="20"/>
+                </div>
+            </div>
+             <input type="hidden" id="roleType"  maxlength="20"/>
+             <div class="role-name clearfix">
+                <div class="cl1 fl"><span class="cl1-1">*</span>数据域</div>
+                <div class="cl2 fl cc-tree">
+                    <input  id="dataArea1"  maxlength="20"/>
+                </div>
+            </div>
+            <div class="infoTips">选择与账号匹配的账号权限</div>
+            <div class="role-name clearfix">
+                <div class="cl1 fl">员&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;工</div>
+                <div class="cl2 fl cc-tree2">
+                    <input class="cc-tree" id="departSelect" type="text"  maxlength="20"/>
+                </div>
+            </div>
+            <div class="area clearfix">
+                <div class="left-name fl">
+                </div>
+                <div class="to-right fl"></div>
+                <div class="right-name fl">
+                
+                </div>
+            </div>
+            <div class="role-name clearfix">
+                <div class="cl1 fl"><span class="cl1-1">*</span>账&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;号</div>
+                <div class="cl2 fl">
+                    <input type="text" id="userAccount1"  maxlength="20"/>
+                </div>
+            </div>
+            <div class="role-name clearfix" style="display: none">
+                <div class="cl1 fl"><span class="cl1-1">*</span>账&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;号</div>
+                <div class="cl2 fl">
+                    <input type="text" id="userId1"  maxlength="20"/>
+                    
+                </div>
+            </div>
+            <div class="infoTips">系统将以此帐号作为前缀，自动生成帐号</div>
+        </div>
+
+        <!-- <div class="the-bottom clearfix">
+            <span class="quxiao fl">取消</span>
+            <span class="comfirm fl">保存</span>
+
+        </div> -->
+    </div>
+</div>
+
+<!-- 详情的弹窗-->
+<div id="roleWin_detail" style="display: none">
+    <div class="roleWin-wrap">
+        <div class="detail-wrap">
+            <div class="role-name clearfix">
+                <div class="cl1 fl"><span class="cl1-1">*</span>角色名称</div>
+                <div class="cl2 fl cc-tree">
+                    <input class="cc-tree" id="roleSelect2" type="text"  maxlength="20"/>
+                </div>
+            </div>
+            <div class="role-name clearfix">
+                <div class="cl1 fl"><span class="cl1-1">*</span>数据域</div>
+                <div class="cl2 fl cc-tree">
+                    <input  id="dataArea2"  maxlength="20"/>
+                </div>
+            </div>
+            <div class="role-name clearfix">
+                <div class="cl1 fl">员&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;工</div>
+                <div class="cl2 fl cc-tree2">
+                    <input class="cc-tree" id="departSelect2" type="text"  maxlength="20"/>
+                </div>
+            </div>
+            <div class="nameDetail">
+                <span class="theName" id="theName"></span>
+            </div>
+            <div class="role-name clearfix">
+                <div class="cl1 fl"><span class="cl1-1">*</span>账&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;号</div>
+                <div class="cl2 fl">
+                    <input type="text" id="userAccount2"  maxlength="20"/>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript"	src="<%=basePath%>/ums/common/easyui/jquery.min.js"></script>
+<script type="text/javascript"	src="<%=basePath%>/ums/common/easyui/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="<%=basePath%>/ums/common/easyui/locale/easyui-lang-zh_CN.js" ></script>
+<script type="text/javascript"	src="<%=basePath%>/ums/common/plugin/common.js"></script>
+<script type="text/javascript"	src="<%=basePath%>/ums/peopleManagement/js/accountManagement.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

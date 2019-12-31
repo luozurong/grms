@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>合同模板管理</title>
+    <meta http-equiv="X-UA-Compatible" content="edge" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <link rel="stylesheet" type="text/css" href="../common/css/reset.css" />
+    <link rel="stylesheet" type="text/css" href="../common/css/default.css" />
+    <link rel="stylesheet" type="text/css" href="../common/easyui/themes/default/easyui.css" />
+    <link rel="stylesheet" type="text/css" href="../common/easyui/themes/icon.css" />
+    <link rel="stylesheet" type="text/css" href="../common/css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../contract/css/contract-common.css" />
+    <link rel="stylesheet" type="text/css" href="../contract/css/contract_template.css" />
+
+</head>
+<body>
+    <div class="wrap">
+        <div class="topTitle clearfix">
+            <div class="path1 fl">合同管理</div>
+            <div class="path2 fl">合同模板管理</div>
+        </div>
+        <div class="conditions-select clearfix">
+         <div class="account fl"></div>
+         <div class="account1 fl">
+                <input value="" id="contractOrAccount" placeholder="请输入合同模板名称/创建人帐号" style="width:220px;" />
+            </div>
+            
+            <div class="time fl">时间：</div>
+            <div class="time-star fl">
+                <div class="datebox-1"></div>
+            </div>
+            <div class="to-line fl">--</div>
+            <div class="time-end fl">
+                <div class="datebox-2"></div>
+            </div>
+        <!--     <div class="account fl">用户类型：</div>
+            <div class="account fl">
+                <input id="roleType" value=""/>
+            </div>  -->
+         	<div class="search fl" onclick="selectAll()" id="contractTepSelect">查询</div>
+            <div class="create fl" data-id="0" onclick="roleWin(this)" id="contractTepUpload">上传</div>
+        </div>
+        <div class="content-wrap">
+            <table id="dg"></table>
+            <div id="pp" style="position: relative;"></div>
+        </div>
+    </div>
+
+    <div id="roleWin" style="display: none">
+    <div class="roleWin-wrap" id='roleWin1'>
+            <div class="detail-wrap"> 
+                <div class="role-name clearfix">
+                    <div class="cl1 fl"><span class="cl1-1">*</span>合同模板名称：</div>
+                    <div class="cl2 fl">
+                        <input type="text" value="" id="name" placeholder="请输入合同模板名称"  maxlength="20"/>
+                    </div>
+                </div>
+                <div class="role-name clearfix">
+                    <div class="cl1 fl"></span>&nbsp;&nbsp;合同模板附件：</span></div>
+                    <div class="cl2 fl">
+                     	 <form id="upfile">选择一个文件:
+                     	    <input type="file" name="file" id="upload" />
+							<input id="uploadFile" value="上传" type="button"/>
+						</form>
+						  <input id="url"  type="hidden"/>
+						<div id="upFile"></div>
+                    </div>
+                </div>  
+                
+            </div>
+
+
+        </div>
+
+ 
+    </div>
+    <script type="text/javascript"	src="../js/jquery-form.js"></script>
+    <script type="text/javascript"	src="../common/easyui/jquery.min.js"></script>
+    <script type="text/javascript"	src="../common/easyui/jquery.easyui.min.js"></script>
+    <script type="text/javascript"  src="../common/easyui/locale/easyui-lang-zh_CN.js" ></script>
+    <script type="text/javascript"	src="../common/plugin/common.js"></script>
+    <script type="text/javascript"	src="../contract/js/contract_template.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

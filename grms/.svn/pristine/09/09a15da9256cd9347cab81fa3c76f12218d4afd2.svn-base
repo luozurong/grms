@@ -1,0 +1,40 @@
+/**
+ * 
+ */
+package com.hori.grms.service;
+
+import java.util.Map;
+
+import com.github.pagehelper.PageInfo;
+import com.hori.grms.queryBean.ProjectActionQueryBean;
+import com.hori.grms.vo.CommunityProjectActionVo;
+
+/** 
+ * @ClassName: ProjectActionService 
+ * @Description: 项目执行清单
+ * @author zhuqiang
+ * @date 2018年8月8日 下午6:53:32 
+ */
+public interface ProjectActionService {
+
+	/**
+	 * 根据参数查询社区运营清单列表
+	 * @param queryBean
+	 * @return
+	 */
+	PageInfo<CommunityProjectActionVo> listCommunityAction(ProjectActionQueryBean queryBean);
+	/**
+	 * 获取项目执行清单
+	 * @param queryBean
+	 * @return
+	 */
+	PageInfo<Map<String, Object>> listProjectAction(ProjectActionQueryBean queryBean);
+
+	/**
+	 * 根据id修改执行清单状态
+	 * @param projectActionId 
+	 * @param actionStatus 执行清单状态，1：待确认 2：策划中 3：待执行 4：执行中  5：已完成
+	 * @return
+	 */
+	int changeStatus(String projectActionId, Integer actionStatus);
+}

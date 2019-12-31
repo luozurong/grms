@@ -1,0 +1,939 @@
+package com.hori.grms.service.impl;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.hori.grms.dao.BackMoneyPlanPeriodsMapper;
+import com.hori.grms.dao.FieldExchangeLogMapper;
+import com.hori.grms.dao.ProjectActionExceptionMapper;
+import com.hori.grms.dao.ProjectProductMapper;
+import com.hori.grms.dao.ProjectProductMenuMapper;
+import com.hori.grms.model.BackMoneyPlan;
+import com.hori.grms.model.BackMoneyPlanPeriods;
+import com.hori.grms.model.FieldExchangeLog;
+import com.hori.grms.model.Project;
+import com.hori.grms.model.ProjectAction;
+import com.hori.grms.model.ProjectActionException;
+import com.hori.grms.model.ProjectProduct;
+import com.hori.grms.queryBean.PAExceptionQueryBean;
+import com.hori.grms.service.BackMoneyPlanService;
+import com.hori.grms.service.PendingEventService;
+import com.hori.grms.service.ProjectActionExceptionService;
+import com.hori.grms.service.ProjectActionService;
+import com.hori.grms.service.ProjectService;
+import com.hori.grms.util.UUIDGeneratorUtil;
+import com.hori.grms.vo.ProjectActionExceptionVo;
+
+/**
+ * 执行清单异常Service实现
+ * 
+ * @author hehj
+ * @datetime 2018年8月14日 上午10:54:42
+ */
+@Service("projectActionExceptionService")
+public class ProjectActionExceptionServiceImpl implements ProjectActionExceptionService {
+	private final Logger logger = LoggerFactory.getLogger(ProjectActionExceptionServiceImpl.class);
+	@Autowired
+	private ProjectActionExceptionMapper projectActionExceptionMapper;
+	@Autowired
+	private ProjectActionService projectActionService;
+	@Autowired
+	private ProjectProductMenuMapper projectProductMenuMapper;
+	@Autowired
+	private ProjectService projectService;
+	@Autowired
+	private BackMoneyPlanService backMoneyPlanService;
+	@Autowired
+	private BackMoneyPlanPeriodsMapper backMoneyPlanPeriodsMapper;
+	@Autowired
+	private ProjectProductMapper projectProductMapper;
+	@Autowired
+	private FieldExchangeLogMapper fieldExchangeLogMapper;
+	@Autowired
+	private PendingEventService pendingEventService;
+
+	@Override
+	public PageInfo<ProjectActionExceptionVo> listException(PAExceptionQueryBean queryBean) {
+		if (queryBean == null) {
+			return null;
+		}
+		PageHelper.startPage(queryBean.getPageNumber(), queryBean.getPageSize());
+		List<ProjectActionExceptionVo> list = projectActionExceptionMapper.listException(queryBean);
+
+		PageInfo<ProjectActionExceptionVo> pageInfo = new PageInfo<ProjectActionExceptionVo>(list);
+
+		return pageInfo;
+	}
+
+	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
+	@Override
+	public void changeConfirmStatus(String exceptionRecordId, Short confirmStatus, int roleType) throws Exception {
+		if (StringUtils.isBlank(exceptionRecordId) || confirmStatus == null) {
+			throw new Exception("参数有误");
+		}
+		ProjectActionException pae = projectActionExceptionMapper.selectByPrimaryKey(exceptionRecordId);
+		pae.setStatus((short) 2);
+		pae.setConfirmStatus(confirmStatus);
+		pae.setConfirmTime(new Date());
+		projectActionExceptionMapper.updateByPrimaryKeySelective(pae);
+
+		if (pae.getType() == 2 && StringUtils.isBlank(pae.getParentExceptionId())) {// 子财务异常
+			// -------------------------------- 修改父异常
+			// ------------------------------------------
+			List<ProjectActionException> lists = projectActionExceptionMapper
+					.listByParentExceptionId(pae.getParentExceptionId());
+			boolean isOtherConfirm = true;// 其他子异常是否已经确认
+			for (ProjectActionException projectActionException : lists) {
+				if (!exceptionRecordId.equals(projectActionException.getId())
+						&& projectActionException.getConfirmStatus() != 1) {
+					isOtherConfirm = false;
+				}
+			}
+			if (isOtherConfirm) {
+				ProjectActionException parentException = projectActionExceptionMapper
+						.selectByPrimaryKey(pae.getParentExceptionId());
+				parentException.setConfirmStatus(confirmStatus);
+				parentException.setConfirmTime(new Date());
+				projectActionExceptionMapper.updateByPrimaryKeySelective(parentException);
+			}
+		}
+
+		ProjectAction action = projectActionService.getByCode(pae.getProjectActionCode());
+		if (6 == pae.getResult()) {// 当前异常的处理结果是终止
+			if (action.getActionStatus() != 5) {// 当前执行清单不是已完成
+				action.setExceptionStatus(0);// 异常
+				action.setActionStatus(5);// 已完成
+				action.setBusinessActionStatus(2);// 业务部门状态变为已完成
+				projectActionService.update(action);
+
+				List<ProjectAction> listByProjectCode = projectActionService.listByProjectCode(action.getProjectCode());
+				boolean isOtherCompleted = true;// 其他执行清单是否已完成
+				for (ProjectAction projectAction : listByProjectCode) {
+					if (!action.getId().equals(projectAction.getId()) && projectAction.getActionStatus() != 5) {
+						isOtherCompleted = false;
+					}
+				}
+				if (isOtherCompleted) {
+					Project project = projectService.getByCode(action.getProjectCode());
+					project.setActionStatus((short) 2);
+					project.setExceptionStatus((short) 1);
+					project.setUpdateTime(new Date());
+					projectService.update(project);
+				}
+			}
+		} else {
+			action.setExceptionStatus(1);// 异常状态变为正常
+			action.setBusinessActionStatus(1);// 业务部门状态变为进行中
+			projectActionService.update(action);
+
+			List<ProjectAction> listByProjectCode = projectActionService.listByProjectCode(action.getProjectCode());
+			boolean isOtherNormal = true;// 其他执行清单为正常
+			for (ProjectAction projectAction : listByProjectCode) {
+				if (!action.getId().equals(projectAction.getId()) && projectAction.getExceptionStatus() != 1) {
+					isOtherNormal = false;
+				}
+			}
+			if (isOtherNormal) {
+				Project project = projectService.getByCode(action.getProjectCode());
+				project.setExceptionStatus((short) 0);
+				project.setUpdateTime(new Date());
+				projectService.update(project);
+			}
+		}
+		
+		// 更新执行部门的待办
+		pendingEventService.updateProjectActionPendingEvent(action.getProjectCode(), action.getActionCode(), pae.getId(), pae.getResult(), roleType);
+	}
+
+	@Override
+	public PageInfo<Map<String, Object>> listProjectActionExceptions(PAExceptionQueryBean queryBean) {
+		if (queryBean == null) {
+			return null;
+		}
+		PageHelper.startPage(queryBean.getPageNumber(), queryBean.getPageSize());
+		List<Map<String, Object>> list = projectActionExceptionMapper.listProjectActionExceptions(queryBean);
+
+		PageInfo<Map<String, Object>> pageInfo = new PageInfo<Map<String, Object>>(list);
+
+		return pageInfo;
+	}
+
+	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
+	@Override
+	public void insertExcuteException(ProjectActionException pae) {
+		logger.info("------上报执行异常！！！------");
+		projectActionExceptionMapper.insert(pae);
+
+		ProjectAction projectAction = projectActionService.getByCode(pae.getProjectActionCode());
+		projectAction.setExceptionStatus(0);
+		projectActionService.update(projectAction);
+
+		Project project = projectService.getByCode(projectAction.getProjectCode());
+		project.setExceptionStatus((short) 1);
+		project.setUpdateTime(new Date());
+		projectService.update(project);
+	}
+
+	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
+	public void stopProjectAction(String exceptionId, String resultRemark, String dealName, String dealAccount,String money)
+			throws Exception {
+
+		ProjectActionException exception = projectActionExceptionMapper.selectByPrimaryKey(exceptionId);
+		// 项目执行清单编号（财务异常不与执行编号关联，而是与项目编号关联）
+		String projectActionCode = exception.getProjectActionCode();
+		// 项目编号
+		String code = exception.getProjectCode();
+
+		if (!exception.getStatus().equals(new Short((short) 0))) {
+			throw new Exception("该异常状态无法进行操作");
+		}
+		// type为1是执行异常
+		if (exception.getType().equals(new Short((short) 1))) {
+
+			logger.info("异常类型为执行异常");
+			
+			Project project = projectService.getByCode(code);
+
+			BackMoneyPlan backMoneyPlan = backMoneyPlanService.getBackMoneyPlanByContractCode(project.getContractCode());
+
+			if (null == backMoneyPlan) {
+				throw new Exception("项目没有建立相关收款计划，终止操作失败！！！");
+			}
+			
+			// 生成扣款计划
+			BackMoneyPlanPeriods backMoneyPlanPeriods = new BackMoneyPlanPeriods();
+
+			backMoneyPlanPeriods.setId(UUIDGeneratorUtil.generateUUID());
+
+			backMoneyPlanPeriods.setBackMoneyPlanCode(backMoneyPlan.getBackMoneyPlanCode());
+
+			backMoneyPlanPeriods.setPlanBackMoney(Double.parseDouble(money));
+
+			backMoneyPlanPeriods.setRemark(resultRemark);
+			
+			Date date = new Date();
+			
+			backMoneyPlanPeriods.setPlanBackTime(date);
+			
+			backMoneyPlanPeriods.setStatus((short) 0);
+
+			backMoneyPlanPeriods.setType((short) 3);
+	
+			backMoneyPlanPeriodsMapper.insertSelective(backMoneyPlanPeriods);
+			
+			backMoneyPlanService.actionExceptionUpdateBackPlan("2", backMoneyPlan.getBackMoneyPlanCode(), money);
+			
+			// 生成财务待办事件
+			pendingEventService.createBackMoneyPendingEventByActionException(project.getName(),
+					code, backMoneyPlan.getBackMoneyPlanCode());
+			
+			ProjectAction projectAction = projectActionService.getByCode(projectActionCode);
+
+			String projectProductId = projectAction.getProjectProductId();
+
+			logger.info("异常所属项目的项目清单编号为：" + projectProductId);
+			//'业务类型（冗余）：1社区运营 2 媒管 3用户运营 4电商运营 0财务'
+			String businessType = exception.getBusinessType();
+			//4为社区运营执行管理员，5为电商运营管理员，6为用户运营执行管理员，7为媒管执行管理员
+			short roleType = 1;
+			
+			if("1".equals(businessType)){
+				roleType = 4;
+			}else if("2".equals(businessType)){
+				roleType = 7;
+			}else if("3".equals(businessType)){
+				roleType = 6;
+			}else if("4".equals(businessType)){
+				roleType = 5;
+			}
+			
+			// 生成待办事件
+			pendingEventService.createProjectActionExceptionPendingEvent(projectAction.getProjectName(),
+					projectAction.getProjectCode(), projectActionCode, exceptionId, 6, roleType);
+			// 处理待办事件
+			pendingEventService.updateProjectActionPendingEvent(projectAction.getProjectCode(), projectActionCode, exceptionId, 6, 1);
+			// 释放资源
+			projectProductMenuMapper.releaseResources(projectProductId);
+		} else {
+
+			logger.info("异常类型为财务异常");
+
+			Project project = projectService.getByCode(code);
+
+			List<ProjectActionException> projectActionExceptions = projectActionExceptionMapper
+					.listByParentExceptionId(exception.getId());
+
+			if (projectActionExceptions.size() > 0) {
+
+				for (ProjectActionException projectActionException : projectActionExceptions) {
+					if (projectActionException.getConfirmStatus().equals(new Short((short) 0))) {
+						throw new Exception("财务异常结果未确定不能进行下一步操作！！");
+					}
+				}
+
+				// 存在子异常处理记录，不新增只修改
+				for (ProjectActionException projectActionException : projectActionExceptions) {
+
+					projectActionException.setDealAccount(dealAccount);
+
+					projectActionException.setDealName(dealName);
+
+					projectActionException.setDealTime(exception.getDealTime());
+
+					projectActionException.setConfirmStatus((short) 0);
+
+					projectActionException.setStatus((short) 1);
+
+					projectActionException.setResult((short) 6);
+
+					projectActionException.setResultRemark(resultRemark);
+
+					projectActionException.setConfirmTime(null);
+
+					projectActionExceptionMapper.updateByPrimaryKey(projectActionException);
+					
+					//'业务类型（冗余）：1社区运营 2 媒管 3用户运营 4电商运营 0财务'
+					String businessType = projectActionException.getBusinessType();
+					//4为社区运营执行管理员，5为电商运营管理员，6为用户运营执行管理员，7为媒管执行管理员
+					short roleType = 1;
+					
+					if("1".equals(businessType)){
+						roleType = 4;
+					}else if("2".equals(businessType)){
+						roleType = 7;
+					}else if("3".equals(businessType)){
+						roleType = 6;
+					}else if("4".equals(businessType)){
+						roleType = 5;
+					}
+					
+					// 生成相关的待办事件
+					pendingEventService.createProjectActionExceptionPendingEvent(project.getName(), code,
+							projectActionException.getProjectActionCode(), projectActionException.getId(), 6, roleType);
+				}
+
+			} else {
+
+				String projectCode = exception.getProjectCode();
+
+				List<ProjectAction> projectActions = projectActionService.listByProjectCode(projectCode);
+
+				// 遍历执行清单，生成对应部门的异常清单
+				for (ProjectAction projectAction : projectActions) {
+
+					ProjectActionException projectActionException = new ProjectActionException();
+
+					ProjectProduct projectProduct = projectProductMapper
+							.selectByPrimaryKey(projectAction.getProjectProductId());
+
+					projectActionException.setBusinessType(projectProduct.getBusinessType());
+
+					projectActionException.setCreaterAccount(exception.getCreaterAccount());
+
+					projectActionException.setCreaterName(exception.getCreaterName());
+
+					projectActionException.setCreateTime(exception.getCreateTime());
+
+					projectActionException.setDealAccount(dealAccount);
+
+					projectActionException.setDealName(dealName);
+
+					projectActionException.setDealTime(exception.getDealTime());
+
+					projectActionException.setDepartmentId(exception.getDepartmentId());
+
+					projectActionException.setDepartmentName(exception.getDepartmentName());
+					
+					projectActionException.setConfirmStatus((short) 0);
+
+					projectActionException.setExceptionRemark(exception.getExceptionRemark());
+
+					projectActionException.setParentExceptionId(exceptionId);
+
+					projectActionException.setId(UUIDGeneratorUtil.generateUUID());
+
+					projectActionException.setProjectActionCode(projectAction.getActionCode());
+
+					projectActionException.setProjectCode(projectCode);
+
+					projectActionException.setResult((short) 6);
+
+					projectActionException.setResultRemark(resultRemark);
+
+					projectActionException.setStatus((short) 1);
+
+					projectActionException.setType((short) 2);
+					
+					projectActionExceptionMapper.insert(projectActionException);
+					
+					//'业务类型（冗余）：1社区运营 2 媒管 3用户运营 4电商运营 0财务'
+					String businessType = projectProduct.getBusinessType();
+					//4为社区运营执行管理员，5为电商运营管理员，6为用户运营执行管理员，7为媒管执行管理员
+					short roleType = 1;
+					
+					if("1".equals(businessType)){
+						roleType = 4;
+					}else if("2".equals(businessType)){
+						roleType = 7;
+					}else if("3".equals(businessType)){
+						roleType = 6;
+					}else if("4".equals(businessType)){
+						roleType = 5;
+					}
+					
+					// 生成相关的待办事件
+					pendingEventService.createProjectActionExceptionPendingEvent(project.getName(), code,
+							projectActionException.getProjectActionCode(), projectActionException.getId(), 6, roleType);
+					logger.info("执行类型为：" + projectProduct.getBusinessType() + "的相关子异常生成成功");
+				}
+
+			}
+			
+			String planPeriodsId = exception.getPlanPeriodsId();
+			
+			BackMoneyPlanPeriods backMoneyPlanPeriods = backMoneyPlanPeriodsMapper.selectByPrimaryKey(planPeriodsId);
+			
+			backMoneyPlanPeriods.setStatus((short) 1);
+			
+			backMoneyPlanPeriodsMapper.updateByPrimaryKeySelective(backMoneyPlanPeriods);
+			
+			backMoneyPlanService.financeExceptionUpdateBackPlan("2",planPeriodsId);
+			
+			// 处理待办事件
+			pendingEventService.updateProjectActionPendingEvent(code, null, exceptionId, 6, 1);
+			// type为2是财务异常，释放项目相关资源
+			projectProductMenuMapper.releaseLock(code);
+
+		}
+
+		// 改变项目清单状态
+		exception.setStatus((short) 1);
+
+		exception.setDealAccount(dealAccount);
+
+		exception.setDealName(dealName);
+
+		exception.setResult((short) 6);
+
+		exception.setDealTime(new Date());
+
+		exception.setConfirmStatus((short) 0);
+
+		exception.setResultRemark(resultRemark);
+		// 更新异常信息
+		projectActionExceptionMapper.updateByPrimaryKeySelective(exception);
+
+		logger.info("异常处理成功！！！");
+	}
+
+	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
+	public void goOnProjectAction(String exceptionId, String resultRemark, String dealName, String dealAccount)
+			throws Exception {
+
+		ProjectActionException exception = projectActionExceptionMapper.selectByPrimaryKey(exceptionId);
+
+		// 项目执行清单编号（财务异常不与执行编号关联，而是与项目编号关联）
+		String projectActionCode = exception.getProjectActionCode();
+		// 项目编号
+		String code = exception.getProjectCode();
+
+		Project project = projectService.getByCode(code);
+
+		if (!exception.getStatus().equals(new Short((short) 0))) {
+			throw new Exception("该异常状态无法进行操作");
+		}
+
+		// 改变项目清单状态
+		exception.setStatus((short) 1);
+
+		exception.setDealAccount(dealAccount);
+
+		exception.setResult((short) 3);
+
+		exception.setDealName(dealName);
+
+		exception.setDealTime(new Date());
+
+		exception.setConfirmStatus((short) 0);
+
+		exception.setResultRemark(resultRemark);
+		// 异常为财务异常时
+		if (exception.getType() == (short) 2) {
+
+			logger.info("异常类型为财务异常");
+
+			List<ProjectActionException> projectActionExceptions = projectActionExceptionMapper
+					.listByParentExceptionId(exception.getId());
+
+			if (projectActionExceptions.size() > 0) {
+
+				for (ProjectActionException projectActionException : projectActionExceptions) {
+					if (projectActionException.getConfirmStatus().equals(new Short((short) 0))) {
+						throw new Exception("财务异常结果未确定不能进行下一步操作！！");
+					}
+				}
+
+				// 存在子异常处理记录，不新增只修改
+				for (ProjectActionException projectActionException : projectActionExceptions) {
+
+					projectActionException.setDealAccount(dealAccount);
+
+					projectActionException.setDealName(dealName);
+
+					projectActionException.setDealTime(exception.getDealTime());
+
+					projectActionException.setConfirmStatus((short) 0);
+
+					projectActionException.setStatus((short) 1);
+
+					projectActionException.setResult((short) 3);
+
+					projectActionException.setResultRemark(resultRemark);
+
+					projectActionException.setConfirmTime(null);
+
+					projectActionExceptionMapper.updateByPrimaryKey(projectActionException);
+					
+					//'业务类型（冗余）：1社区运营 2 媒管 3用户运营 4电商运营 0财务'
+					String businessType = projectActionException.getBusinessType();
+					//4为社区运营执行管理员，5为电商运营管理员，6为用户运营执行管理员，7为媒管执行管理员
+					short roleType = 1;
+					
+					if("1".equals(businessType)){
+						roleType = 4;
+					}else if("2".equals(businessType)){
+						roleType = 7;
+					}else if("3".equals(businessType)){
+						roleType = 6;
+					}else if("4".equals(businessType)){
+						roleType = 5;
+					}
+					
+					// 生成相关的待办事件
+					pendingEventService.createProjectActionExceptionPendingEvent(project.getName(), code,
+							projectActionException.getProjectActionCode(), projectActionException.getId(), 3, roleType);
+				}
+
+			} else {
+
+				String projectCode = exception.getProjectCode();
+
+				List<ProjectAction> projectActions = projectActionService.listByProjectCode(projectCode);
+
+				// 遍历执行清单，生成对应部门的异常清单
+				for (ProjectAction projectAction : projectActions) {
+
+					ProjectActionException projectActionException = new ProjectActionException();
+
+					ProjectProduct projectProduct = projectProductMapper
+							.selectByPrimaryKey(projectAction.getProjectProductId());
+
+					projectActionException.setBusinessType(projectProduct.getBusinessType());
+
+					projectActionException.setCreaterAccount(exception.getCreaterAccount());
+
+					projectActionException.setCreaterName(exception.getCreaterName());
+
+					projectActionException.setCreateTime(exception.getCreateTime());
+
+					projectActionException.setDealAccount(dealAccount);
+
+					projectActionException.setDealName(dealName);
+
+					projectActionException.setDealTime(exception.getDealTime());
+
+					projectActionException.setDepartmentId(exception.getDepartmentId());
+
+					projectActionException.setDepartmentName(exception.getDepartmentName());
+					
+					projectActionException.setConfirmStatus((short) 0);
+
+					projectActionException.setExceptionRemark(exception.getExceptionRemark());
+
+					projectActionException.setParentExceptionId(exceptionId);
+
+					projectActionException.setId(UUIDGeneratorUtil.generateUUID());
+
+					projectActionException.setProjectActionCode(projectAction.getActionCode());
+
+					projectActionException.setProjectCode(projectCode);
+
+					projectActionException.setResult((short) 3);
+
+					projectActionException.setResultRemark(resultRemark);
+
+					projectActionException.setStatus((short) 1);
+
+					projectActionException.setType((short) 2);
+
+					projectActionExceptionMapper.insert(projectActionException);
+					
+					//'业务类型（冗余）：1社区运营 2 媒管 3用户运营 4电商运营 0财务'
+					String businessType = projectProduct.getBusinessType();
+					//4为社区运营执行管理员，5为电商运营管理员，6为用户运营执行管理员，7为媒管执行管理员
+					short roleType = 1;
+					
+					if("1".equals(businessType)){
+						roleType = 4;
+					}else if("2".equals(businessType)){
+						roleType = 7;
+					}else if("3".equals(businessType)){
+						roleType = 6;
+					}else if("4".equals(businessType)){
+						roleType = 5;
+					}
+					
+					// 生成相关的待办事件
+					pendingEventService.createProjectActionExceptionPendingEvent(project.getName(), code,
+							projectActionException.getProjectActionCode(), projectActionException.getId(), 3, roleType);
+
+					logger.info("执行类型为：" + projectProduct.getBusinessType() + "的相关子异常生成成功");
+				}
+
+			}
+			
+			String planPeriodsId = exception.getPlanPeriodsId();
+			
+			BackMoneyPlanPeriods backMoneyPlanPeriods = backMoneyPlanPeriodsMapper.selectByPrimaryKey(planPeriodsId);
+			
+			backMoneyPlanPeriods.setStatus((short) 1);
+			
+			backMoneyPlanPeriodsMapper.updateByPrimaryKeySelective(backMoneyPlanPeriods);
+			
+			backMoneyPlanService.financeExceptionUpdateBackPlan("1",planPeriodsId);
+			
+			// 处理相关的待办事件
+			pendingEventService.updateProjectActionPendingEvent(code, projectActionCode,
+								exceptionId, 3, 1);
+
+		} else {
+			
+			//'业务类型（冗余）：1社区运营 2 媒管 3用户运营 4电商运营 0财务'
+			String businessType = exception.getBusinessType();
+			//4为社区运营执行管理员，5为电商运营管理员，6为用户运营执行管理员，7为媒管执行管理员
+			short roleType = 1;
+			
+			if("1".equals(businessType)){
+				roleType = 4;
+			}else if("2".equals(businessType)){
+				roleType = 7;
+			}else if("3".equals(businessType)){
+				roleType = 6;
+			}else if("4".equals(businessType)){
+				roleType = 5;
+			}
+
+			// 生成相关的待办事件
+			pendingEventService.createProjectActionExceptionPendingEvent(project.getName(), code, projectActionCode,
+					exceptionId, 3, roleType);
+			// 处理相关的待办事件
+			pendingEventService.updateProjectActionPendingEvent(code, projectActionCode,
+					exceptionId, 3, 1);
+		}
+
+		// 更新异常信息
+		projectActionExceptionMapper.updateByPrimaryKeySelective(exception);
+
+		logger.info("异常处理成功！！！");
+	}
+
+	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
+	public void pauseProjectAction(String exceptionId, String resultRemark, String dealName, String dealAccount)
+			throws Exception {
+		ProjectActionException exception = projectActionExceptionMapper.selectByPrimaryKey(exceptionId);
+
+		String projectCode = exception.getProjectCode();
+
+		Project project = projectService.getByCode(projectCode);
+
+		if (!exception.getStatus().equals(new Short((short) 0))) {
+			throw new Exception("该异常状态无法进行操作");
+		}
+
+		if (exception.getResult().equals(new Short((short) 4))) {
+			throw new Exception("该异常状态处理结果已经是暂停不能重复操作");
+		}
+
+		exception.setDealAccount(dealAccount);
+
+		exception.setResult((short) 4);
+
+		exception.setDealName(dealName);
+
+		exception.setDealTime(new Date());
+
+		exception.setConfirmStatus((short) 0);
+
+		exception.setResultRemark(resultRemark);
+		
+		List<ProjectAction> projectActions = projectActionService.listByProjectCode(projectCode);
+
+		// 遍历执行清单，生成对应部门的异常清单
+		for (ProjectAction projectAction : projectActions) {
+
+			ProjectActionException projectActionException = new ProjectActionException();
+
+			ProjectProduct projectProduct = projectProductMapper
+					.selectByPrimaryKey(projectAction.getProjectProductId());
+
+			projectActionException.setBusinessType(projectProduct.getBusinessType());
+
+			projectActionException.setCreaterAccount(exception.getCreaterAccount());
+
+			projectActionException.setCreaterName(exception.getCreaterName());
+
+			projectActionException.setCreateTime(exception.getCreateTime());
+
+			projectActionException.setDealAccount(dealAccount);
+
+			projectActionException.setDealName(dealName);
+
+			projectActionException.setDealTime(exception.getDealTime());
+
+			projectActionException.setDepartmentId(exception.getDepartmentId());
+
+			projectActionException.setDepartmentName(exception.getDepartmentName());
+			
+			projectActionException.setConfirmStatus((short) 0);
+
+			projectActionException.setExceptionRemark(exception.getExceptionRemark());
+
+			projectActionException.setParentExceptionId(exceptionId);
+
+			projectActionException.setId(UUIDGeneratorUtil.generateUUID());
+
+			projectActionException.setProjectActionCode(projectAction.getActionCode());
+
+			projectActionException.setProjectCode(projectCode);
+
+			projectActionException.setResult((short) 4);
+
+			projectActionException.setResultRemark(resultRemark);
+
+			projectActionException.setStatus((short) 1);
+
+			projectActionException.setType((short) 2);
+
+			projectActionExceptionMapper.insert(projectActionException);
+			
+			//'业务类型（冗余）：1社区运营 2 媒管 3用户运营 4电商运营 0财务'
+			String businessType = projectProduct.getBusinessType();
+			//4为社区运营执行管理员，5为电商运营管理员，6为用户运营执行管理员，7为媒管执行管理员
+			short roleType = 1;
+			
+			if("1".equals(businessType)){
+				roleType = 4;
+			}else if("2".equals(businessType)){
+				roleType = 7;
+			}else if("3".equals(businessType)){
+				roleType = 6;
+			}else if("4".equals(businessType)){
+				roleType = 5;
+			}
+			
+			// 生成相关的待办事件
+			pendingEventService.createProjectActionExceptionPendingEvent(project.getName(), projectCode,
+					projectActionException.getProjectActionCode(), projectActionException.getId(), 4, roleType);
+
+			logger.info("执行类型为：" + projectProduct.getBusinessType() + "的相关子异常生成成功");
+		}
+		
+		projectActionExceptionMapper.updateByPrimaryKey(exception);
+		
+		// 处理相关的待办事件
+		pendingEventService.updateProjectActionPendingEvent(projectCode,
+				exception.getProjectActionCode(), exceptionId, 4, 1);
+
+		logger.info("异常处理成功！！！");
+	}
+
+	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
+	public void deduction(String exceptionId, String resultRemark, String money, String dealName, String dealAccount)
+			throws Exception {
+
+		ProjectActionException exception = projectActionExceptionMapper.selectByPrimaryKey(exceptionId);
+		// 项目执行清单编号
+		String projectActionCode = exception.getProjectActionCode();
+
+		ProjectAction projectAction = projectActionService.getByCode(projectActionCode);
+		// 项目清单id
+		String projectProductId = projectAction.getProjectProductId();
+		// 项目编号
+		String projectCode = projectAction.getProjectCode();
+
+		Project project = projectService.getByCode(projectCode);
+
+		BackMoneyPlan backMoneyPlan = backMoneyPlanService.getBackMoneyPlanByContractCode(project.getContractCode());
+
+		if (null == backMoneyPlan) {
+			throw new Exception("项目没有建立相关收款计划，扣款操作失败！！！");
+		}
+
+		logger.info("异常所属项目的项目清单编号为：" + projectProductId);
+
+		// 改变项目清单状态
+		exception.setStatus((short) 1);
+
+		exception.setDealAccount(dealAccount);
+
+		exception.setResult((short) 2);
+
+		exception.setDealName(dealName);
+
+		exception.setDealTime(new Date());
+
+		exception.setConfirmStatus((short) 0);
+
+		exception.setResultRemark(resultRemark);
+
+		// 生成扣款计划
+		BackMoneyPlanPeriods backMoneyPlanPeriods = new BackMoneyPlanPeriods();
+
+		backMoneyPlanPeriods.setId(UUIDGeneratorUtil.generateUUID());
+
+		backMoneyPlanPeriods.setBackMoneyPlanCode(backMoneyPlan.getBackMoneyPlanCode());
+
+		backMoneyPlanPeriods.setPlanBackMoney(Double.parseDouble(money));
+
+		backMoneyPlanPeriods.setRemark(resultRemark);
+		
+		Date date = new Date();
+		
+		backMoneyPlanPeriods.setPlanBackTime(date);
+		
+		backMoneyPlanPeriods.setStatus((short) 0);
+
+		backMoneyPlanPeriods.setType((short) 3);
+
+		// 释放资源
+		projectProductMenuMapper.releaseResources(projectProductId);
+
+		// 更新异常信息
+		projectActionExceptionMapper.updateByPrimaryKeySelective(exception);
+		
+		backMoneyPlanPeriodsMapper.insertSelective(backMoneyPlanPeriods);
+		
+		backMoneyPlanService.actionExceptionUpdateBackPlan("1",backMoneyPlan.getBackMoneyPlanCode(),money);
+		
+		//'业务类型（冗余）：1社区运营 2 媒管 3用户运营 4电商运营 0财务'
+		String businessType = exception.getBusinessType();
+		//4为社区运营执行管理员，5为电商运营管理员，6为用户运营执行管理员，7为媒管执行管理员
+		short roleType = 1;
+		
+		if("1".equals(businessType)){
+			roleType = 4;
+		}else if("2".equals(businessType)){
+			roleType = 7;
+		}else if("3".equals(businessType)){
+			roleType = 6;
+		}else if("4".equals(businessType)){
+			roleType = 5;
+		}
+		
+		// 生成待办事件
+		pendingEventService.createProjectActionExceptionPendingEvent(project.getName(), projectCode, projectActionCode,
+				exceptionId, 2, roleType);
+		// 处理待办事件
+		pendingEventService.updateProjectActionPendingEvent(projectCode, projectActionCode,
+				exceptionId, 2, 1);
+		// 生成财务待办事件
+		pendingEventService.createBackMoneyPendingEventByActionException(projectAction.getProjectName(),
+				projectAction.getProjectCode(), backMoneyPlan.getBackMoneyPlanCode());
+
+		logger.info("异常处理成功！！！");
+
+	}
+
+	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
+	public void substitution(String exceptionId, ProjectProduct projectProduct, String dealName, String dealAccount) {
+
+		logger.info("对异常ID：" + exceptionId + "的异常进行场地置换操作");
+
+		ProjectActionException exception = projectActionExceptionMapper.selectByPrimaryKey(exceptionId);
+
+		// 项目执行清单编号
+		String projectActionCode = exception.getProjectActionCode();
+
+		ProjectAction projectAction = projectActionService.getByCode(projectActionCode);
+
+		// 项目编号
+		String projectCode = projectAction.getProjectCode();
+
+		Project project = projectService.getByCode(projectCode);
+
+		FieldExchangeLog fieldExchangeLog = new FieldExchangeLog();
+
+		fieldExchangeLog.setId(UUIDGeneratorUtil.generateUUID());
+
+		fieldExchangeLog.setCreaterAccount(dealAccount);
+
+		fieldExchangeLog.setCreaterName(dealName);
+
+		fieldExchangeLog.setProjectActionCode(exception.getProjectActionCode());
+
+		fieldExchangeLog.setCreateTime(projectProduct.getFieldExchangeTime());
+
+		// 改变项目清单状态
+		exception.setStatus((short) 1);
+
+		exception.setDealAccount(dealAccount);
+
+		exception.setResult((short) 1);
+
+		exception.setDealName(dealName);
+
+		exception.setConfirmStatus((short) 0);
+
+		exception.setDealTime(new Date());
+
+		// 更新异常信息
+		projectActionExceptionMapper.updateByPrimaryKeySelective(exception);
+		// 更新执行清单信息信息
+		projectProductMapper.updateByPrimaryKeySelective(projectProduct);
+		// 插入场地置换日志记录
+		fieldExchangeLogMapper.insert(fieldExchangeLog);
+		
+		//'业务类型（冗余）：1社区运营 2 媒管 3用户运营 4电商运营 0财务'
+		String businessType = exception.getBusinessType();
+		//4为社区运营执行管理员，5为电商运营管理员，6为用户运营执行管理员，7为媒管执行管理员
+		short roleType = 1;
+		
+		if("1".equals(businessType)){
+			roleType = 4;
+		}else if("2".equals(businessType)){
+			roleType = 7;
+		}else if("3".equals(businessType)){
+			roleType = 6;
+		}else if("4".equals(businessType)){
+			roleType = 5;
+		}
+		
+		// 处理待办事件
+		pendingEventService.updateProjectActionPendingEvent(projectProduct.getProjectCode(),
+				exception.getProjectActionCode(), exceptionId, 1, 1);
+		// 生成待办事件
+		pendingEventService.createProjectActionExceptionPendingEvent(project.getName(),projectProduct.getProjectCode(),
+				exception.getProjectActionCode(), exceptionId, 1, roleType);
+
+		logger.info("置换场地操作完成！！！");
+	}
+
+	@Override
+	public void insertMoneyException(ProjectActionException pae) {
+		// TODO Auto-generated method stub
+		projectActionExceptionMapper.insert(pae);
+	}
+	
+}

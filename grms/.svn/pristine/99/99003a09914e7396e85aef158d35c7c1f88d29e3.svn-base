@@ -1,0 +1,17 @@
+package com.hori.grms.dao;
+
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
+import com.hori.grms.model.DepartmentBusinessType;
+
+
+public interface DepartmentBusinessTypeMapper {
+
+	List<DepartmentBusinessType> getBusinessTypeList(String condition);
+
+	void delDepartmentBusiness(String id);
+	
+	
+}

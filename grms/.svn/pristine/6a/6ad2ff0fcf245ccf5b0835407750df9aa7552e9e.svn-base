@@ -1,0 +1,61 @@
+var dataStatus = null;
+$(function(){
+	//初始化项目状态选择值
+	dataStatus = -1;
+	
+	$("[name='projectStauts']").on("click", function(){
+		
+		//选择项目状态值发生改变则重新查询
+		if(dataStatus!=$(this).attr("data-status")){
+			dataStatus = $(this).attr("data-status")
+			console.log(dataStatus)
+			
+		}
+		
+	});
+	$('#createBtn').linkbutton({    
+	}); 
+	$('#searchBtn').linkbutton({    
+	}); 
+	
+	
+	
+	
+})
+
+//查询
+function findMenu(pageSize,pageNo){
+	var id=$('#id').val();
+	var name=$('#name').val();
+	var contractCode=$('#contractCode').val();
+	var customerName=$('#customerName').val();
+	
+	
+	pageNo=pageNoAll;
+	pageSize=pageSizeAll;
+	var projectQueryBean='{"id":"'+id+'","name":"'+name+'","contractCode":"'+contractCode+
+	+'","customerName":"'+customerName+'","status":"'+dataStatus
+	+'","pageNumber":"'+pageNo+'","pageSize":"'+pageSize+'"}';
+	
+    $.ajax({  
+        type : "POST",  //提交方式  
+        url : "project/list.html",//路径  
+        dataType : "json",//数据，这里使用的是Json格式进行传输  
+        data:  {"projectQueryBean":projectQueryBean},  
+        success : function(result) {//返回数据根据结果进行相应的处理  
+            if ( result.success) {  
+            	var data2=result.obj.rows;
+            	var total=result.obj.total;
+            	/*refresh(data2);
+            	paginationpage(total,data2);*/
+            	
+            	console.log(data2)
+            	console.log(total)
+            	
+            	
+            } else {  
+            	
+            }  
+        }  
+    }); 
+}

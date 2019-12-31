@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hori.grms.dao.BackMoneyPlanMapper" >
+  <resultMap id="BaseResultMap" type="com.hori.grms.model.BackMoneyPlan" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="back_money_plan_code" property="backMoneyPlanCode" jdbcType="VARCHAR" />
+    <result column="contract_code" property="contractCode" jdbcType="VARCHAR" />
+    <result column="creater_name" property="createrName" jdbcType="VARCHAR" />
+    <result column="creater_account" property="createrAccount" jdbcType="VARCHAR" />
+    <result column="creater_level" property="createrLevel" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="checker_account" property="checkerAccount" jdbcType="VARCHAR" />
+    <result column="checker_name" property="checkerName" jdbcType="VARCHAR" />
+    <result column="checker_time" property="checkerTime" jdbcType="TIMESTAMP" />
+    <result column="checker_level" property="checkerLevel" jdbcType="VARCHAR" />
+    <result column="check_status" property="checkStatus" jdbcType="SMALLINT" />
+  </resultMap>
+  
+  <resultMap id="BackMoneyPlanVoMap" type="com.hori.grms.vo.BackMoneyPlanVo" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="back_money_plan_code" property="backMoneyPlanCode" jdbcType="VARCHAR" />
+    <result column="contract_code" property="contractCode" jdbcType="VARCHAR" />
+    <result column="project_code" property="projectCode" jdbcType="VARCHAR" />
+    <result column="contract_name" property="contractName" jdbcType="VARCHAR" />
+    <result column="money" property="money" jdbcType="DECIMAL" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="creater_name" property="createrName" jdbcType="VARCHAR" />
+    <result column="update_time" property="approveTime" jdbcType="VARCHAR" />
+	<result column="check_status" property="checkStatus" jdbcType="SMALLINT" />
+  </resultMap>
+  
+  <resultMap type="com.hori.grms.vo.ContractDetailVo" id="ContractVoMap">
+  	<id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="project_code" property="projectCode" jdbcType="VARCHAR" />
+    <result column="contract_code" property="contractCode" jdbcType="VARCHAR" />
+    <result column="contract_name" property="contractName" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+	<result column="creater_name" property="createrName" jdbcType="VARCHAR" />
+    <result column="money" property="money" jdbcType="DECIMAL" />
+	<result column="update_time" property="approveTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, back_money_plan_code, contract_code, creater_name, creater_account, creater_level, 
+    create_time, update_time, checker_account, checker_name, checker_time, checker_level, 
+    check_status
+  </sql>
+  
+  <select id="getBackMoneyPlanByCode" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from back_money_plan
+    where back_money_plan_code = #{backMoneyPlanCode,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="getBackMoneyPlanByContractCode" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from back_money_plan
+    where contract_code = #{contractCode,jdbcType=VARCHAR} and check_status != -1
+  </select>
+  <select id="getBackMoneyPlanByContractCodeAndStatus" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from back_money_plan
+    where contract_code = #{contractCode,jdbcType=VARCHAR} and check_status = ${status}
+  </select>
+  
+  <select id="getBackMoneyPlanListByCondition" resultMap="BackMoneyPlanVoMap" parameterType="com.hori.grms.queryBean.BackMoneyPlanQueryBean">
+  	select b.id,b.back_money_plan_code,b.contract_code,c.project_code,b.check_status,
+  	c.money,c.contract_name,b.creater_name,ct.name,
+  	c.update_time from back_money_plan b 
+  	left join contract c on c.contract_code = b.contract_code 
+  	left join project p on p.contract_code = b.contract_code 
+  	left join customer ct on ct.id = p.customer_id 
+  	where 1=1 
+  	<if test='selectCondition != null and selectCondition != ""'>
+  		<choose>  
+			<when test='selectCondition=="0"'>  
+				and b.back_money_plan_code = #{condition,jdbcType=VARCHAR}
+			</when>  
+			<when test='selectCondition=="1"'>  
+				and c.project_code = #{condition,jdbcType=VARCHAR}
+			</when>
+			<when test='selectCondition=="2"'>  
+				and b.contract_code = #{condition,jdbcType=VARCHAR}
+			</when>
+			<when test='selectCondition=="3"'>  
+				and c.contract_name like #{condition}
+			</when>
+			<when test='selectCondition=="4"'>  
+				and ct.name like #{condition}
+			</when> 
+		</choose>
+  	</if>
+  	
+  	<if test="startTime != null and startTime !=''">
+		  AND b.create_time >= #{startTime,jdbcType=VARCHAR}
+	</if>
+	<if test="endTime != null and endTime != ''">
+	      <![CDATA[
+	      AND b.create_time <= #{endTime,jdbcType=VARCHAR} 
+	      ]]>
+	</if>
+	<if test="userString != null and userString != ''">
+		AND b.creater_account in (${userString})
+	</if>
+	AND b.check_status != -1 
+	GROUP BY c.contract_code 
+	order by b.create_time desc
+  </select>
+  
+  <select id="getBackMoneyPlanList" resultMap="BackMoneyPlanVoMap">
+  	select b.id,b.back_money_plan_code,b.contract_code,c.project_code,
+  	c.money,c.contract_name,ct.name,b.creater_name,b.check_status,
+  	c.update_time from back_money_plan b 
+  	left join contract c on c.contract_code = b.contract_code 
+  	left join project p on p.contract_code = b.contract_code 
+  	left join customer ct on ct.id = p.customer_id 
+  	where b.check_status != -1
+  </select>
+  
+  <select id="getContractList" resultMap="ContractVoMap" parameterType="String">
+  	select c.id,c.project_code,c.contract_code,c.contract_name,ct.name,c.creater_name,c.money,c.update_time from contract c 
+  	left join project p on p.contract_code = c.contract_code
+  	left join customer ct on ct.id = p.customer_id 
+  	where 1=1 
+  	<if test="condition !=null and condition != ''">
+  		and c.project_code = #{condition,jdbcType=VARCHAR} or c.contract_code = #{condition,jdbcType=VARCHAR} 
+  		or c.contract_name like #{condition} or ct.name like #{condition}
+  		or c.creater_name like #{condition}
+  	</if>
+  	and c.contract_code not in(select contract_code from back_money_plan where check_status != -1 ) 
+  	and c.status = 7 and c.contract_type = 1 
+  	GROUP BY c.contract_code
+  </select>
+  
+  <select id="getContractDetail" resultMap="ContractVoMap" parameterType="String">
+  	select c.id,c.project_code,c.contract_code,c.contract_name,ct.name,c.creater_name,c.money,c.update_time from contract c 
+  	left join project p on p.contract_code = c.contract_code
+  	left join customer ct on ct.id = p.customer_id 
+  	where 1=1 
+  	<if test="contractCode !=null and contractCode != ''">
+  		and c.contract_code = #{contractCode,jdbcType=VARCHAR}
+  	</if>
+  	GROUP BY c.contract_code
+  </select>
+  
+  <insert id="insertSelective" parameterType="com.hori.grms.model.BackMoneyPlan" >
+    insert into back_money_plan
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="backMoneyPlanCode != null" >
+        back_money_plan_code,
+      </if>
+      <if test="contractCode != null" >
+        contract_code,
+      </if>
+      <if test="createrName != null" >
+        creater_name,
+      </if>
+      <if test="createrAccount != null" >
+        creater_account,
+      </if>
+      <if test="createrLevel != null" >
+        creater_level,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="checkerAccount != null" >
+        checker_account,
+      </if>
+      <if test="checkerName != null" >
+        checker_name,
+      </if>
+      <if test="checkerTime != null" >
+        checker_time,
+      </if>
+      <if test="checkerLevel != null" >
+        checker_level,
+      </if>
+      <if test="checkStatus != null" >
+        check_status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="backMoneyPlanCode != null" >
+        #{backMoneyPlanCode,jdbcType=VARCHAR},
+      </if>
+      <if test="contractCode != null" >
+        #{contractCode,jdbcType=VARCHAR},
+      </if>
+      <if test="createrName != null" >
+        #{createrName,jdbcType=VARCHAR},
+      </if>
+      <if test="createrAccount != null" >
+        #{createrAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="createrLevel != null" >
+        #{createrLevel,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="checkerAccount != null" >
+        #{checkerAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="checkerName != null" >
+        #{checkerName,jdbcType=VARCHAR},
+      </if>
+      <if test="checkerTime != null" >
+        #{checkerTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="checkerLevel != null" >
+        #{checkerLevel,jdbcType=VARCHAR},
+      </if>
+      <if test="checkStatus != null" >
+        #{checkStatus,jdbcType=SMALLINT},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.hori.grms.model.BackMoneyPlan" >
+    update back_money_plan
+    <set >
+      <if test="backMoneyPlanCode != null" >
+        back_money_plan_code = #{backMoneyPlanCode,jdbcType=VARCHAR},
+      </if>
+      <if test="contractCode != null" >
+        contract_code = #{contractCode,jdbcType=VARCHAR},
+      </if>
+      <if test="createrName != null" >
+        creater_name = #{createrName,jdbcType=VARCHAR},
+      </if>
+      <if test="createrAccount != null" >
+        creater_account = #{createrAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="createrLevel != null" >
+        creater_level = #{createrLevel,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="checkerAccount != null" >
+        checker_account = #{checkerAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="checkerName != null" >
+        checker_name = #{checkerName,jdbcType=VARCHAR},
+      </if>
+      <if test="checkerTime != null" >
+        checker_time = #{checkerTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="checkerLevel != null" >
+        checker_level = #{checkerLevel,jdbcType=VARCHAR},
+      </if>
+      <if test="checkStatus != null" >
+        check_status = #{checkStatus,jdbcType=SMALLINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

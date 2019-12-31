@@ -1,0 +1,219 @@
+package com.hori.grms.service.impl;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.hori.grms.dao.CloseCaseMapper;
+import com.hori.grms.dao.ProjectActionMapper;
+import com.hori.grms.model.Attachment;
+import com.hori.grms.model.BackMoneyPlan;
+import com.hori.grms.model.CloseCaseInfo;
+import com.hori.grms.model.Contract;
+import com.hori.grms.model.Project;
+import com.hori.grms.model.ProjectAction;
+import com.hori.grms.model.ProjectProduct;
+import com.hori.grms.queryBean.CloseCaseQueryBean;
+import com.hori.grms.service.BackMoneyPlanService;
+import com.hori.grms.service.CloseCaseService;
+import com.hori.grms.service.ContractService;
+import com.hori.grms.service.ProjectActionService;
+import com.hori.grms.service.ProjectProductMenuAreaService;
+import com.hori.grms.service.ProjectProductService;
+import com.hori.grms.service.ProjectService;
+import com.hori.grms.util.UUIDGeneratorUtil;
+import com.hori.grms.vo.CloseCaseVo;
+
+@Service
+public class CloseCaseServiceImpl implements CloseCaseService {
+
+	@Autowired
+	private CloseCaseMapper closeCaseMapper;
+	@Autowired
+	private ProjectService projectService;
+	@Autowired
+	private ProjectProductService projectProductService;
+	@Autowired
+	private ContractService contractService;
+	@Autowired
+	private BackMoneyPlanService backMoneyPlanService;
+	@Autowired
+	private ProjectProductMenuAreaService projectProductMenuAreaService;
+	
+	@Override
+	public List<CloseCaseVo> getCloseCases(CloseCaseQueryBean queryBean) {
+		if(queryBean != null) {
+			queryBean.setPageIndex((queryBean.getPageNumber() - 1) * queryBean.getPageSize());
+			if(StringUtils.isNotBlank(queryBean.getKeyword())) {
+				queryBean.setKeyword("%" + queryBean.getKeyword() + "%");
+			}
+			if(StringUtils.isNotBlank(queryBean.getCreateTimeEnd())) {
+				queryBean.setCreateTimeEnd(queryBean.getCreateTimeEnd().trim() + " 23:59:59");
+			}
+			if(StringUtils.isNotBlank(queryBean.getActionTimeEnd())) {
+				queryBean.setActionTimeEnd(queryBean.getActionTimeEnd().trim() + " 23:59:59");
+			}
+		}
+		List<CloseCaseVo> ccis = closeCaseMapper.getCloseCases(queryBean);
+		if(ccis != null && !ccis.isEmpty()) {
+			for(CloseCaseVo cc : ccis) {
+				//附件
+				List<Attachment> attachments = closeCaseMapper.getAttachmentByCloseCaseId(cc.getId());
+				cc.setAttachments(attachments);
+				//业务人员
+				if(queryBean.getUserType() == 0) {
+					//通过项目编号获取各个执行部门的执行结案
+					List<CloseCaseInfo> cinfos = closeCaseMapper.getCloseCaseByProjectCode(cc.getProjectCode());
+					for(CloseCaseInfo cinfo : cinfos) {
+						//如果其中有一个是未提交状态，则结案状态（项目维度）为不能处理状态，这里用0标识
+						if(cinfo.getStatus() != null && cinfo.getStatus() <= 4) {
+							cc.setStatus(0);
+							break;
+						}
+						//多个小区展示的时候现在小区数目
+						if(StringUtils.isNotBlank(cinfo.getActionArea())) {
+							String[] areas = cinfo.getActionArea().split(",");
+							cinfo.setActionArea(areas.length + "");
+						}
+					}
+				}
+			}
+		}
+		return ccis;
+	}
+
+	@Override
+	public int getCloseCaseCount(CloseCaseQueryBean queryBean) {
+		if(queryBean != null) {
+			if(StringUtils.isNotBlank(queryBean.getKeyword())) {
+				queryBean.setKeyword("%" + queryBean.getKeyword() + "%");
+			}
+			if(StringUtils.isNotBlank(queryBean.getCreateTimeEnd())) {
+				queryBean.setCreateTimeEnd(queryBean.getCreateTimeEnd().trim() + " 23:59:59");
+			}
+			if(StringUtils.isNotBlank(queryBean.getActionTimeEnd())) {
+				queryBean.setActionTimeEnd(queryBean.getActionTimeEnd().trim() + " 23:59:59");
+			}
+		}
+		return closeCaseMapper.getCloseCaseCount(queryBean);
+	}
+	
+	@Override
+	public Attachment getAttachmentById(String id) {
+		return closeCaseMapper.getAttachmentById(id);
+	}
+	
+	@Override
+	public int updateStatusForAction(List<String> ids, Integer status) {
+		int count = 0;
+		if(ids != null && !ids.isEmpty()) {
+			for(String id : ids) {
+				count += closeCaseMapper.commit(id, status);
+			}
+		}
+		return count;
+	}
+	
+	@Override
+	public int updateStatusForBusiness(List<String> closeCaseCodes, Integer status) {
+		int count = 0;
+		if(closeCaseCodes != null && !closeCaseCodes.isEmpty()) {
+			for(String closeCaseCode : closeCaseCodes) {
+				count += closeCaseMapper.commit(closeCaseCode, status);
+			}
+		}
+		return count;
+	}
+
+	@Override
+	public int uploadAttachment(List<Attachment> attachments) {
+		int count = 0;
+		if(attachments != null && !attachments.isEmpty()) {
+			for(Attachment attachment : attachments) {
+				count += closeCaseMapper.uploadAttachment(attachment);
+			}
+		}
+		return count;
+	}
+	
+	@Override
+	public int deleteAttachments(List<String> ids) {
+		int count = 0;
+		if(ids != null && !ids.isEmpty()) {
+			for(String id : ids) {
+				if(StringUtils.isNotBlank(id)) {
+					count += closeCaseMapper.deleteAttachment(id);
+				}
+			}
+		}
+		return count;
+	}
+	
+	@Override
+	public int save(CloseCaseInfo closeCaseInfo) {
+		return closeCaseMapper.save(closeCaseInfo);
+	}
+
+	@Override
+	public void createCloseCaseInfo(String projectCode, String createrAccount) {
+		Project project = projectService.getByCode(projectCode);
+		Contract contract = contractService.getExecuteContract(project.getProductCode());
+		BackMoneyPlan backMoneyPlan = backMoneyPlanService.getBackMoneyPlanByContractCode(contract.getContractCode());
+		// 获取项目关联的所有项目清单
+		List<ProjectProduct> projectProducts = projectProductService.getProductsOrderBy(project.getProductCode());
+		
+		if (projectProducts != null && projectProducts.size() > 0) {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmm");
+			String closeCaseCode = sdf.format(new Date());// 结案编号
+			
+			SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			String actionTime = sdf2.format(projectProducts.get(projectProducts.size() - 1).getBeginTime());
+			String createTime = sdf2.format(new Date());
+			
+			for (ProjectProduct projectProduct : projectProducts) {
+				CloseCaseInfo closeCase = new CloseCaseInfo();
+				closeCase.setId(UUIDGeneratorUtil.generateUUID());
+				closeCase.setCloseCaseCode(closeCaseCode);
+				closeCase.setProjectCode(project.getProductCode());
+				closeCase.setProjectName(project.getName());
+				closeCase.setContractCode(contract.getContractCode());
+				closeCase.setContractName(contract.getContractName());
+				closeCase.setActionTime(actionTime);
+				
+				if ("1".equals(projectProduct.getBusinessType())) {// 社区运营
+					closeCase.setActionArea(projectProduct.getAreaName());
+					closeCase.setStatus(1);// 1：待提交社区运营
+				} else if ("2".equals(projectProduct.getBusinessType())) {// 媒管
+					String areaNames = projectProductMenuAreaService.getAreaNamesByPPID(projectProduct.getId());
+					closeCase.setActionArea(areaNames);
+					closeCase.setStatus(4);// 4：待提交媒管
+					
+				} else if ("3".equals(projectProduct.getBusinessType())) {// 用户运营
+					String areaNames = projectProductMenuAreaService.getAreaNamesByPPID(projectProduct.getId());
+					closeCase.setActionArea(areaNames);
+					closeCase.setStatus(2);// 2：待提交用户运营
+					
+				} else if ("4".equals(projectProduct.getBusinessType())) {// 电商运营
+					String areaNames = projectProductMenuAreaService.getAreaNamesByPPID(projectProduct.getId());
+					closeCase.setActionArea(areaNames);
+					closeCase.setStatus(3);// 3：待提交电商运营
+					
+				}
+				closeCase.setBackMoneyPlanCode(backMoneyPlan.getBackMoneyPlanCode());
+				closeCase.setType(1);// 正常结案
+				closeCase.setCreaterAccount(createrAccount);
+				closeCase.setCreateTime(createTime);
+				
+				closeCaseMapper.save(closeCase);
+			}
+		}
+	}
+	
+	public static void main(String[] rgs) {
+		
+	}
+}

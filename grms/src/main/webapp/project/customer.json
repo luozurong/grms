@@ -1,0 +1,11 @@
+{"total":28,"rows":[
+	{"id":"1","contactor":"FI-SW-01","dutyName":"Koi","name":10.00,"department":"P"},
+	{"id":"2","contactor":"FI-SW-02","dutyName":"Koi","name":10.00,"department":"P"},
+	{"id":"3","contactor":"FI-SW-03","dutyName":"Koi","name":10.00,"department":"P"},
+	{"id":"4","contactor":"FI-SW-04","dutyName":"Koi","name":10.00,"department":"P"},
+	{"id":"5","contactor":"FI-SW-05","dutyName":"Koi","name":10.00,"department":"P"},
+	{"id":"6","contactor":"FI-SW-01","dutyName":"Koi","name":10.00,"department":"P"},
+	{"id":"7","contactor":"FI-SW-01","dutyName":"Koi","name":10.00,"department":"P"},
+	{"id":"8","contactor":"FI-SW-01","dutyName":"Koi","name":10.00,"department":"P"}
+	
+]}

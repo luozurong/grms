@@ -1,0 +1,23 @@
+package com.hori.grms.dao;
+
+import java.util.List;
+
+import com.hori.grms.model.DepartmentBusinessArea;
+import com.hori.grms.model.ProCityAreaTown;
+
+
+public interface DepartmentBusinessAreaMapper {
+    int deleteByPrimaryKey(String id);
+
+    int insert(DepartmentBusinessArea record);
+
+    int insertSelective(DepartmentBusinessArea record);
+
+    DepartmentBusinessArea selectByPrimaryKey(String id);
+
+    int updateByPrimaryKeySelective(DepartmentBusinessArea record);
+
+    int updateByPrimaryKey(DepartmentBusinessArea record);
+
+	List<ProCityAreaTown> getAllProCity();
+}

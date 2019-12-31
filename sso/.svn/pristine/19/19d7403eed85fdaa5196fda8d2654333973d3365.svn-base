@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.0.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd"
+	default-lazy-init="true"> 
+  	<!-- 初始化Spring注解配置 -->
+	<context:annotation-config />
+
+	<!-- 使用annotation 自动注册bean,并检查@Required,@Autowired的属性已被注入 -->
+	<context:component-scan base-package="com.jlit.uaas" />
+
+  	 <import resource="dao/applicationContext-dao-system.xml" />
+
+	<!-- 开发者表信息dao -->
+	<!--  
+	<bean id="developerDao" class="com.jlit.uaas.dao.DeveloperDao">
+		<property name="sessionFactory" ref="localSessionFactory" />
+	</bean>
+	-->
+    <bean id="propertyConfigurer"
+    	  class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" lazy-init="false">
+    	  <property name="locations">
+    	  	<list>
+    	  		<value>classpath:/com/jlit/uaas/resources/global.properties</value>
+    	  	</list>
+    	  </property>
+    </bean>
+    
+    
+    <!-- JNDI DataSource for J2EE environments -->
+	<!--<jee:jndi-lookup id="dataSource" jndi-name="java:comp/env/jdbc/T82A"/>-->
+
+	<!--	<bean id="DataSource" class="org.springframework.jndi.JndiObjectFactoryBean">-->
+	<!--		<property name="jndiName" value="java:comp/env/jdbc/T82A"/>-->
+	<!--	</bean>-->
+	
+		 <!-- JDBC数据源定义,使用c3p0 连接池 --> 
+    <bean id="jdbcDataSource"
+    	class="com.mchange.v2.c3p0.ComboPooledDataSource"
+    	destroy-method="close">
+    	<property name="driverClass" value="${jdbc.driverClassName}" />
+    	<property name="jdbcUrl" value="${jdbc.url}" />
+    	<property name="user" value="${jdbc.username}" />
+    	<property name="password" value="${jdbc.password}" />
+    	<property name="initialPoolSize" value="${cpool.minPoolSize}" />
+    	<property name="minPoolSize" value="${cpool.minPoolSize}" />
+    	<property name="maxPoolSize" value="${cpool.maxPoolSize}" />
+    	<property name="acquireIncrement" value="${cpool.acquireIncrement}" />
+    	<property name="maxIdleTime" value="${cpool.maxIdleTime}" />
+    	<property name="idleConnectionTestPeriod" value="${cpool.idleConnectionTestPeriod}" />
+    	<property name="testConnectionOnCheckin" value="${cpool.testConnectionOnCheckin}"></property>
+    	<property name="preferredTestQuery" value="${cpool.preferredTestQuery}"></property>
+    </bean>
+    
+    <!-- 连接本地数据库的sessionDactory -->
+	 <bean id="localSessionFactory"  
+        class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">  
+        <property name="dataSource" ref="jdbcDataSource"/>
+        <property name="configLocation"	value="classpath:/com/jlit/uaas/resources/hibernate.cfg.xml" />
+        <property name="hibernateProperties">  
+            <props>  
+                <prop key="hibernate.dialect">  
+                    org.hibernate.dialect.MySQLDialect
+                </prop>
+                <prop key="hibernate.show_sql">true</prop>
+            </props>
+        </property>
+    </bean>
+    
+    <bean id="lobHandler" lazy-init="true"
+		  class="org.springframework.jdbc.support.lob.DefaultLobHandler"/>
+	<bean id="txHibernateManager"
+		class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+		<property name="sessionFactory" ref="localSessionFactory" />
+	</bean>
+	<tx:advice id="txHibernateAdvice" transaction-manager="txHibernateManager">
+		<tx:attributes>
+			<tx:method name="*" read-only="false" />
+			<tx:method name="add*" propagation="REQUIRED" rollback-for="Exception"/>
+			<tx:method name="save*" propagation="REQUIRED" rollback-for="Exception" />
+			<tx:method name="insert*" propagation="REQUIRED" rollback-for="Exception"/>
+			<tx:method name="delete*" propagation="REQUIRED" rollback-for="Exception"/>
+			<tx:method name="remove*" propagation="REQUIRED" rollback-for="Exception"/>
+			<tx:method name="delAndInit" propagation="REQUIRED" />
+			<tx:method name="append*" propagation="REQUIRED" />
+			<tx:method name="init" propagation="REQUIRED" />
+			<tx:method name="update*" propagation="REQUIRED" rollback-for="Exception" />
+			<tx:method name="modify*" propagation="REQUIRED" rollback-for="Exception"/>
+			<tx:method name="edit*" propagation="REQUIRED" rollback-for="Exception"/>
+			<tx:method name="do*" propagation="REQUIRED" rollback-for="Exception"/><!-- do开头的方式，需要支持事务，表示较复杂的事务 -->
+
+			<tx:method name="get*" propagation="REQUIRED" read-only="true" />
+			<tx:method name="find*" propagation="REQUIRED" read-only="true" />
+			<tx:method name="load*" propagation="REQUIRED" read-only="true" />
+			<tx:method name="search*" propagation="REQUIRED" read-only="true" />
+			<tx:method name="datagrid*" propagation="REQUIRED" read-only="true" />
+		</tx:attributes>
+	</tx:advice>
+    <aop:config>
+		<aop:pointcut id="hibernateBussinessService"
+			expression="execution(public * com.jlit.uaas.service.*.*(..))" />
+		<aop:advisor pointcut-ref="hibernateBussinessService"
+			advice-ref="txHibernateAdvice" />
+	</aop:config>
+		  
+    
+    <!-- Transaction manager for a single Hibernate SessionFactory (alternative to JTA) -->
+    <!-- jdbcTemplate 事务支持 -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="jdbcDataSource" />
+	</bean>	
+			
+	<bean id="hibernateEntityDao"
+		class="com.jlit.db.extend.HibernateEntityExtendDao">
+		<property name="sessionFactory" ref="localSessionFactory" />
+	</bean>
+	
+	<bean id="jdbcTemplate"
+		class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource">
+			<ref bean="jdbcDataSource" />
+		</property>
+	</bean>
+	
+	
+</beans>  

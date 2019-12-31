@@ -1,0 +1,283 @@
+html,body {
+    background-color: #f8f8f8;
+}
+
+.workorder-breadcrumb{
+    margin-left:24px;
+    min-width: 1000px;
+}
+
+.workorder-breadcrumb{
+    line-height: 50px;
+}
+.workorder-breadcrumb-icon{
+    display: inline-block;
+    width:16px;
+    height:22px;
+    float:left;
+    margin-top:15px;
+    margin-right:10px;
+    background:url(../images/ic_location.png) no-repeat;
+}
+.system-set{
+    box-sizing: border-box;
+    margin: 20px 24px 60px 25px;
+    line-height:50px;
+    background: #fff;
+    color:#fff;
+    border: 1px solid #d7d7d7;
+    box-shadow: 0 2px 2px #eee;
+}
+.system-setWord{
+    padding-left:24px;
+    line-height:50px;
+    height:50px;
+    background: #4d525a;
+    color:#fff;
+}
+.system-setChoose{
+    color:#666;
+    padding-top:15px;
+    padding-left:25px;
+    min-width: 900px;
+    /*height: 540px;*/
+}
+.system-setChoose>div>span{
+    display: inline-block;
+    width: 385px;
+    color:#222;
+}
+.system-setChoose>div>label{
+    display: inline-block;
+}
+.system-setShow{
+    margin-right: 150px;
+
+}
+.system-setChoose>div>label input{
+    margin-top:17px;
+    margin-right:12px;
+    float:left;
+    display: inline-block;
+    width:16px;
+    height:16px;
+    border-radius: 100%;
+}
+/*.system-setOK>button{
+    width:120px;
+    height:40px;
+    margin:30px auto 0;
+    line-height:40px;
+    text-align: center;
+    color:#fff;
+    border-radius: 3px;
+    background: #51d2b6;
+}*/
+.system-set input[type=checkbox]:checked::after ,input[type=radio]:checked::after{
+    content: url(../images/inputradio.png);
+    display: block;
+    position: absolute;
+    top: -1px;
+    right: -1px;
+}
+
+
+.time-alarm {
+    margin-left: 24px;
+    margin-right: 25px;
+}
+.title1 {
+    padding-left: 24px;
+    height: 50px;
+    line-height: 50px;
+    font-size: 14px;
+    color: #ffffff;
+    background-color: #4d525a;
+}
+.alarm-body {
+    height: 160px;
+    background: #fff;
+    border: 1px solid #d7d7d7;
+    box-shadow: 0 2px 2px #eee;
+}
+.setips {
+    margin-left: 26px;
+    margin-top: 20px;
+    height: 34px;
+    line-height: 34px;
+    font-size: 12px;
+    color: #222222;
+}
+.select1 {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+.combo {
+    width: 80px !important;
+    height: 32px;
+    line-height: 34px;
+}
+.textbox .textbox-text{
+    width: 60px !important;
+    text-align: center;
+
+}
+.comfirm {
+    margin:48px auto;
+    width: 120px;
+    height: 40px;
+    line-height: 38px;
+    text-align: center;
+    font-size: 14px;
+    background-color: #51d2b6;
+    color: #FFFFFF;
+    border:1px solid #51d2b6;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.comfirm1{
+    margin-top: 20px;
+}
+
+.time-over {
+    margin-top: 24px;
+}
+.time-over .alarm-body{
+    height: 276px;
+}
+.ic_right::before{
+    display:inline-block;
+    width:10px;
+    height:20px;
+    content:url(../../common/images/goback.png);
+    margin-top:2px;
+    margin-right:5px;
+    margin-left:10px;
+}
+.personal {
+    padding-bottom: 20px;
+}
+/*客诉 故障*/
+.setBody{
+	margin: 0 24px;
+	padding: 24px;
+	background-color: #FFFFFF;
+}
+.editTable{
+	border: 1px solid #CCCCCC;
+	width: 710px;
+}
+.editTable tr td:first-child{
+	color: #666666;
+	width: 160px;
+	line-height: 38px;
+	text-align: center;
+	background-color: #F2F2F2;
+}
+.editTable tr td:last-child{
+	padding: 5px 10px;
+}
+.addbox{
+	position: relative;
+}
+.addbox input[type='text'],.addbox select{
+	height: 30px;
+	width: 430px;
+	border:1px solid #D7D7D7;
+	color: #666666;
+	margin-bottom: 5px;
+}
+.addbox input.w258{
+	width: 258px;
+}
+.addbox select{
+	width: 150px;
+}
+.ic_guanlian{
+	display: inline-block;
+	width: 14px;
+	height: 14px;
+	background: url(../images/ic_guanlian.png) left center no-repeat;
+	margin: 0 4px;
+}
+.addbox ins{
+	position: absolute;
+	width: 14px;
+	height: 14px;
+	background: url(../images/ic_delete.png) left center no-repeat;
+	left: 440px;
+	top: 8px;
+	cursor: pointer;
+}
+/*编辑合并勾选*/
+.addbox label{
+	position: relative;
+	margin-left: 35px;
+	padding-left: 22px;
+	top: -2px;
+}
+.addbox label input{
+	opacity: 1;
+	left: 10px;
+	top: 0;
+}
+.addbtn{
+	display: inline-block;
+	cursor: pointer;
+	color: #51D2B6;
+	line-height: 28px;
+}
+
+
+/*.自动弹窗*/
+.autotips{
+	display: none;
+	position: fixed;
+	width: 260px;
+	height: 120px;
+	background-color: rgba(0,0,0,0.5);
+	left: 50%;
+	top: 20%;
+	margin-left: -130px;
+	margin-top: -60px;
+	border-radius: 5px;
+	text-align: center;
+	padding-top: 45px;
+	box-sizing: border-box;
+}
+.autotips ins{
+	display: inline-block;
+	width: 24px;
+	height: 24px;
+	vertical-align: middle;
+	background: url(../images/ic_tips.png) left center no-repeat;
+}
+.autotips ins.warning_icon{
+	background: url(../../common/images/ic_!.png) left center no-repeat;
+	background-size: 90%;	
+}
+.mes{
+	color: #FFFFFF;
+	font-size: 16px;
+}
+/*故障按钮*/
+.setbtnbox{
+	margin-bottom: 20px;
+}
+.setbtn{
+	display: inline-block;
+	width: 90px;
+	height: 34px;
+	box-sizing: border-box;
+	border: 1px solid #41b79d;
+	line-height: 33px;
+	text-align: center;
+	color: #41b79d;
+	border-radius: 4px;
+	cursor: pointer;
+}
+.delbtn{
+	border: 1px solid #E65E4E;
+	color: #E65E4E;
+	margin-left: 18px;
+}

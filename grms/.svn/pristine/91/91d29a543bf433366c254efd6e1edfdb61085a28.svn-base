@@ -1,0 +1,118 @@
+html,body {
+    background-color: #f8f8f8;
+}
+
+
+/*路径导航样式*/
+.topTitle {
+    height: 50px;
+    background-color: #f8f8f8;
+}
+
+.path1,.path2 {
+    padding-left: 28px;
+    min-width: 60px;
+    height: 50px;
+    line-height: 50px;
+    font-size: 14px;
+    color:#666;
+}
+.path1 {
+    margin-left: 24px;
+    background: url("../images/ic_location.png") no-repeat left 15px;
+}
+.path2 {
+    margin-left: 15px;
+    background: url("../images/arrow.png") no-repeat left 20px;
+}
+.statCss{
+	margin-top: 5px;
+    margin-left: 20px;
+}
+.account {
+	margin-top: 23px;
+    margin-left: 16px;
+    line-height: 28px;
+    /*width: 60px;*/
+}
+.account1 {
+    margin-top: 25px;
+    width: 116px;
+    height: 34px;
+}
+.account1>input {
+    width: 114px;
+    height: 32px;
+    border: 1px solid #c2c2c2;
+}
+.probtn{
+	margin-top: 10px;
+    margin-left: 20px;
+}
+.search,.substitutionArea{
+    margin-top: 0px;
+    width: 88px;
+    height:30px;
+    margin-left: 20px;
+    line-height: 25px;
+    font-size: 14px;
+    color:#97e4d3;
+    text-align: center;
+    border: 1px solid #97e4d3;
+    background-color: #FFFFFF;
+    border-radius: 3px;
+    cursor: pointer;
+}
+.goback{
+    margin-top: 15px;
+    width: 88px;
+    height:30px;
+    margin-left: 10px;
+    line-height: 25px;
+    font-size: 14px;
+    color:#000000;
+    text-align: center;
+    border: 1px solid #000000;
+    background-color: #c0c0c0;
+    border-radius: 3px;
+    cursor: pointer;
+}
+.handle{
+    margin-top: 5px;
+    width: 88px;
+    height:30px;
+    line-height: 25px;
+    font-size: 14px;
+    color:#000000;
+    text-align: center;
+    border: 1px solid #000000;
+    background-color: #c0c0c0;
+    border-radius: 3px;
+    cursor: pointer;
+}
+.pagination table{
+	float: right;
+}
+.workorder-breadcrumb{
+	overflow:hidden;
+	line-height: 45px;
+	margin-left: 30px;
+}
+.workorder-breadcrumb span{
+	font-size: 14px;
+}
+.wrap{
+	margin: 0 30px;
+	background: #fff;
+	padding: 0 20px 20px;
+}
+#conditions-select>div{
+	padding: 20px 20px;
+}
+#searchBtn,#substitutionArea{
+	background: #fff;
+}
+#searchBtn .l-btn-text, #substitutionArea .l-btn-text{
+	line-height: 28px;
+	
+}

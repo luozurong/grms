@@ -1,0 +1,45 @@
+package com.hori.grms.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.github.pagehelper.PageInfo;
+import com.hori.grms.model.ContractTemplate;
+import com.hori.grms.pageModel.Json;
+import com.hori.grms.queryBean.ContractTemplateQueryBean;
+import com.hori.grms.service.ContractService;
+
+/**
+ * 合同管理
+ * @author hhb
+ *
+ */
+@Controller
+@RequestMapping("contract")
+public class ContractController {
+	@Autowired
+	private ContractService contractService;
+	/**
+	 * 分页获取合同模版列表数据
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value ={ "/getContractTemplateListData"}, method = { RequestMethod.POST})
+	@ResponseBody
+	public Json getContractTemplate(@RequestBody ContractTemplateQueryBean queryBean){
+		PageInfo<ContractTemplate> contractTemplateList=contractService.getContractTemplate(queryBean);
+		Json json=new Json();
+		json.setSuccess(true);
+		json.setObj(contractTemplateList);
+		return json;
+	}
+	
+
+}

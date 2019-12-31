@@ -1,0 +1,165 @@
+/*
+ * ProjectProduct.java
+ * Copyright(C) 20xx-2015 xxxxxx公司
+ * All rights reserved.
+ * -----------------------------------------------
+ * 2018-08-10 Created
+ */
+package com.hori.grms.model;
+
+import java.util.Date;
+
+/**
+ * 项目清单表
+ * 
+ * @author 
+ * @version 1.0 2018-08-10
+ */
+public class ProjectProduct {
+
+    //主键id
+    private String id;
+    //项目编号
+    private String projectCode;
+    //业务类型：1社区运营 2 媒管 3用户运营 4电商运营
+    private String businessType;
+    //执行开始时间
+    private Date beginTime;
+    //执行结束时间
+    private Date endTime;
+    //小区名称（社区运营清单需要）
+    private String areaName;
+    //小区机构编码（社区运营清单需要）
+    private String organizationSeq;
+    //省编码（社区运营清单需要）
+    private String province;
+    //省名称（社区运营清单需要）
+    private String provinceName;
+    //城市编码（社区运营清单需要）
+    private String city;
+    //城市名称（社区运营清单需要）
+    private String cityName;
+    //区县编码（社区运营清单需要）
+    private String country;
+    //区县名称（社区运营清单需要）
+    private String countryName;
+    //小区详细地址
+    private String areaAddress;
+    //场次
+    private String fieldName;
+    //是否服从场地分配(1服从分配 0不服从分配)
+    private Integer isDistributionField;
+    //是否服从时间调配(1服从分配 0不服从分配)
+    private Integer isDistributionTime;
+    //场地置换时间
+    private Date fieldExchangeTime;
+
+    public String getId() {
+        return id;
+    }
+    public void setId(String id) {
+        this.id = id;
+    }
+    public String getProjectCode() {
+        return projectCode;
+    }
+    public void setProjectCode(String projectCode) {
+        this.projectCode = projectCode;
+    }
+    public String getBusinessType() {
+        return businessType;
+    }
+    public void setBusinessType(String businessType) {
+        this.businessType = businessType;
+    }
+    public Date getBeginTime() {
+        return beginTime;
+    }
+    public void setBeginTime(Date beginTime) {
+        this.beginTime = beginTime;
+    }
+    public Date getEndTime() {
+        return endTime;
+    }
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
+    }
+    public String getAreaName() {
+        return areaName;
+    }
+    public void setAreaName(String areaName) {
+        this.areaName = areaName;
+    }
+    public String getOrganizationSeq() {
+        return organizationSeq;
+    }
+    public void setOrganizationSeq(String organizationSeq) {
+        this.organizationSeq = organizationSeq;
+    }
+    public String getProvince() {
+        return province;
+    }
+    public void setProvince(String province) {
+        this.province = province;
+    }
+    public String getProvinceName() {
+        return provinceName;
+    }
+    public void setProvinceName(String provinceName) {
+        this.provinceName = provinceName;
+    }
+    public String getCity() {
+        return city;
+    }
+    public void setCity(String city) {
+        this.city = city;
+    }
+    public String getCityName() {
+        return cityName;
+    }
+    public void setCityName(String cityName) {
+        this.cityName = cityName;
+    }
+    public String getCountry() {
+        return country;
+    }
+    public void setCountry(String country) {
+        this.country = country;
+    }
+    public String getCountryName() {
+        return countryName;
+    }
+    public void setCountryName(String countryName) {
+        this.countryName = countryName;
+    }
+    public String getAreaAddress() {
+        return areaAddress;
+    }
+    public void setAreaAddress(String areaAddress) {
+        this.areaAddress = areaAddress;
+    }
+    public String getFieldName() {
+        return fieldName;
+    }
+    public void setFieldName(String fieldName) {
+        this.fieldName = fieldName;
+    }
+    public Integer getIsDistributionField() {
+        return isDistributionField;
+    }
+    public void setIsDistributionField(Integer isDistributionField) {
+        this.isDistributionField = isDistributionField;
+    }
+    public Integer getIsDistributionTime() {
+        return isDistributionTime;
+    }
+    public void setIsDistributionTime(Integer isDistributionTime) {
+        this.isDistributionTime = isDistributionTime;
+    }
+    public Date getFieldExchangeTime() {
+        return fieldExchangeTime;
+    }
+    public void setFieldExchangeTime(Date fieldExchangeTime) {
+        this.fieldExchangeTime = fieldExchangeTime;
+    }
+}

@@ -1,0 +1,430 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hori.grms.dao.ProjectMapper" >
+    <resultMap id="BaseResultMap" type="com.hori.grms.model.Project" >
+        <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="product_code" property="productCode" jdbcType="VARCHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="customer_id" property="customerId" jdbcType="VARCHAR" />
+        <result column="customer_name" property="customerName" jdbcType="VARCHAR" />
+        <result column="description" property="description" jdbcType="LONGVARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="creater_account" property="createrAccount" jdbcType="VARCHAR" />
+        <result column="creater_name" property="createrName" jdbcType="VARCHAR" />
+        <result column="creater_level" property="createrLevel" jdbcType="VARCHAR" />
+        <result column="creater_dedpartment_id" property="createrDedpartmentId" jdbcType="VARCHAR" />
+        <result column="contract_code" property="contractCode" jdbcType="VARCHAR" />
+        <result column="status" property="status" jdbcType="SMALLINT" />
+        <result column="action_status" property="actionStatus" jdbcType="SMALLINT" />
+        <result column="exception_status" property="exceptionStatus" jdbcType="SMALLINT" />
+    </resultMap>
+	
+	<resultMap id="ProjectDetailsVoResultMap" type="com.hori.grms.vo.ProjectDetailsVo" >
+        <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="customer_id" property="customerId" jdbcType="VARCHAR" />
+        <result column="product_code" property="projectCode" jdbcType="VARCHAR" />
+        <result column="customer_name" property="customerName" jdbcType="VARCHAR" />
+        <result column="description" property="description" jdbcType="LONGVARCHAR" />
+        <result column="status" property="status" jdbcType="SMALLINT" />
+      	<result column="contract_id" property="contractId" jdbcType="VARCHAR" />
+      	<result column="contract_name" property="contractName" jdbcType="VARCHAR" />
+      	<result column="contract_code" property="contractCode" jdbcType="VARCHAR" />
+      	<result column="contract_status" property="contractStatus" jdbcType="SMALLINT" />
+    </resultMap>
+	
+	
+    <sql id="Example_Where_Clause" >
+        <where >
+            <foreach collection="oredCriteria" item="criteria" separator="or" >
+                <if test="criteria.valid" >
+                    <trim prefix="(" suffix=")" prefixOverrides="and" >
+                        <foreach collection="criteria.criteria" item="criterion" >
+                            <choose >
+                                <when test="criterion.noValue" >
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue" >
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue" >
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue" >
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+
+    <sql id="Update_By_Example_Where_Clause" >
+        <where >
+            <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+                <if test="criteria.valid" >
+                    <trim prefix="(" suffix=")" prefixOverrides="and" >
+                        <foreach collection="criteria.criteria" item="criterion" >
+                            <choose >
+                                <when test="criterion.noValue" >
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue" >
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue" >
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue" >
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+
+    <sql id="Base_Column_List" >
+        id, product_code, name, customer_id, customer_name, description, create_time, update_time, 
+        creater_account, creater_name, creater_level, creater_dedpartment_id, contract_code, 
+        status, action_status, exception_status
+    </sql>
+
+    <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.hori.grms.model.ProjectExample" >
+        select
+        <if test="distinct" >
+            distinct
+        </if>
+        'true' as QUERYID,
+        <include refid="Base_Column_List" />
+        from project
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+        <if test="orderByClause != null" >
+            order by ${orderByClause}
+        </if>
+    </select>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+        select 
+        <include refid="Base_Column_List" />
+        from project
+        where id = #{id,jdbcType=VARCHAR}
+    </select>
+
+    <insert id="insert" parameterType="com.hori.grms.model.Project" >
+        insert into project (id, product_code, name, 
+            customer_id, customer_name, description, 
+            create_time, update_time, creater_account, 
+            creater_name, creater_level, creater_dedpartment_id, 
+            contract_code, status, action_status, 
+            exception_status)
+        values (#{id,jdbcType=VARCHAR}, #{productCode,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
+            #{customerId,jdbcType=VARCHAR}, #{customerName,jdbcType=VARCHAR}, #{description,jdbcType=LONGVARCHAR}, 
+            #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{createrAccount,jdbcType=VARCHAR}, 
+            #{createrName,jdbcType=VARCHAR}, #{createrLevel,jdbcType=VARCHAR}, #{createrDedpartmentId,jdbcType=VARCHAR}, 
+            #{contractCode,jdbcType=VARCHAR}, #{status,jdbcType=SMALLINT}, #{actionStatus,jdbcType=SMALLINT}, 
+            #{exceptionStatus,jdbcType=SMALLINT})
+    </insert>
+
+    <select id="countByExample" parameterType="com.hori.grms.model.ProjectExample" resultType="java.lang.Integer" >
+        select count(*) from project
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+    </select>
+
+    <update id="updateByExampleSelective" parameterType="map" >
+        update project
+        <set >
+            <if test="record.id != null" >
+                id = #{record.id,jdbcType=VARCHAR},
+            </if>
+            <if test="record.productCode != null" >
+                product_code = #{record.productCode,jdbcType=VARCHAR},
+            </if>
+            <if test="record.name != null" >
+                name = #{record.name,jdbcType=VARCHAR},
+            </if>
+            <if test="record.customerId != null" >
+                customer_id = #{record.customerId,jdbcType=VARCHAR},
+            </if>
+            <if test="record.customerName != null" >
+                customer_name = #{record.customerName,jdbcType=VARCHAR},
+            </if>
+            <if test="record.description != null" >
+                description = #{record.description,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="record.createTime != null" >
+                create_time = #{record.createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.updateTime != null" >
+                update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.createrAccount != null" >
+                creater_account = #{record.createrAccount,jdbcType=VARCHAR},
+            </if>
+            <if test="record.createrName != null" >
+                creater_name = #{record.createrName,jdbcType=VARCHAR},
+            </if>
+            <if test="record.createrLevel != null" >
+                creater_level = #{record.createrLevel,jdbcType=VARCHAR},
+            </if>
+            <if test="record.createrDedpartmentId != null" >
+                creater_dedpartment_id = #{record.createrDedpartmentId,jdbcType=VARCHAR},
+            </if>
+            <if test="record.contractCode != null" >
+                contract_code = #{record.contractCode,jdbcType=VARCHAR},
+            </if>
+            <if test="record.status != null" >
+                status = #{record.status,jdbcType=SMALLINT},
+            </if>
+            <if test="record.actionStatus != null" >
+                action_status = #{record.actionStatus,jdbcType=SMALLINT},
+            </if>
+            <if test="record.exceptionStatus != null" >
+                exception_status = #{record.exceptionStatus,jdbcType=SMALLINT},
+            </if>
+        </set>
+        <if test="_parameter != null" >
+            <include refid="Update_By_Example_Where_Clause" />
+        </if>
+    </update>
+
+    <update id="updateByExample" parameterType="map" >
+        update project
+        set id = #{record.id,jdbcType=VARCHAR},
+            product_code = #{record.productCode,jdbcType=VARCHAR},
+            name = #{record.name,jdbcType=VARCHAR},
+            customer_id = #{record.customerId,jdbcType=VARCHAR},
+            customer_name = #{record.customerName,jdbcType=VARCHAR},
+            description = #{record.description,jdbcType=LONGVARCHAR},
+            create_time = #{record.createTime,jdbcType=TIMESTAMP},
+            update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+            creater_account = #{record.createrAccount,jdbcType=VARCHAR},
+            creater_name = #{record.createrName,jdbcType=VARCHAR},
+            creater_level = #{record.createrLevel,jdbcType=VARCHAR},
+            creater_dedpartment_id = #{record.createrDedpartmentId,jdbcType=VARCHAR},
+            contract_code = #{record.contractCode,jdbcType=VARCHAR},
+            status = #{record.status,jdbcType=SMALLINT},
+            action_status = #{record.actionStatus,jdbcType=SMALLINT},
+            exception_status = #{record.exceptionStatus,jdbcType=SMALLINT}
+        <if test="_parameter != null" >
+            <include refid="Update_By_Example_Where_Clause" />
+        </if>
+    </update>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.hori.grms.model.Project" >
+        update project
+        <set >
+            <if test="productCode != null" >
+                product_code = #{productCode,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null" >
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="customerId != null" >
+                customer_id = #{customerId,jdbcType=VARCHAR},
+            </if>
+            <if test="customerName != null" >
+                customer_name = #{customerName,jdbcType=VARCHAR},
+            </if>
+            <if test="description != null" >
+                description = #{description,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="createTime != null" >
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createrAccount != null" >
+                creater_account = #{createrAccount,jdbcType=VARCHAR},
+            </if>
+            <if test="createrName != null" >
+                creater_name = #{createrName,jdbcType=VARCHAR},
+            </if>
+            <if test="createrLevel != null" >
+                creater_level = #{createrLevel,jdbcType=VARCHAR},
+            </if>
+            <if test="createrDedpartmentId != null" >
+                creater_dedpartment_id = #{createrDedpartmentId,jdbcType=VARCHAR},
+            </if>
+            <if test="contractCode != null" >
+                contract_code = #{contractCode,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null" >
+                status = #{status,jdbcType=SMALLINT},
+            </if>
+            <if test="actionStatus != null" >
+                action_status = #{actionStatus,jdbcType=SMALLINT},
+            </if>
+            <if test="exceptionStatus != null" >
+                exception_status = #{exceptionStatus,jdbcType=SMALLINT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+        delete from project
+        where id = #{id,jdbcType=VARCHAR}
+    </delete>
+
+    <delete id="deleteByExample" parameterType="com.hori.grms.model.ProjectExample" >
+        delete from project
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+    </delete>
+    
+    <!-- 查询项目列表 -->
+    <select id="list" resultMap="BaseResultMap" parameterType="com.hori.grms.queryBean.ProjectQueryBean" >
+        select
+        <include refid="Base_Column_List" />
+        from project
+        where status != -1
+			<if test="productCode!= null and productCode != ''" >
+				and product_code like CONCAT('%',#{productCode},'%')
+            </if>
+			<if test="account != null and account != ''" >
+				and creater_account = #{account}
+            </if>
+			<if test="name!= null and name != ''" >
+				and name like CONCAT('%',#{name},'%')
+            </if>
+			<if test="customerName!= null and customerName!=''" >
+				and customer_name like CONCAT('%',#{customerName},'%')
+            </if>
+			<if test="createrName!= null and createrName!=''" >
+				and creater_name like CONCAT('%',#{createrName},'%')
+            </if>
+			<if test="contractCode!= null and contractCode!=''" >
+				and contract_code like CONCAT('%',#{contractCode},'%')
+            </if>
+			<if test="status!= -2" >
+				and status = #{status}
+            </if>
+			<if test="roleType!= null and roleType == 1" >
+				and status != 4
+            </if>
+            <if test="accounts != null and accounts.size() > 0">
+            	and account in
+            	<foreach collection="accounts" item="account" open="(" separator="," close=")">
+              		#{account}       
+       			</foreach>
+            </if>
+            order by product_code desc
+            limit #{start},#{pageSize}
+    </select>
+	
+	<select id="findProjectDetailsVoByProjectCode" resultMap="ProjectDetailsVoResultMap" parameterType="java.lang.String" >
+        SELECT p.id,p.name,p.product_code,p.customer_id,p.customer_name,p.status,p.description,c.id as contract_id,c.status  as contract_status,c.contract_name ,c.contract_code FROM project p 
+		LEFT JOIN  contract c ON c.contract_code = p.contract_code
+		WHERE p.product_code =  #{projectCode,jdbcType=VARCHAR}
+    </select>
+    
+    
+    <!-- 撤回项目 -->
+    <update id="revoke">
+    	update project
+        set status = 4
+        where product_code = #{productCode} and status = 0
+    </update>
+    <!-- 删除项目 -->
+    <update id="delet">
+    	update project
+        set status = -1
+        where product_code = #{productCode}
+    </update>
+	
+	<!-- 查询项目列表总数 -->
+    <select id="total" resultType="java.lang.Integer" parameterType="com.hori.grms.queryBean.ProjectQueryBean" >
+        select count(id)
+        from project
+        where status != -1
+			<if test="productCode!= null and productCode != ''" >
+				and product_code like CONCAT('%',#{productCode},'%')
+            </if>
+            <if test="account != null and account != ''" >
+				and creater_account = #{account}
+            </if>
+			<if test="name!= null and name != ''" >
+				and name like CONCAT('%',#{name},'%')
+            </if>
+			<if test="customerName!= null and customerName!=''" >
+				and customer_name like CONCAT('%',#{customerName},'%')
+            </if>
+			<if test="contractCode!= null and contractCode!=''" >
+				and contract_code like CONCAT('%',#{contractCode},'%')
+            </if>
+			<if test="status!= -2" >
+				and status = #{status}
+            </if>
+            <if test="accounts != null and accounts.size() > 0">
+            	and account in
+            	<foreach collection="accounts" item="account" open="(" separator="," close=")">
+              		#{account}       
+       			</foreach>
+            </if>
+    </select>
+    
+    <select id="findProjectByProjectCode" resultType="com.hori.grms.vo.project.ProjectVo" >
+        select
+                id as id,
+				product_code as projectCode,
+				name as name,
+				customer_id as customer_id,
+				description as description
+        from project where product_code=#{projectCode};
+    </select>
+    
+    <!-- 通过合同编号查找项目 -->
+    <select id="getByContractCode" resultMap="BaseResultMap" parameterType="java.lang.String" >
+        select 
+        <include refid="Base_Column_List" />
+        from project
+        where contract_code = #{contractCode,jdbcType=VARCHAR}
+    </select>
+
+    <!-- 通过项目编号查找项目 -->
+    <select id="selectByProductCode" resultMap="BaseResultMap" parameterType="java.lang.String" >
+        select 
+        <include refid="Base_Column_List" />
+        from project
+        where product_code = #{selectByProductCode,jdbcType=VARCHAR}
+    </select>
+    <!-- 终止项目  -->
+    <update id="stopProject" >
+        update project
+        set 
+            status = 3
+        where product_code = #{productCode} and status = 1
+    </update>
+    
+    
+    <!-- 根据客户id查找该客户下的项目状态 -->
+    <select id="projectStatus" parameterType="java.lang.String" resultType="java.util.HashMap">
+    	select 
+    		p.product_code as code , 
+    		p.status as status 
+    	from 
+    		project p 
+    	where 
+    		p.customer_id = #{custId,jdbcType=VARCHAR};
+    </select>
+    
+    
+</mapper>

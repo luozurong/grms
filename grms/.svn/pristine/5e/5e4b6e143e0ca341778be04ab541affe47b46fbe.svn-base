@@ -1,0 +1,15 @@
+/**
+ * 
+ */
+package com.hori.grms.service;
+
+/** 
+ * @ClassName: ProjectApproveLogService 
+ * @Description:项目审批日志表 
+ * @author zhuqiang
+ * @date 2018年8月8日 下午6:57:31 
+ */
+
+public interface ProjectApproveLogService {
+
+}

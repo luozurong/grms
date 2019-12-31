@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!--框架必需start-->
+<script type="text/javascript" src="../js/jquery-1.4.js"></script>
+<script type="text/javascript" src="../js/framework.js"></script>
+<link href="../css/import_basic.css" rel="stylesheet" type="text/css"/>
+<link  rel="stylesheet" type="text/css" id="skin"/>
+<!--框架必需end-->
+<script type="text/javascript" src="../js/nav/switchable.js"></script>
+<script>
+$(function(){
+	$("#tabs1").switchable("#panels1 >div",{  
+	     triggerType:"click"
+	});
+})
+</script>
+<body>
+<div id="scrollContent">
+	<div class="padding_top10">
+<div id="tabs1" class="tabs-trigger" style="width:602px;">
+<div class="tabs-triggerLeft">
+<div class="tabs-triggerRight">
+	<a href="#First">子选项1</a>
+	<a href="#Second">子选项2</a>
+	<a href="#Third">子选项3</a>
+</div>
+</div>
+</div>
+<div id="panels1" class="tabs-panel" style="width:600px;height:400px;">
+	<div class="padding_left10">
+		内容1<br />内容1<br />内容1<br />内容1<br />
+	</div>
+	<div class="padding_left10">
+		内容2<br />内容2<br />内容2<br />内容2<br />内容2
+	</div>
+	<div class="padding_left10">
+		内容3<br />内容3<br />内容3<br />内容3<br />
+	</div>
+</div>
+	</div>
+</div>				
+</body>
+</html>

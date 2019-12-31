@@ -1,0 +1,135 @@
+package com.hori.grms.vo;
+
+import java.util.Date;
+
+public class BackMoneyPlanVo {
+	private String id;
+	// 收款计划ID
+	private String backMoneyPlanCode;
+	// 项目ID
+	private String projectCode;
+	// 合同ID
+	private String contractCode;
+	// 合同名称
+	private String contractName;
+	// 合同总金额
+	private Long money;
+	// 客户名称
+	private String customerName;
+	// 业务员
+	private String createrName;
+	// 合同审批时间
+	private Date approveTime;
+	// 合同实收金额
+	private Long collectedMoney;
+	// 合同未收金额
+	private Long unCollectedMoney;
+	// 扣款金额
+	private Long reduceMoney;
+	// 合同收款状态
+	private String planStatus;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getBackMoneyPlanCode() {
+		return backMoneyPlanCode;
+	}
+
+	public void setBackMoneyPlanCode(String backMoneyPlanCode) {
+		this.backMoneyPlanCode = backMoneyPlanCode;
+	}
+
+	public String getProjectCode() {
+		return projectCode;
+	}
+
+	public void setProjectCode(String projectCode) {
+		this.projectCode = projectCode;
+	}
+
+	public String getContractCode() {
+		return contractCode;
+	}
+
+	public void setContractCode(String contractCode) {
+		this.contractCode = contractCode;
+	}
+
+	public String getContractName() {
+		return contractName;
+	}
+
+	public void setContractName(String contractName) {
+		this.contractName = contractName;
+	}
+
+	public String getCustomerName() {
+		return customerName;
+	}
+
+	public void setCustomerName(String customerName) {
+		this.customerName = customerName;
+	}
+
+	public String getCreaterName() {
+		return createrName;
+	}
+
+	public void setCreaterName(String createrName) {
+		this.createrName = createrName;
+	}
+
+	public Date getApproveTime() {
+		return approveTime;
+	}
+
+	public void setApproveTime(Date approveTime) {
+		this.approveTime = approveTime;
+	}
+
+	public String getPlanStatus() {
+		return planStatus;
+	}
+
+	public void setPlanStatus(String planStatus) {
+		this.planStatus = planStatus;
+	}
+
+	public Long getMoney() {
+		return money;
+	}
+
+	public void setMoney(Long money) {
+		this.money = money;
+	}
+
+	public Long getCollectedMoney() {
+		return collectedMoney;
+	}
+
+	public void setCollectedMoney(Long collectedMoney) {
+		this.collectedMoney = collectedMoney;
+	}
+
+	public Long getUnCollectedMoney() {
+		return unCollectedMoney;
+	}
+
+	public void setUnCollectedMoney(Long unCollectedMoney) {
+		this.unCollectedMoney = unCollectedMoney;
+	}
+
+	public Long getReduceMoney() {
+		return reduceMoney;
+	}
+
+	public void setReduceMoney(Long reduceMoney) {
+		this.reduceMoney = reduceMoney;
+	}
+}

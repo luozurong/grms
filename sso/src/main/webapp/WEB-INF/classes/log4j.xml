@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+	<appender name="stdout" class="org.apache.log4j.ConsoleAppender">
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d [%-5p] (%c:%L) %x - %m%n" />
+		</layout>
+	</appender>
+	
+	<appender name="RAppender" class="org.apache.log4j.RollingFileAppender">
+		<param name="file" value="${catalina.base}/applogs/memberAuction/app.log" />
+		<param name="encoding" value="UTF-8"/>
+		<param name="maxBackupIndex" value="5" />
+		<param name="maxFileSize" value="10MB" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss} %5p %c{1}:%L - %m%n" />
+		</layout>
+	</appender>
+	
+	<appender name="error" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="DatePattern" value="-yyyy-MM-dd" />
+		<param name="File" value="${catalina.base}/applogs/memberAuction/error.log" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss} %5p %c{1}:%L - %m%n" />
+		</layout>
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<param name="LevelMax" value="fatal" />
+			<param name="LevelMin" value="error" />
+			<param name="AcceptOnMatch" value="true" />
+		</filter>
+	</appender>
+
+	<!-- 
+			<logger name="com.ibatis">
+  		<level value="debug" />
+ 	</logger>
+ 
+	 <logger name="com.ibatis.common.jdbc.SimpleDataSource">
+	  <level value="debug" />
+	 </logger>
+	 
+	 <logger name="com.ibatis.common.jdbc.ScriptRunner">
+	  <level value="debug" />
+	 </logger>
+	 
+	 <logger name="com.ibatis.common.jdbc.SqlMapClientDelegate">
+	  <level value="debug" />
+	 </logger>
+	  -->
+	<root>
+		<priority value="info" />
+		<appender-ref ref="stdout" />
+		<appender-ref ref="RAppender" />
+		<appender-ref ref="error" />
+	</root>
+</log4j:configuration>

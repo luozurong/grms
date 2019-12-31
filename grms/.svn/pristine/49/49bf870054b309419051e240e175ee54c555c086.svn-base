@@ -1,0 +1,86 @@
+
+function goback(){
+	window.location.href="../schemeInfo/list.html";
+}
+
+//异步上传附件
+function uploadFile(fileId){
+	loadingShow("正在上传中，请勿进行其他操作");
+	var file = $("#" + fileId);
+	var	patrn = /^.+(xlsx|XLSX|xls|XLS|doc|docx|DOC|pdf|PDF|txt|TXT)$/i;
+	if(!patrn.exec(file.val())){
+		loadingShow(false);
+		infoMask('请上传Excel、doc、txt或pdf文件');
+		return;
+  	}
+	if(file[0].files[0].size > 123289600){
+		loadingShow(false);
+		infoMask('文件大小不能超过100M');
+		return;
+	}
+	var formData = new FormData();
+	formData.append("file", file[0].files[0]); 
+    $.ajax({
+        url: "../schemeInfo/upload",
+        type: "POST",
+        data: formData,
+        contentType: false,
+        processData: false,
+        success: function (data) {
+        	var code = data.code;
+        	var path = data.path;
+            if(code == 0){
+            	$('#url').val(path);
+            	$('#fileName').val(file[0].files[0].name);
+                infoMask('上传成功');
+            }else{
+            	infoMask('上传失败:' + "服务器响应异常");
+            }
+        },
+        error: function () {
+        	infoMask('上传失败:' + "服务器响应异常");
+        },
+        complete : function (XHR, TS){
+        	loadingShow(false);
+        }
+    });
+}
+
+function saveSchemeInfo(){
+	loadingShow("正在保存");
+	$('#nameNotNull').hide();
+	 //对表单数据进行验证
+	var name = $('#name').val();
+	if(!name){
+		loadingShow(false);
+		$('#nameNotNull').show();
+		return;
+	}
+	var url = $('#url').val();
+	if(!url){
+		loadingShow(false);
+		infoMask('请上传附件');
+		return;
+	}
+	$.ajax({
+		  url: "../schemeInfo/save",  
+		  type: "POST",  
+		  dataType: "json",  
+		  data: {name:name,url:url},  
+		  success: function(data){
+			  var code = data.code;
+			  if(code == 0){
+				  infoMask('操作成功');
+				  window.location.href = "../schemeInfo/list.html";
+			  }else if(code == 1){
+				  infoMask('提案名称已经存在');
+			  }else {
+				  infoMask('服务器异常');
+			  }
+		  },  
+		  error: function(){
+			  infoMask('网络异常，请稍后重试！');
+		  }  
+	});
+	loadingShow(false);
+}

@@ -1,0 +1,540 @@
+package com.hori.grms.controller;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFRichTextString;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.CellRangeAddress;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.alibaba.fastjson.JSON;
+import com.github.pagehelper.PageInfo;
+import com.hori.grms.model.Attachment;
+import com.hori.grms.model.ProjectAction;
+import com.hori.grms.model.ProjectPeople;
+import com.hori.grms.model.ProjectProductMenuArea;
+import com.hori.grms.page.AjaxResult;
+import com.hori.grms.page.PageResult;
+import com.hori.grms.queryBean.ProjectActionDetailQueryBean;
+import com.hori.grms.queryBean.ProjectActionQueryBean;
+import com.hori.grms.queryBean.ZhUmbQueryBean;
+import com.hori.grms.service.ProjectActionService;
+import com.hori.grms.service.ProjectPeopleService;
+import com.hori.grms.service.ProjectService;
+import com.hori.grms.util.ExportExcelUtil;
+import com.hori.grms.util.ExportExcelUtil.PoiCell;
+import com.hori.grms.vo.CommunityProjectActionVo;
+import com.hori.grms.vo.ExportMGVo;
+import com.hori.grms.vo.ProjectActionDetailVo;
+import com.hori.grms.vo.ProjectDetailsVo;
+import com.hori.grms.vo.ProjectProductMenuAreaVo;
+/**
+ * 综合支持部门执行清单
+ * @author dell
+ *
+ */
+@Controller
+@RequestMapping("/zhongheDepart")
+public class ZhongheDepartController{
+	private final Logger logger = LoggerFactory.getLogger(ProjectActionController.class);
+	@Autowired
+	private ProjectActionService projectActionService;
+	
+	@Autowired
+	private ProjectService projectService;
+	
+	@Autowired
+	private ProjectPeopleService projectPeopleService;
+	
+	//社区首页
+	@RequestMapping("/sq")
+	public String sqIndex(){
+		//return "/projectAction/zhongheDepartList.jsp";
+		return "/projectAction/zhongheSqList.jsp";
+	}
+	//用户媒管电商首页
+	@RequestMapping("/umb")
+	public String index(){
+		return "/projectAction/zhongheUmbNewList.jsp";
+	}
+	
+	/**
+	 * 用户媒管电商执行清单列表
+	 * @param queryBean
+	 * @return
+	 */
+	/*@RequestMapping("/umbList")
+	@ResponseBody
+	public PageResult umbList(ZhUmbQueryBean qo){
+		System.out.println(qo.toString());
+		PageResult pageResult = null;
+		pageResult = projectActionService.queryUmbPage(qo);
+		return pageResult;
+	}*/
+	@RequestMapping(value = "/umbListNew", produces = "text/html;charset=UTF-8;")
+	@ResponseBody
+	public String ymdPAListData(HttpServletRequest request, HttpServletResponse response) {
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+
+		try {
+			String parameter = request.getParameter("projectActionQueryBean");
+
+			ProjectActionQueryBean queryBean = JSON.parseObject(parameter, ProjectActionQueryBean.class);
+			if (queryBean == null) {
+				queryBean = new ProjectActionQueryBean();
+			}
+			logger.info("*********" + queryBean.toString());
+
+			PageInfo<Map<String, Object>> pageInfo = projectActionService.listUmbAction(queryBean);
+			if (pageInfo == null) {
+				resultMap.put("success", false);
+			} else {
+				resultMap.put("success", true);
+				resultMap.put("rows", pageInfo.getList());
+				resultMap.put("total", pageInfo.getTotal());
+			}
+		} catch (Exception e) {
+			logger.info("异常信息：" + e.getMessage());
+			resultMap.put("success", false);
+		} 
+		return JSON.toJSONString(resultMap);
+	}
+	
+	
+	/**
+	 * 社区运营执行清单列表
+	 * @param queryBean
+	 * @return
+	 */
+	/*@RequestMapping("/sqList")
+	@ResponseBody
+	public PageResult sqList(ProjectActionQueryBean qo){
+		PageResult pageResult = null;
+		pageResult = projectActionService.queryPage(qo);
+		return pageResult;
+	}*/
+	@RequestMapping(value = "/sqListNew", produces = "text/html;charset=UTF-8;")
+	@ResponseBody
+	public String sqList(HttpServletRequest request, HttpServletResponse response) {
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+
+		try {
+			String parameter = request.getParameter("projectActionQueryBean");
+
+			ProjectActionQueryBean queryBean = JSON.parseObject(parameter, ProjectActionQueryBean.class);
+			if (queryBean == null) {
+				queryBean = new ProjectActionQueryBean();
+			}
+			logger.info("*********" + queryBean.toString());
+	
+			PageInfo<CommunityProjectActionVo> pageInfo = projectActionService.listZHCommunityAction(queryBean);
+			if (pageInfo == null) {
+				resultMap.put("success", false);
+			} else {
+				resultMap.put("success", true);
+				resultMap.put("rows", pageInfo.getList());
+				resultMap.put("total", pageInfo.getTotal());
+			}
+		} catch (Exception e) {
+			logger.info("异常信息：" + e.getMessage());
+			resultMap.put("success", false);
+		} 
+		return JSON.toJSONString(resultMap);
+	}
+	
+	
+	
+	
+	//执行清单详情页
+	@RequestMapping("/actionDetail")
+	public String actionDetail(HttpServletRequest request, String projectCode){
+		String actionCode = request.getParameter("actionCode");//执行清单编码
+		ProjectAction projectAction = projectActionService.getByCode(actionCode);
+		//根据部门id获得部门类型
+		//String type = projectActionService.getTypeByDeptId(projectAction.getDepartmentId());
+		if (actionCode!=null&&actionCode!="") {
+			//根据清单编码查出执行清单
+			ProjectDetailsVo projectVo =  projectService.findProjectDetailsVoByProjectCode(projectAction.getProjectCode());
+			List<ProjectPeople> projectPeopleList = projectPeopleService.findByProjectCode(projectAction.getProjectCode()); // 项目角色数据
+			projectVo.setRoles(projectPeopleList);
+			request.setAttribute("actionCode", actionCode);
+			request.setAttribute("projectVo", projectVo);
+			
+		}
+		//String projectCode = (String) request.getAttribute("projectCode");
+		System.out.println(projectCode);
+		if (projectCode!=null&&projectCode!="") {//业务部门
+			ProjectDetailsVo projectVo =  projectService.findProjectDetailsVoByProjectCode(projectCode);
+			List<ProjectPeople> projectPeopleList = projectPeopleService.findByProjectCode(projectCode); // 项目角色数据
+			projectVo.setRoles(projectPeopleList);
+			request.setAttribute("projectVo", projectVo);
+			request.setAttribute("projectCode", projectCode);
+			//根据项目编码获取所有执行清单号和执行部门名称（名称主要是页面区分是否是社区运营资源）
+			return "/projectAction/projectActionYWDetail.jsp";
+		}else if (projectActionService.getTypeByActionCode(actionCode).equals("1")) {//社区部门或者综合-社区部门
+			return "/projectAction/projectActionSQDetail.jsp";
+		}else {
+			return "/projectAction/projectActionDetail.jsp";
+		}
+	}
+
+	/**
+	 * 返回资源清单数据
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping("/getActionData")
+	@ResponseBody
+	public PageResult viewProject(ProjectActionDetailQueryBean qb,HttpServletRequest request){
+		Byte roleType = (Byte) request.getSession().getAttribute("roleType");
+		//System.out.println(roleType);
+		//业务类型（1社区运营 2 媒管 3用户运营 4电商运营）
+		/*if (roleType.equals("4")) {//社区运营
+			qb.setBusinessType("1");
+		}else if (roleType.equals("5")) {//电商运营
+			qb.setBusinessType("4");
+		}else if (roleType.equals("6")) {//用户运营
+			qb.setBusinessType("3");
+		}else if (roleType.equals("7")) {//媒管
+			qb.setBusinessType("2");
+		}else if (roleType.equals("8")) {//综合支持
+			
+		}else {
+			qb.setBusinessType("");
+			//return null;
+		}*/
+		PageResult pageResult = null;
+		pageResult = projectActionService.queryActionData(qb);
+		return pageResult;
+	}
+	/**
+	 * 业务部门-返回资源清单数据
+	 * @param request 需项目编号和清单类型2个参数
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping("/getActionDataYW")
+	@ResponseBody
+	public PageResult viewProjectYW(ProjectActionDetailQueryBean qb,HttpServletRequest request){
+		PageResult pageResult = null;
+		pageResult = projectActionService.queryActionDataYW(qb);
+		return pageResult;
+	}
+	@RequestMapping("/getActionAttachmentData")
+	@ResponseBody
+	public PageResult viewProjeActionAttachment(ProjectActionDetailQueryBean qb,HttpServletRequest request){
+		PageResult pageResult = null;
+		if (qb.getActionCode()!=null&&qb.getActionCode()!="") {
+			ProjectAction projectAction = projectActionService.getByCode(qb.getActionCode());
+			qb.setProjectCode(projectAction.getProjectCode());
+			//pageResult = projectActionService.queryAttachmentData(qb);
+		}
+			pageResult = projectActionService.queryAllAttachmentData(qb);
+		
+		return pageResult;
+	}
+	
+	@RequestMapping("/uploadAttachment")
+	@ResponseBody
+	public AjaxResult update(Attachment attachment){
+		AjaxResult result = null;
+		try{
+			attachment.setId(UUID.randomUUID().toString().replace("-", ""));
+			projectActionService.insert(attachment);
+			result = new AjaxResult(true,"上传成功");
+		}catch(Exception e){
+			e.printStackTrace();
+			result = new AjaxResult(false,"上传失败！");
+		}
+		return result;
+	}
+	
+	@RequestMapping("/showArea")
+	@ResponseBody
+	public String showArea(String projectProductMenuId,HttpServletRequest request){
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			List<ProjectProductMenuAreaVo> ppmavo = projectActionService.getShowAreaDataByPPMID(projectProductMenuId);
+			request.setAttribute("areaList", ppmavo);
+			resultMap.put("success", true);
+			resultMap.put("areaList", ppmavo);
+		} catch (Exception e) {
+			resultMap.put("success", false);
+		}
+		return JSON.toJSONString(resultMap);
+	}
+	
+	@RequestMapping("/deleteAttatment")
+	@ResponseBody
+	public AjaxResult deleteAttatment(String id){
+		AjaxResult result = null;
+		try{
+			projectActionService.deleteAttatment(id);
+			result = new AjaxResult(true,"删除成功");
+		}catch(Exception e){
+			e.printStackTrace();
+			result = new AjaxResult(false,"删除失败！");
+		}
+		return result;
+	}
+	
+	/**
+	 * 导出资源清单
+	 * 
+	 * @param request
+	 * @param response
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/exportMGData", produces = "text/html;charset=UTF-8;")
+	public void export(HttpServletRequest request, HttpServletResponse response,ProjectActionDetailQueryBean qb) {
+		List<ProjectActionDetailVo> vos = projectActionService.queryActionDataList(qb);
+		if(projectActionService.getTypeByActionCode(qb.getActionCode()).equals("1")) {//如果是社区运营，需要不同格式和合并单元格
+			HSSFWorkbook workbook = new HSSFWorkbook();
+			HSSFSheet sheet = workbook.createSheet("清单详情");
+			// 表头字体设置
+			HSSFFont headerfont = workbook.createFont();
+			// 字体加粗
+			headerfont.setBoldweight(Font.BOLDWEIGHT_BOLD);
+			// 表头style设置
+			HSSFCellStyle headerStyle = workbook.createCellStyle();
+			// 设置长文本自动换行
+			headerStyle.setFont(headerfont);
+			// 水平方向对齐
+			headerStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+			// 垂直方向的对齐方式
+			headerStyle.setVerticalAlignment(HSSFCellStyle.ALIGN_CENTER);
+			// 设置边框
+			headerStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+			headerStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
+			headerStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
+			headerStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+			// 设置背景颜色
+			headerStyle.setFillBackgroundColor(IndexedColors.LIGHT_CORNFLOWER_BLUE.getIndex());
+			// 创建样式
+			HSSFFont commonfont = workbook.createFont();
+			HSSFCellStyle commonStyle = workbook.createCellStyle();
+			commonStyle.setWrapText(true);
+			commonStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER); // 水平居中
+			commonStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);// 垂直居中
+			commonStyle.setFont(commonfont);
+			// 水平方向对齐
+			commonStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+			// 设置边框
+			commonStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+			commonStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
+			commonStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
+			commonStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+			// 生成第一行表头行
+			String[] headers = { "执行部门","场次名称", "类型", "产品清单", "产品规格", "购买数量", "执行开始时间", "执行结束时间", "已选小区" };
+			SimpleDateFormat fmt2 = new SimpleDateFormat("yyyy年MM月dd日   HH:mm:ss");
+			HSSFRow headerRow = sheet.createRow(0);
+			HSSFRichTextString text;
+			for (int i = 0; i < headers.length; i++) {
+				HSSFCell cell = headerRow.createCell(i);
+				cell.setCellStyle(headerStyle);
+				text = new HSSFRichTextString(headers[i]);
+				cell.setCellValue(text);
+			}
+			int rowNum = 1;
+			sheet.addMergedRegion(
+					new CellRangeAddress(rowNum, vos.size(), 0, 0));
+			sheet.addMergedRegion(
+					new CellRangeAddress(rowNum, vos.size(), 1, 1));
+			sheet.addMergedRegion(
+					new CellRangeAddress(rowNum, vos.size(), 8, 8));
+			for (ProjectActionDetailVo vo : vos) {
+				if(rowNum==1) {
+					int s = 0;
+					HSSFRow row = sheet.createRow(rowNum++);
+					// 执行部门
+					HSSFCell cell = row.createCell(s++);
+					cell.setCellStyle(commonStyle);
+					if (vo.getBusinessType().equals("1")) {
+						cell.setCellValue("社区运营");
+					}else if (vo.getBusinessType().equals("2")) {
+						cell.setCellValue("媒管 ");
+					}else if (vo.getBusinessType().equals("3")) {
+						cell.setCellValue("用户运营");
+					}else {
+						cell.setCellValue("电商运营");
+					}
+					// 场次名称
+					cell = row.createCell(s++);
+					cell.setCellStyle(commonStyle);
+					cell.setCellValue(vo.getFieldName());
+					// 类型
+					cell = row.createCell(s++);
+					cell.setCellStyle(commonStyle);
+					cell.setCellValue(vo.getProductType());
+					// 产品清单
+					cell = row.createCell(s++);
+					cell.setCellStyle(commonStyle);
+					cell.setCellValue(vo.getProductMenu());
+					// 产品规格
+					cell = row.createCell(s++);
+					cell.setCellStyle(commonStyle);
+					cell.setCellValue(vo.getProductSpec());
+					// 购买数量
+					cell = row.createCell(s++);
+					cell.setCellStyle(commonStyle);
+					cell.setCellValue(vo.getBuyNum());
+					// 执行开始时间
+					cell = row.createCell(s++);
+					cell.setCellStyle(commonStyle);
+					cell.setCellValue(fmt2.format(vo.getBeginTime()));
+					// 执行结束时间
+					cell = row.createCell(s++);
+					cell.setCellStyle(commonStyle);
+					cell.setCellValue(fmt2.format(vo.getEndTime()));
+					// 已选小区
+					cell = row.createCell(s++);
+					cell.setCellStyle(commonStyle);
+					cell.setCellValue(vo.getAreaName());
+				}else {
+					int s = 0;
+					HSSFRow row = sheet.createRow(rowNum++);
+					// 执行部门
+					HSSFCell cell = row.createCell(s++);
+					cell.setCellStyle(commonStyle);
+					// 场次名称
+					cell = row.createCell(s++);
+					cell.setCellStyle(commonStyle);
+					// 类型
+					cell = row.createCell(s++);
+					cell.setCellStyle(commonStyle);
+					cell.setCellValue(vo.getProductType());
+					// 产品清单
+					cell = row.createCell(s++);
+					cell.setCellStyle(commonStyle);
+					cell.setCellValue(vo.getProductMenu());
+					// 产品规格
+					cell = row.createCell(s++);
+					cell.setCellStyle(commonStyle);
+					cell.setCellValue(vo.getProductSpec());
+					// 购买数量
+					cell = row.createCell(s++);
+					cell.setCellStyle(commonStyle);
+					cell.setCellValue(vo.getBuyNum());
+					// 执行开始时间
+					cell = row.createCell(s++);
+					cell.setCellStyle(commonStyle);
+					cell.setCellValue(fmt2.format(vo.getBeginTime()));
+					// 执行结束时间
+					cell = row.createCell(s++);
+					cell.setCellStyle(commonStyle);
+					cell.setCellValue(fmt2.format(vo.getEndTime()));
+					// 已选小区
+					cell = row.createCell(s++);
+					cell.setCellStyle(commonStyle);
+					
+				}
+			}
+			for (int i = 0; i < headers.length; i++) {
+				sheet.autoSizeColumn(i);
+				if (sheet.getColumnWidth(i) < 20 * 256) {
+					sheet.setColumnWidth(i, 20 * 256);
+				}
+			}
+			ExportExcelUtil.downSpcialFile("清单详情.xls", workbook, request, response);
+			
+		}else {
+			if (vos != null && vos.size() > 0) {
+				// 生成表格
+				String title = "清单详情";
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+				String fileName = "执行清单详情." + sdf.format(new Date()) + ".xls";
+				String[] headers = { "组织名称", "类型","产品清单","产品规格", "购买数量","执行开始时间", "执行结束时间", "已选小区数量","具体小区" };
+				ExportExcelUtil.experotExcelFor2003(title, headers, vos, fileName, new PoiCell() {
+					@Override
+					public void setCellData(Object obj, HSSFRow row, HSSFCellStyle style) {
+						ProjectActionDetailVo exportMGVo = (ProjectActionDetailVo) obj;
+
+						int i = 0;
+						// 组织名称
+						HSSFCell cell = row.createCell(i++);
+						cell.setCellStyle(style);
+						System.out.println(exportMGVo.getBusinessType());
+						if (exportMGVo.getBusinessType().equals("1")) {
+							cell.setCellValue("社区运营");
+						}else if (exportMGVo.getBusinessType().equals("2")) {
+							cell.setCellValue("媒管 ");
+						}else if (exportMGVo.getBusinessType().equals("3")) {
+							cell.setCellValue("用户运营");
+						}else {
+							cell.setCellValue("电商运营");
+						}
+						// 产品类型
+						cell = row.createCell(i++);
+						cell.setCellStyle(style);
+						cell.setCellValue(exportMGVo.getProductType()); 
+						
+						// 产品清单
+						cell = row.createCell(i++);
+						cell.setCellStyle(style);
+						cell.setCellValue(exportMGVo.getProductMenu());
+						// 产品规格
+						cell = row.createCell(i++);
+						cell.setCellStyle(style);
+						cell.setCellValue(exportMGVo.getProductSpec());
+						// 购买数量
+						cell = row.createCell(i++);
+						cell.setCellStyle(style);
+						cell.setCellValue(exportMGVo.getBuyNum());
+						
+						// 执行开始时间
+						cell = row.createCell(i++);
+						cell.setCellStyle(style);
+						cell.setCellValue(sdf.format(exportMGVo.getBeginTime()));
+						// 执行结束时间
+						cell = row.createCell(i++);
+						cell.setCellStyle(style);
+						cell.setCellValue(sdf.format(exportMGVo.getEndTime()));
+						// 已选小区数量
+						cell = row.createCell(i++);
+						cell.setCellStyle(style);
+						cell.setCellValue(exportMGVo.getAreaNum());
+						// 具体小区
+						cell = row.createCell(i++);
+						cell.setCellStyle(style);
+						StringBuffer sb = new StringBuffer();
+						for (int j = 0; j < exportMGVo.getAreas().size(); j++) {
+							sb.append(exportMGVo.getAreas().get(j));
+							sb.append("、");
+						}
+						cell.setCellValue(sb.toString());
+					}
+				}, request, response);
+			}
+		}
+		
+		
+		
+	}
+	
+	
+	
+}

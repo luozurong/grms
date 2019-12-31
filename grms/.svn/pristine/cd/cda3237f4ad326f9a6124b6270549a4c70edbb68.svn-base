@@ -1,0 +1,165 @@
+/*
+ * ProjectActionMapper.java
+ * Copyright(C) 20xx-2015 xxxxxx公司
+ * All rights reserved.
+ * -----------------------------------------------
+ * 2018-08-10 Created
+ */
+package com.hori.grms.dao;
+
+import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.annotations.Param;
+
+import com.hori.grms.model.ProjectAction;
+import com.hori.grms.model.ProjectActionExample;
+import com.hori.grms.queryBean.ProjectActionDetailQueryBean;
+import com.hori.grms.queryBean.ProjectActionQueryBean;
+import com.hori.grms.queryBean.ZhUmbQueryBean;
+import com.hori.grms.vo.CommunityProjectActionVo;
+import com.hori.grms.vo.ProjectActionDetailVo;
+import com.hori.grms.vo.ProjectActionVo;
+import com.hori.grms.vo.ZhProjectActionVo;
+
+public interface ProjectActionMapper {
+	
+	Long queryPageCount(ProjectActionQueryBean qb);
+	
+    int countByExample(ProjectActionExample example);
+
+    int deleteByExample(ProjectActionExample example);
+
+    int deleteByPrimaryKey(String id);
+
+    int insert(ProjectAction record);
+
+    int insertSelective(ProjectAction record);
+
+    List<ProjectAction> selectByExample(ProjectActionExample example);
+
+    ProjectAction selectByPrimaryKey(String id);
+
+    int updateByExampleSelective(@Param("record") ProjectAction record, @Param("example") ProjectActionExample example);
+
+    int updateByExample(@Param("record") ProjectAction record, @Param("example") ProjectActionExample example);
+
+    int updateByPrimaryKeySelective(ProjectAction record);
+
+    int updateByPrimaryKey(ProjectAction record);
+
+    /**
+     * 查询社区运营执行清单列表
+     * @param queryBean
+     * @return
+     */
+	List<CommunityProjectActionVo> listCommunityAction(ProjectActionQueryBean queryBean);
+	
+	/**
+	 * 获取项目执行清单
+	 * @param queryBean
+	 * @return
+	 */
+	List<Map<String, Object>> listProjectAction(@Param("queryBean") ProjectActionQueryBean queryBean);
+
+	/**
+	 * 通过项目编码查询社区运营清单列表
+	 * @param projectCode
+	 * @return
+	 */
+	List<CommunityProjectActionVo> findCommunityProjectActionVoByProjectCode(String projectCode);
+
+	/**
+	 * 查询用户运营/媒管/电商的执行清单列表
+	 * @param queryBean
+	 * @return
+	 */
+	List<Map<String, Object>> listYMDAction(@Param("queryBean") ProjectActionQueryBean queryBean);
+	/**
+	 * 通过执行清单编号获取
+	 * @param code 执行清单编号
+	 * @return
+	 */
+	ProjectAction getByCode(String code);
+	/**
+	 * 综合支持部-查询社区运营执行清单列表
+	 * @param queryBean
+	 * @return
+	 */
+	List<CommunityProjectActionVo> selectZhongheDepartList(ProjectActionQueryBean queryBean);
+	/**
+	 * 综合支持部-查询用户媒管电商社区运营执行清单列表
+	 * @param queryBean
+	 * @return
+	 */
+	List<ZhProjectActionVo> selectZhUmbList(ZhUmbQueryBean queryBean);
+
+	Long queryCount(ZhUmbQueryBean qb);
+	/**
+	 * 获取项目执行清单(社区运营)的小区机构编码
+	 * @param actionCode 项目执行编号
+	 * @return
+	 */
+	String getOrganizationSeqByActionCode(String actionCode);
+
+	
+	
+	/**
+	 * 根据项目编码获取所有项目执行清单
+	 * @param projectCode
+	 * @return
+	 */
+	List<ProjectActionVo> findProjectActionVoByProjectCode(String projectCode);
+
+	/**
+	 * 通过项目编号获取执行清单列表
+	 * @param projectCode
+	 * @return
+	 */
+	List<ProjectAction> listByProjectCode(@Param("projectCode") String projectCode);
+
+	/**
+	 * 获取项目执行清单
+	 * @param queryBean
+	 * @return
+	 */
+	List<Map<String, Object>> listProject(@Param("queryBean")ProjectActionQueryBean queryBean);
+
+	Long queryDetailCount(ProjectActionDetailQueryBean qb);
+	
+	/**
+	 * 执行详情-资源列表数据
+	 * @param qb
+	 * @return
+	 */
+	List<ProjectActionDetailVo> selectActionDetailList(ProjectActionDetailQueryBean qb);
+
+	/**
+	 * 执行详情-资源列表数据(业务部门查看)
+	 * @param qb
+	 * @return
+	 */
+	List<ProjectActionDetailVo> selectActionDetaiYWlList(ProjectActionDetailQueryBean qb);
+
+	/**
+	 * /**
+     * 综合部门-查询社区运营执行清单列表
+     * @param queryBean
+     * @return
+     */
+	List<CommunityProjectActionVo> listZHCommunityAction(ProjectActionQueryBean queryBean);
+	
+	/**
+	 * 综合部门-查询用户运营/媒管/电商的执行清单列表
+	 * @param queryBean
+	 * @return
+	 */
+	List<Map<String, Object>> listUmbAction(@Param("queryBean") ProjectActionQueryBean queryBean);
+
+	/**
+	 * 查询执行详情-资源列表数据
+	 * @param qb
+	 * @return
+	 */
+	List<ProjectActionDetailVo> selectActionDataList(ProjectActionDetailQueryBean qb);
+}

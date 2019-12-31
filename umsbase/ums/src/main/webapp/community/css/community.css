@@ -1,0 +1,138 @@
+body{
+	min-width: 1100px;
+	box-sizing: border-box;
+	background-color: #F8F8F8;
+}
+.line-1,.line-2,.line-3,.line-4 {
+    padding: 20px 24px 0 24px ;
+    height: 30px;
+}
+.community-name {
+     width: 76px;
+     height: 30px;
+     line-height: 30px;
+     font-size: 14px;
+     color: #222222;
+     text-align: right;
+ }
+.namevalue {
+    width: 280px;
+    height: 30px;
+}
+.namevalue>input {
+    padding-left: 8px;
+    width: 270px;
+    height: 28px;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+}
+.community-area {
+    width: 76px;
+    height: 30px;
+    line-height: 30px;
+    font-size: 14px;
+    color: #222222;
+    text-align: right;
+}
+.areavalue {
+    margin-left: 10px;
+    width: 120px;
+    height: 30px;
+}
+.areavalue>input {
+    width: 118px;
+    height: 28px;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.communitytype-1,.communitytype-2 {
+    width: 76px;
+    height: 30px;
+    line-height: 30px;
+    font-size: 14px;
+    color: #222222;
+    text-align:right;
+}
+.typevalue-1,.typevalue-2 {
+    width: 90px;
+    height: 30px;
+}
+.typevalue-1>input,.typevalue-2>input{
+    width: 88px;
+    height: 28px;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+}
+.conditionvalue-1,.conditionvalue-2 {
+    margin-left: 20px;
+    width: 90px;
+    height: 30px;
+}
+.conditionvalue-1>input,.conditionvalue-2>input {
+    padding-left: 8px;
+    width: 80px;
+    height: 28px;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+}
+.unit-1,.unit-2 {
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    font-size: 14px;
+    color: #222222;
+    text-align:center;
+}
+.textbox {
+    /*��ı?��ʽ*/
+    height: 28px;
+    /*border: 1px solid #6a6a6a;*/
+}
+.textbox .textbox-text{
+    background-color: #ffffff;
+    cursor: pointer;
+    text-align: center;
+}
+.guide-in,.guide-out{
+    width: 80px;
+    height: 34px;
+    line-height: 34px;
+    font-size: 14px;
+    color: #FC883B;
+    text-align: center;
+    border: 1px solid #FC883B;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.guide-in,.guide-out {
+    margin-left: 40px;
+}
+/*������*/
+.content {
+    margin: 24px;
+}
+/*��ҳ��ť*/
+.pagination table{
+    margin: 0 auto;
+    float: none;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

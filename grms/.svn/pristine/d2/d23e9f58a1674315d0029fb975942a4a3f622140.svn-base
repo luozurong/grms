@@ -1,0 +1,78 @@
+package com.hori.grms.service.impl;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
+
+import com.hori.grms.dao.DepartmentBusinessAreaMapper;
+import com.hori.grms.dao.DepartmentBusinessTypeMapper;
+import com.hori.grms.model.DepartmentBusinessArea;
+import com.hori.grms.model.DepartmentBusinessType;
+import com.hori.grms.service.DepartmentBusinessService;
+import com.hori.grms.vo.DepartmentBusinessVo;
+@Service
+public class DepartmentBusinessServiceImpl implements DepartmentBusinessService {
+
+	@Autowired
+	private DepartmentBusinessTypeMapper businessTypeMapper;
+	
+	@Autowired
+	private DepartmentBusinessAreaMapper businessAreaMapper;
+	
+	@Override
+	public List<DepartmentBusinessType> getBusinessTypeList(String condition) {
+		// TODO Auto-generated method stub
+		return businessTypeMapper.getBusinessTypeList(condition);
+	}
+
+	@Override
+	public void delDepartmentBusinessType(String id) {
+		// TODO Auto-generated method stub
+		businessTypeMapper.delDepartmentBusinessType(id);
+	}
+
+	@Override
+	public void delDepartmentBusinessArea(String id) {
+		// TODO Auto-generated method stub
+		businessAreaMapper.delDepartmentBusinessArea(id);
+	}
+	@Override
+	public void insertType(DepartmentBusinessType type) {
+		// TODO Auto-generated method stub
+		businessTypeMapper.insert(type);
+	}
+
+	@Override
+	public void insertArea(DepartmentBusinessArea area) {
+		// TODO Auto-generated method stub
+		businessAreaMapper.insert(area);
+	}
+
+	@Override
+	public List<DepartmentBusinessType> findByBusinessType(String businessType) {
+		Assert.notNull(businessType, "businessType 不能为空");
+		return this.businessTypeMapper.findByBusinessType(businessType);
+	}
+
+	@Override
+	public List<DepartmentBusinessType> findByBusinessAreaCity(String city, String businessType) {
+		Assert.notNull(city, "city不能为空");
+		Assert.notNull(businessType, "businessType不能为空");
+		return this.businessTypeMapper.findByBusinessAreaCity(city, businessType);
+	}
+
+	@Override
+	public DepartmentBusinessType selectByPrimaryKey(String id) {
+		// TODO Auto-generated method stub
+		return businessTypeMapper.selectByPrimaryKey(id);
+	}
+
+	@Override
+	public List<DepartmentBusinessVo> getBusinessVoList(String condition) {
+		// TODO Auto-generated method stub
+		return businessTypeMapper.getBusinessVoList(condition);
+	}
+
+}

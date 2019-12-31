@@ -1,0 +1,23 @@
+package com.hori.grms.controller;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+/**
+ * 执行管理Controller
+ * @author hehj
+ * @datetime 2018年8月9日 上午11:44:46
+ */
+@Controller
+@RequestMapping("/projectAction")
+public class ProjectActionController extends BaseController {
+	private final Logger logger = LoggerFactory.getLogger(ProjectActionController.class);
+	
+	@RequestMapping("/list")
+	public String actionList() {
+		logger.info("查找执行清单列表。。。。。。。");
+		return "/projectAction/actionList.jsp";
+	}
+}

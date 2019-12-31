@@ -1,0 +1,76 @@
+package com.hori.grms.dao;
+
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
+import com.hori.grms.model.CloseCaseInfo;
+import com.hori.grms.queryBean.CloseCaseQueryBean;
+
+public interface CloseCaseMapper {
+	
+	/**
+	 * 获取结案列表
+	 * @param queryBean
+	 * @return
+	 */
+	List<CloseCaseInfo> getCloseCases(CloseCaseQueryBean queryBean);
+	
+	/**
+	 * 获取结案列表总数
+	 * @param queryBean
+	 * @return
+	 */
+	int getCloseCaseCount(CloseCaseQueryBean queryBean);
+	
+	/**
+	 * 根据id获取结案
+	 * @param id
+	 * @return
+	 */
+	CloseCaseInfo getCloseCaseById(@Param("id")String id);
+	
+	/**
+	 * 根据项目id获取结案
+	 * @param projectCode
+	 * @return
+	 */
+	List<CloseCaseInfo> getCloseCaseByProjectCode(@Param("projectCode")String projectCode);
+	
+	/**
+	 * 提交/撤回提交结案
+	 * @param id
+	 * @return
+	 */
+	int commit(@Param("id")String id, @Param("status")Integer status);
+	
+	/**
+	 * 处理/撤回处理结案
+	 * @param closeCaseCode
+	 * @return
+	 */
+	int handle(@Param("closeCaseCode")String closeCaseCode, @Param("status")Integer status);
+	
+	/**
+	 * 上传附件
+	 * @param id
+	 * @param url
+	 * @param urlName
+	 * @return
+	 */
+	int uploadAttachment(@Param("id")String id, @Param("url")String url, @Param("urlName")String urlName);
+	
+	/**
+	 * 删除附件
+	 * @param id
+	 * @return
+	 */
+	int deleteAttachment(@Param("id")String id);
+	
+	/**
+	 * 保存
+	 * @param closeCaseInfo
+	 * @return
+	 */
+	int save(CloseCaseInfo closeCaseInfo);
+}

@@ -1,0 +1,16 @@
+package com.hori.grms.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+/**
+ * 合同管理
+ * @author hhb
+ *
+ */
+@Controller
+@RequestMapping("contract")
+public class ContractController {
+	
+
+}

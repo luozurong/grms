@@ -1,0 +1,18 @@
+/**
+ * 
+ */
+package com.hori.grms.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.hori.grms.dao.ProductMenuMapper;
+
+/** 
+ * @ClassName: ProductMenuService 
+ * @Description: 产品清单
+ * @author zhuqiang
+ * @date 2018年8月8日 下午6:43:19 
+ */
+public interface ProductMenuService {
+   
+}

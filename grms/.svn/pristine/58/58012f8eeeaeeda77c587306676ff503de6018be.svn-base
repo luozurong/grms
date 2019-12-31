@@ -1,0 +1,17 @@
+$(function(){
+$("#uploadFile").click(function(){
+	var formData = new FormData($("#upfile")[0]);
+	//formData.set('file', document.getElementById("upload").files[0]);
+    var url = "upload";
+	$.ajax({
+        url: url,
+        type: 'POST',
+        cache: false,
+        data:formData,
+        processData: false,
+        contentType: false
+    }).done(function(res) {
+        
+    });
+});
+});

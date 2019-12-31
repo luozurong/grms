@@ -1,0 +1,120 @@
+package com.hori.grms.controller;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import com.alibaba.fastjson.JSON;
+import com.github.pagehelper.PageInfo;
+import com.hori.grms.queryBean.ProjectActionQueryBean;
+import com.hori.grms.service.ProjectActionService;
+import com.hori.grms.vo.CommunityProjectActionVo;
+
+/**
+ * 执行管理Controller
+ * 
+ * @author hehj
+ * @datetime 2018年8月9日 上午11:44:46
+ */
+@Controller
+@RequestMapping("/projectAction")
+public class ProjectActionController extends BaseController {
+	private final Logger logger = LoggerFactory.getLogger(ProjectActionController.class);
+
+	@Autowired
+	private ProjectActionService projectActionService;
+
+	@RequestMapping("/communityActionList")
+	public String getProjectList(HttpServletRequest request, HttpServletResponse response) {
+
+		return "/projectAction/communityActionList.jsp";
+	}
+
+	/**
+	 * 社区运营执行清单列表
+	 * 
+	 * @param request
+	 * @param response
+	 * @param queryBean
+	 * @return
+	 */
+	@RequestMapping(value = "/actionList", produces = "text/html;charset=UTF-8;")
+	@ResponseBody
+	public String communityActionList(HttpServletRequest request, HttpServletResponse response) {
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+
+		String parameter = request.getParameter("projectActionQueryBean");
+
+		ProjectActionQueryBean queryBean = JSON.parseObject(parameter, ProjectActionQueryBean.class);
+		if (queryBean != null) {
+			System.out.println("*********" + queryBean.toString());
+		}
+
+		PageInfo<CommunityProjectActionVo> pageInfo = projectActionService.listCommunityAction(queryBean);
+		resultMap.put("success", true);
+		resultMap.put("rows", pageInfo.getList());
+		resultMap.put("total", pageInfo.getTotal());
+		return JSON.toJSONString(resultMap);
+	}
+
+	@RequestMapping("/projectActionList")
+	public String getProjectActionList(HttpServletRequest request, HttpServletResponse response) {
+		return "/projectAction/projectActionList.jsp";
+	}
+
+	/**
+	 * 获取项目执行清单列表数据
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "/getlistData", produces = "text/html;charset=UTF-8;")
+	@ResponseBody
+	public String getProjectListData(HttpServletRequest request, HttpServletResponse response) {
+
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+
+		try {
+			String parameter = request.getParameter("projectQueryBean");
+
+			ProjectActionQueryBean queryBean = JSON.parseObject(parameter, ProjectActionQueryBean.class);
+
+			if (null == queryBean) {
+				queryBean = new ProjectActionQueryBean();
+			}
+
+			PageInfo<Map<String, Object>> listProjectAction = projectActionService.listProjectAction(queryBean);
+
+			List<Map<String, Object>> list = listProjectAction.getList();
+
+			for (Map<String, Object> map : list) {
+				Set<String> keySet = map.keySet();
+				for (String string : keySet) {
+					System.out.println(string);
+				}
+			}
+
+			resultMap.put("success", true);
+			resultMap.put("rows", listProjectAction.getList());
+			resultMap.put("total", listProjectAction.getTotal());
+
+		} catch (Exception e) {
+
+			logger.info("错误原因：" + e.getMessage());
+			resultMap.put("success", false);
+
+		}
+
+		return JSON.toJSONStringWithDateFormat(resultMap, "yyyy-MM-dd");
+	}
+}

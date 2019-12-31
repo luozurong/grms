@@ -1,0 +1,155 @@
+a{text-decoration: none;}
+body{font-size: 14px; color:#666; font-family: "Microsoft Yahei"; background: #e8e8e8;}
+/******reset******/
+html{
+    color:#000;
+}
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,textarea,p,blockquote,th,td,button{
+    margin:0;
+    padding:0;
+}
+table{
+    border-collapse:collapse;
+    border-spacing:0;
+}
+fieldset,img{
+    border:0;
+}
+address,caption,cite,code,dfn,em,strong,th,var{
+    font-style:normal;
+    font-weight:normal;
+}
+ol,ul{
+    list-style:none;
+}
+caption,th{
+    text-align:left;
+}
+h1,h2,h3,h4,h5,h6{
+    font-size:100%;
+    font-weight:normal;
+}
+q:before,q:after{
+    content:'';
+}
+abbr,acronym{
+    border:0;
+    font-variant:normal;
+}
+sup{
+    vertical-align:text-top;
+}
+sub{
+    vertical-align:text-bottom;
+}
+input,textarea,select{
+    font-family:inherit;
+    font-size:inherit;
+    font-weight:inherit;
+    *font-size:100%;
+    border: none;
+}
+legend{
+    color:#000;
+}
+.clearfix:before,.clearfix:after{
+    display:table;
+    content:"";
+}
+.clearfix:after{
+    clear:both;
+}
+.clearfix{
+    *zoom:1;
+}
+/******conmment style******/
+.header{
+    width: 100%;
+    height: 73px;
+    background: #fff;
+    line-height: 73px;
+}
+.header h1{
+    float: left;
+    padding-left: 10px;
+}
+.header h1{
+    font-size: 22px;
+    color: #000;
+    height: 73px;
+    line-height: 73px;
+}
+.header h1 span{
+    padding-left: 40px;
+    background: url(../images/smile.png) left center no-repeat;
+    color: #178fe6;
+    font-size: 26px;
+    margin-right: 10px;
+    display: inline-block;
+    float: left;
+    height: 73px;
+    line-height: 73px;
+}
+
+.header .login_logo{
+    /*padding-left: 105px;*/
+    width: 70px;
+    height: 35px;
+    display: inline-block;
+    background: url(../images/login_logo.png) left center no-repeat;
+    margin-right: 6px;
+    float: left;
+    height: 73px;
+    line-height: 73px;
+}
+
+
+.header h1 .title {
+    font-size: 21px;
+    margin-right: 10px;
+    display: inline-block;
+    float: left;
+    height: 73px;
+    line-height: 73px;
+}
+
+/***************head style***********/
+.head_info{
+    width: 100%;
+    height: 65px;
+    background: #178fe6;
+    color: #fff;
+    font-size: 22px;
+}
+.head_info h1{
+    display: inline-block;
+    line-height: 65px;
+    padding-left: 48px;
+    font-size: 22px;
+    float: left;
+}
+.head_info h1 span{
+    font-size: 18px;
+    color: #8ecbf6;
+}
+.head_info .head_left{
+    line-height: 65px;
+    float: left;
+}
+.head_info .head_right{
+    float: right;
+    padding-top: 17px;
+    padding-right: 48px;
+}
+.head_info .head_right i{
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    background: url(../images/ic_user.png) 0 0 no-repeat;
+    margin-right: 5px;
+    vertical-align: middle;
+}
+ .head_right a{
+    font-size: 14px;
+    color: #fff;
+}

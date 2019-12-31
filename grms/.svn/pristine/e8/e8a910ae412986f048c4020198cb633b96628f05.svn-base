@@ -1,0 +1,21 @@
+$(function(){
+	
+	$('#"createTime"').datebox({    
+	    required:true   
+	});
+	
+	$('#searchBtn').linkbutton({  
+		
+	});
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+})

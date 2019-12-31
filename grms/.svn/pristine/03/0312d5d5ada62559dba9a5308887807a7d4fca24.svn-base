@@ -1,0 +1,17 @@
+package com.hori.grms.dao;
+
+import com.hori.grms.model.ContractTemplate;
+
+public interface ContractTemplateMapper {
+    int deleteByPrimaryKey(String id);
+
+    int insert(ContractTemplate record);
+
+    int insertSelective(ContractTemplate record);
+
+    ContractTemplate selectByPrimaryKey(String id);
+
+    int updateByPrimaryKeySelective(ContractTemplate record);
+
+    int updateByPrimaryKey(ContractTemplate record);
+}

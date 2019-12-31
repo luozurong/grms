@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hori.grms.dao.DepartmentBusinessTypeMapper" >
+  <resultMap id="BaseResultMap" type="com.hori.grms.model.DepartmentBusinessType" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="department_id" property="departmentId" jdbcType="VARCHAR" />
+    <result column="department_name" property="departmentName" jdbcType="VARCHAR" />
+    <result column="business_type" property="businessType" jdbcType="VARCHAR" />
+    <result column="area_flag" property="areaFlag" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, department_id, department_name, business_type, area_flag
+  </sql>
+  
+  <select id="getBusinessTypeList" resultMap="BaseResultMap" parameterType="String">
+  	select * from department_business_type where department_id = #{condition} or business_type = #{condition} 
+  </select>
+  <delete id="delDepartmentBusiness" parameterType="String" >
+    delete from department_business_type
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+</mapper>

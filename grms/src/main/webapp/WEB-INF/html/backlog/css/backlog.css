@@ -1,0 +1,36 @@
+.backlog{
+	margin: 20px;
+	background: #fff;
+	padding: 40px 20px;
+}
+.datebox{
+	height: 30px;
+}
+.startTime,.endTime{
+	width: 157px;
+}
+.backlog-input{
+	width: 157px;
+	height: 30px;
+	line-height: 30px;
+	padding-left: 10px;
+	border:1px solid #bbb;
+	border-radius: 4px;
+}
+.backlog-search{
+	display: inline-block;
+	height: 32px;
+	line-height: 30px;
+	width: 90px;
+	text-align: center;
+	background: #51d2b6;
+	color: #fff;
+	border-radius: 4px;
+	margin-left: 10px;
+	cursor: pointer;
+}
+.dataTable{
+	margin-top: 30px;
+	width: 100%;
+	box-sizing: border-box;
+}

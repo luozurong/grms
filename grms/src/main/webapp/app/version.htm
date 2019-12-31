@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html >
+<head>
+    <meta charset="utf-8">
+    <title>APP版本分布</title>
+	<link href="../easyui/themes/default/easyui.css" rel="stylesheet" type="text/css" />
+	<link href="../easyui/themes/icon.css" rel="stylesheet" type="text/css" />
+	<link href="../css/reset.css" rel="stylesheet" type="text/css" />
+	<link rel="stylesheet" type="text/css" href="../css/component.css"/>
+	<link rel="stylesheet" type="text/css" href="../dialog/css/addArea.css"/>
+</head>
+
+<body style="min-width:1000px;height: 100%;background-color: #F8F8F8;padding: 14px 24px;">
+	<div class="tipsBox">
+		<div class="tipsP clearfix">
+            <span class="fl">统计字段说明</span>
+            <span class="fl illPic"></span>
+        </div>
+		<div class="tips">
+		    <h2>APP版本分布</h2>
+			1.累计新用户：该版本第一次登陆过的用户<br/>
+			2.升级用户：从旧版本升级到该版本的用户<br/>			
+			3.全新用户：第一次登陆该app的用户<br/>
+			4.累计启动次数：该版本启动的次数<br/>
+			5.累计启动用户：该版本启动的用户数<br/>
+			6.时间维度中，日是针对上一天的统计，周是针对上周一到上周日的统计，月是针对上月1号到上月月底的统计
+		</div>
+	</div>
+	<!-- 查询栏 -->
+	<div class="myPanel" style="padding: 14px 0;">
+        <div class="dimension"><!--维度-->
+            <span class="tlt">选择统计维度:</span>
+            <label class="typeLabel1">
+                <input type="radio" name="selType" value="selectDay" checked="checked">
+                <span>日</span>
+            </label>
+            <label class="typeLabel1">
+                <input type="radio" name="selType" value="selectWeek">
+                <span>周</span>
+            </label>
+            <label class="typeLabel1">
+                <input type="radio" name="selType" value="selectMonth">
+                <span>月</span>
+            </label>
+        </div>
+        <!--日期范围-->
+        <div class="daterange clearfix">
+            <span class="tlt fl">选择日期范围:</span>
+            <span class="fl" id="dateFrame"></span>
+        </div>
+		<div class="areaslt">
+	    	<span class="tlt">区域:
+	    		<span class="addareaBtn" onclick="bd.areaWindow()">添加区域</span>
+	    	</span>
+	    	<ul class="arealist clearfix">
+	    	</ul>
+	    </div>
+	    <div class="communityslt">
+	    	<span class="tlt">小区:
+	    		<span class="addareaBtn" onclick="bd.communityWindow()">添加小区</span>
+	    	</span>
+	    	<ul class="communitylist clearfix">
+	    		<li></li>
+	    	</ul>
+	    </div>
+	    <div class="panelBtn">
+	        <a id="query_ticket" class="searchBtn" shape="rect"  onclick="dosearch()">查询</a>
+	        <a id="query_ticket" class="exportBtn" shape="rect" onclick="doExportPoi()">导出</a>
+	    </div>
+    </div>
+     <!-- 统计图 -->  
+	<div class="myPanel" style="margin-top: 20px;background-color:#FFFFFF;">
+		<div id="graphic" class="col-md-8" style="padding-top: 20px;">
+	        <div id="main" class="main" style="height: 330px;"></div>             
+	    </div>
+		<div class="dataTable" style="height:315px;margin-top: 30px;">
+		     <!-- 数据表 -->
+		    <table class="easyui-datagrid" id="easyui-datagrid" data-options="fit:true,fitColumns:true,scrollbarSize:0,singleSelect:true" style="width: 100%; height:auto">
+		    	<thead>
+		    		<tr>
+		    			<th data-options="field:'versionName',width:100,align:'center',sortable:true">版本</th>
+		    			<th data-options="field:'accNewUserNum',width:100,align:'center',sortable:true">累计新用户</th>
+		    			<th data-options="field:'updateUserNum',width:100,align:'center',sortable:true">升级用户</th>
+		    			<th data-options="field:'newUserNum',width:100,align:'center',sortable:true">全新用户</th>
+		    			<th data-options="field:'accStartNum',width:100,align:'center',sortable:true">累计启动次数</th>
+		    			<th data-options="field:'accStartUserNum',width:100,align:'center',sortable:true">累计启动用户</th>
+		    		</tr>
+		    	</thead>
+		    </table>
+		</div>
+	</div>
+
+	<!--选择区域、小区弹窗-->
+	<div id="areaWindow"></div>
+	<div id="communityWindow"></div>
+
+    <script src="../js/jquery.min.js" type="text/javascript"></script>
+	<script src="../easyui/jquery.easyui.min.js" type="text/javascript"></script>
+    <script src="../easyui/jquery.tree.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../echarts/echarts.js"></script>
+	<script src="../easyui/easyloader.js" type="text/javascript"></script>
+	<script src="../common/common.js" type="text/javascript"></script>
+	<script src="../js/component/component.js" type="text/javascript" charset="utf-8"></script>
+    <script src="js/version.js" type="text/javascript" ></script>
+</body>
+</html>

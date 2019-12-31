@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hori.grms.dao.CustomerMapper" >
+    <resultMap id="BaseResultMap" type="com.hori.grms.model.Customer" >
+        <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="customer_type_id" property="customerTypeId" jdbcType="VARCHAR" />
+        <result column="industry" property="industry" jdbcType="VARCHAR" />
+        <result column="department" property="department" jdbcType="VARCHAR" />
+        <result column="province" property="province" jdbcType="VARCHAR" />
+        <result column="province_name" property="provinceName" jdbcType="VARCHAR" />
+        <result column="city" property="city" jdbcType="VARCHAR" />
+        <result column="city_name" property="cityName" jdbcType="VARCHAR" />
+        <result column="area" property="area" jdbcType="VARCHAR" />
+        <result column="area_name" property="areaName" jdbcType="VARCHAR" />
+        <result column="address" property="address" jdbcType="VARCHAR" />
+        <result column="duty_name" property="dutyName" jdbcType="VARCHAR" />
+        <result column="duty_phone" property="dutyPhone" jdbcType="VARCHAR" />
+        <result column="contactor" property="contactor" jdbcType="VARCHAR" />
+        <result column="contactor_phone" property="contactorPhone" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="creator_name" property="creatorName" jdbcType="VARCHAR" />
+        <result column="creator_account" property="creatorAccount" jdbcType="VARCHAR" />
+        <result column="creator_level" property="creatorLevel" jdbcType="VARCHAR" />
+        <result column="owner_name" property="ownerName" jdbcType="VARCHAR" />
+        <result column="owner_account" property="ownerAccount" jdbcType="VARCHAR" />
+        <result column="owner_level" property="ownerLevel" jdbcType="VARCHAR" />
+        <result column="remark" property="remark" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="Example_Where_Clause" >
+        <where >
+            <foreach collection="oredCriteria" item="criteria" separator="or" >
+                <if test="criteria.valid" >
+                    <trim prefix="(" suffix=")" prefixOverrides="and" >
+                        <foreach collection="criteria.criteria" item="criterion" >
+                            <choose >
+                                <when test="criterion.noValue" >
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue" >
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue" >
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue" >
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+
+    <sql id="Update_By_Example_Where_Clause" >
+        <where >
+            <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+                <if test="criteria.valid" >
+                    <trim prefix="(" suffix=")" prefixOverrides="and" >
+                        <foreach collection="criteria.criteria" item="criterion" >
+                            <choose >
+                                <when test="criterion.noValue" >
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue" >
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue" >
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue" >
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+
+    <sql id="Base_Column_List" >
+        id, name, customer_type_id, industry, department, province, province_name, city, 
+        city_name, area, area_name, address, duty_name, duty_phone, contactor, contactor_phone, 
+        create_time, update_time, creator_name, creator_account, creator_level, owner_name, 
+        owner_account, owner_level, remark
+    </sql>
+
+    <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.hori.grms.model.CustomerExample" >
+        select
+        <if test="distinct" >
+            distinct
+        </if>
+        'true' as QUERYID,
+        <include refid="Base_Column_List" />
+        from customer
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+        <if test="orderByClause != null" >
+            order by ${orderByClause}
+        </if>
+    </select>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+        select 
+        <include refid="Base_Column_List" />
+        from customer
+        where id = #{id,jdbcType=VARCHAR}
+    </select>
+
+    <insert id="insert" parameterType="com.hori.grms.model.Customer" >
+        insert into customer (id, name, customer_type_id, 
+            industry, department, province, 
+            province_name, city, city_name, 
+            area, area_name, address, 
+            duty_name, duty_phone, contactor, 
+            contactor_phone, create_time, update_time, 
+            creator_name, creator_account, creator_level, 
+            owner_name, owner_account, owner_level, 
+            remark)
+        values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{customerTypeId,jdbcType=VARCHAR}, 
+            #{industry,jdbcType=VARCHAR}, #{department,jdbcType=VARCHAR}, #{province,jdbcType=VARCHAR}, 
+            #{provinceName,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR}, #{cityName,jdbcType=VARCHAR}, 
+            #{area,jdbcType=VARCHAR}, #{areaName,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, 
+            #{dutyName,jdbcType=VARCHAR}, #{dutyPhone,jdbcType=VARCHAR}, #{contactor,jdbcType=VARCHAR}, 
+            #{contactorPhone,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+            #{creatorName,jdbcType=VARCHAR}, #{creatorAccount,jdbcType=VARCHAR}, #{creatorLevel,jdbcType=VARCHAR}, 
+            #{ownerName,jdbcType=VARCHAR}, #{ownerAccount,jdbcType=VARCHAR}, #{ownerLevel,jdbcType=VARCHAR}, 
+            #{remark,jdbcType=VARCHAR})
+    </insert>
+
+    <select id="countByExample" parameterType="com.hori.grms.model.CustomerExample" resultType="java.lang.Integer" >
+        select count(*) from customer
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+    </select>
+
+    <update id="updateByExampleSelective" parameterType="map" >
+        update customer
+        <set >
+            <if test="record.id != null" >
+                id = #{record.id,jdbcType=VARCHAR},
+            </if>
+            <if test="record.name != null" >
+                name = #{record.name,jdbcType=VARCHAR},
+            </if>
+            <if test="record.customerTypeId != null" >
+                customer_type_id = #{record.customerTypeId,jdbcType=VARCHAR},
+            </if>
+            <if test="record.industry != null" >
+                industry = #{record.industry,jdbcType=VARCHAR},
+            </if>
+            <if test="record.department != null" >
+                department = #{record.department,jdbcType=VARCHAR},
+            </if>
+            <if test="record.province != null" >
+                province = #{record.province,jdbcType=VARCHAR},
+            </if>
+            <if test="record.provinceName != null" >
+                province_name = #{record.provinceName,jdbcType=VARCHAR},
+            </if>
+            <if test="record.city != null" >
+                city = #{record.city,jdbcType=VARCHAR},
+            </if>
+            <if test="record.cityName != null" >
+                city_name = #{record.cityName,jdbcType=VARCHAR},
+            </if>
+            <if test="record.area != null" >
+                area = #{record.area,jdbcType=VARCHAR},
+            </if>
+            <if test="record.areaName != null" >
+                area_name = #{record.areaName,jdbcType=VARCHAR},
+            </if>
+            <if test="record.address != null" >
+                address = #{record.address,jdbcType=VARCHAR},
+            </if>
+            <if test="record.dutyName != null" >
+                duty_name = #{record.dutyName,jdbcType=VARCHAR},
+            </if>
+            <if test="record.dutyPhone != null" >
+                duty_phone = #{record.dutyPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="record.contactor != null" >
+                contactor = #{record.contactor,jdbcType=VARCHAR},
+            </if>
+            <if test="record.contactorPhone != null" >
+                contactor_phone = #{record.contactorPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="record.createTime != null" >
+                create_time = #{record.createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.updateTime != null" >
+                update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.creatorName != null" >
+                creator_name = #{record.creatorName,jdbcType=VARCHAR},
+            </if>
+            <if test="record.creatorAccount != null" >
+                creator_account = #{record.creatorAccount,jdbcType=VARCHAR},
+            </if>
+            <if test="record.creatorLevel != null" >
+                creator_level = #{record.creatorLevel,jdbcType=VARCHAR},
+            </if>
+            <if test="record.ownerName != null" >
+                owner_name = #{record.ownerName,jdbcType=VARCHAR},
+            </if>
+            <if test="record.ownerAccount != null" >
+                owner_account = #{record.ownerAccount,jdbcType=VARCHAR},
+            </if>
+            <if test="record.ownerLevel != null" >
+                owner_level = #{record.ownerLevel,jdbcType=VARCHAR},
+            </if>
+            <if test="record.remark != null" >
+                remark = #{record.remark,jdbcType=VARCHAR},
+            </if>
+        </set>
+        <if test="_parameter != null" >
+            <include refid="Update_By_Example_Where_Clause" />
+        </if>
+    </update>
+
+    <update id="updateByExample" parameterType="map" >
+        update customer
+        set id = #{record.id,jdbcType=VARCHAR},
+            name = #{record.name,jdbcType=VARCHAR},
+            customer_type_id = #{record.customerTypeId,jdbcType=VARCHAR},
+            industry = #{record.industry,jdbcType=VARCHAR},
+            department = #{record.department,jdbcType=VARCHAR},
+            province = #{record.province,jdbcType=VARCHAR},
+            province_name = #{record.provinceName,jdbcType=VARCHAR},
+            city = #{record.city,jdbcType=VARCHAR},
+            city_name = #{record.cityName,jdbcType=VARCHAR},
+            area = #{record.area,jdbcType=VARCHAR},
+            area_name = #{record.areaName,jdbcType=VARCHAR},
+            address = #{record.address,jdbcType=VARCHAR},
+            duty_name = #{record.dutyName,jdbcType=VARCHAR},
+            duty_phone = #{record.dutyPhone,jdbcType=VARCHAR},
+            contactor = #{record.contactor,jdbcType=VARCHAR},
+            contactor_phone = #{record.contactorPhone,jdbcType=VARCHAR},
+            create_time = #{record.createTime,jdbcType=TIMESTAMP},
+            update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+            creator_name = #{record.creatorName,jdbcType=VARCHAR},
+            creator_account = #{record.creatorAccount,jdbcType=VARCHAR},
+            creator_level = #{record.creatorLevel,jdbcType=VARCHAR},
+            owner_name = #{record.ownerName,jdbcType=VARCHAR},
+            owner_account = #{record.ownerAccount,jdbcType=VARCHAR},
+            owner_level = #{record.ownerLevel,jdbcType=VARCHAR},
+            remark = #{record.remark,jdbcType=VARCHAR}
+        <if test="_parameter != null" >
+            <include refid="Update_By_Example_Where_Clause" />
+        </if>
+    </update>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.hori.grms.model.Customer" >
+        update customer
+        <set >
+            <if test="name != null" >
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="customerTypeId != null" >
+                customer_type_id = #{customerTypeId,jdbcType=VARCHAR},
+            </if>
+            <if test="industry != null" >
+                industry = #{industry,jdbcType=VARCHAR},
+            </if>
+            <if test="department != null" >
+                department = #{department,jdbcType=VARCHAR},
+            </if>
+            <if test="province != null" >
+                province = #{province,jdbcType=VARCHAR},
+            </if>
+            <if test="provinceName != null" >
+                province_name = #{provinceName,jdbcType=VARCHAR},
+            </if>
+            <if test="city != null" >
+                city = #{city,jdbcType=VARCHAR},
+            </if>
+            <if test="cityName != null" >
+                city_name = #{cityName,jdbcType=VARCHAR},
+            </if>
+            <if test="area != null" >
+                area = #{area,jdbcType=VARCHAR},
+            </if>
+            <if test="areaName != null" >
+                area_name = #{areaName,jdbcType=VARCHAR},
+            </if>
+            <if test="address != null" >
+                address = #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="dutyName != null" >
+                duty_name = #{dutyName,jdbcType=VARCHAR},
+            </if>
+            <if test="dutyPhone != null" >
+                duty_phone = #{dutyPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="contactor != null" >
+                contactor = #{contactor,jdbcType=VARCHAR},
+            </if>
+            <if test="contactorPhone != null" >
+                contactor_phone = #{contactorPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creatorName != null" >
+                creator_name = #{creatorName,jdbcType=VARCHAR},
+            </if>
+            <if test="creatorAccount != null" >
+                creator_account = #{creatorAccount,jdbcType=VARCHAR},
+            </if>
+            <if test="creatorLevel != null" >
+                creator_level = #{creatorLevel,jdbcType=VARCHAR},
+            </if>
+            <if test="ownerName != null" >
+                owner_name = #{ownerName,jdbcType=VARCHAR},
+            </if>
+            <if test="ownerAccount != null" >
+                owner_account = #{ownerAccount,jdbcType=VARCHAR},
+            </if>
+            <if test="ownerLevel != null" >
+                owner_level = #{ownerLevel,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null" >
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+        delete from customer
+        where id = #{id,jdbcType=VARCHAR}
+    </delete>
+
+    <delete id="deleteByExample" parameterType="com.hori.grms.model.CustomerExample" >
+        delete from customer
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+    </delete>
+
+</mapper>

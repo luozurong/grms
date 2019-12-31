@@ -1,0 +1,42 @@
+.conditions-select {
+    min-height: 130px;
+}
+.adjust1{
+    margin-left:0;
+}
+#pp{
+    margin-top:0;
+    margin-bottom: 0;
+}
+.panel-header,
+.panel-body {
+    border-color: #e4e4e4;
+    border-left: none;
+    border-right: none;
+}
+.datagrid-btable{
+    border-left:1px solid transparent !important;
+    border-right:1px solid transparent;
+    border-bottom:1px solid transparent;
+}
+.tree-wrap{
+    margin-left: 12px;
+    margin-top: 10px;
+}
+.wrap {
+    height: 100%;
+}
+.body-wrap{
+    min-height: calc(100% - 240px);
+    background-color: #F8f8f8;
+}
+.combo {
+    width: 418px;
+    height: 34px;
+    line-height: 34px;
+}
+.combo .textbox-text {
+    width: 410px !important;
+}
+
+

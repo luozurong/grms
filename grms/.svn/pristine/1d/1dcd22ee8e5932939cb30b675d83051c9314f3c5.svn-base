@@ -1,0 +1,20 @@
+package com.hori.grms.service;
+
+import java.util.List;
+
+import org.springframework.web.bind.annotation.RequestBody;
+
+import com.github.pagehelper.PageInfo;
+import com.hori.grms.model.ContractTemplate;
+import com.hori.grms.queryBean.ContractTemplateQueryBean;
+
+public interface ContractService {
+	/**
+	 * 分页获取合同模版列表数据
+	 * @param ContractTemplateQueryBean
+	 * @return
+	 */
+	public PageInfo<ContractTemplate> getContractTemplate(@RequestBody ContractTemplateQueryBean queryBean);
+
+
+}

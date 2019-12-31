@@ -1,0 +1,153 @@
+package com.hori.grms.service.impl;
+
+import java.util.Date;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.hori.grms.dao.PendingEventMapper;
+import com.hori.grms.model.PendingEvent;
+import com.hori.grms.queryBean.PendingEventQueryBean;
+import com.hori.grms.service.PendingEventService;
+import com.hori.grms.util.UUIDGenerator;
+
+/**
+ * 待办事项service实现类
+ * @author FWQ
+ *
+ */
+@Service("pendingEventService")
+public class PendingEventServiceImpl implements PendingEventService{
+	@Autowired
+	private PendingEventMapper pendingEventMapper;
+	
+	/**
+	 * 待办事件列表查询
+	 * @param pendingEventQueryBean
+	 * @return
+	 */
+	@Override
+	public List<PendingEvent> list(PendingEventQueryBean pendingEventQueryBean){
+		return pendingEventMapper.list(pendingEventQueryBean);
+	}
+	
+	/**
+	 * 新添各个管理模块的待办事件
+	 * @param projectName	项目名称
+	 * @param modelCode		模块编号
+	 * @param modelType     模块编号类型（1项目管理、2合同管理、3执行管理、4收款管理、5结案管理
+	 * @param userAccount	业务员账号
+	 * @param userName		业务员名称
+	 */
+	@Override
+	public int createModelPendingEvent(String projectName,String modelCode,String modelType,
+			String userAccount,String userName){
+		PendingEvent pe = new PendingEvent();
+		pe.setId(UUIDGenerator.generate());
+		pe.setProjectName(projectName);
+		pe.setModelCode(modelCode);
+		if("1".equals(modelType)){
+			pe.setModelName("项目管理");
+			pe.setStatus(0);
+			pe.setRoleType(1);
+		}else if("2".equals(modelType)){
+			pe.setModelName("合同管理");
+			pe.setStatus(1);
+			pe.setRoleType(0);
+		}else if("3".equals(modelType)){ //需要讨论
+			pe.setModelName("执行管理");
+			pe.setStatus(1);
+			pe.setRoleType(0);
+		}else if("4".equals(modelType)){
+			pe.setModelName("收款管理");
+			pe.setStatus(1);
+			pe.setRoleType(0);
+		}else if("5".equals(modelType)){
+			pe.setModelName("结案管理");
+			pe.setStatus(1);
+			pe.setRoleType(0);
+		}
+		
+		pe.setCreateTime(new Date());
+		pe.setCreatorName(userName);
+		pe.setCreatorAccount(userAccount);
+		pe.setIsShow(1);
+		
+		return this.pendingEventMapper.insert(pe);
+	}
+	
+	/**
+	 * 修改“项目管理”待办事件状态
+	 * @param projectCode 项目编号
+	 * @param status      项目管理 0待审核 1审核通过 2审核不通过 3立项终止 4撤回
+	 * @return
+	 */
+	@Override
+	public void updateProjectPendingEvent(String projectCode,int status){
+		
+		PendingEvent pendingEvent = this.pendingEventMapper.selectByModelCode(projectCode);
+		if(pendingEvent != null){
+			if(status == 1 || status == 3 || status == 4){
+				pendingEvent.setIsShow(0);
+			}else if(status == 2){
+				pendingEvent.setRoleType(0);
+			}else if(status == 0){
+				pendingEvent.setRoleType(1);
+			}
+			
+			pendingEvent.setStatus(status);
+			pendingEvent.setUpdateTime(new Date());
+			
+			this.pendingEventMapper.updateByModelCode(pendingEvent);
+		}
+		
+	}
+	
+	/**
+	 * 修改“合同管理”待办事件状态
+	 * @param projectCode 合同编号
+	 * @param status      合同管理（1：未提交 2：待审批-业务管理 3:待审批-合同管理 4:待审批-财务管理 
+	 * 						5:审批通过 6:审批不通过 7:已完成 8：撤回-业务员 9：撤回-业务管理 10:撤回-合同管理 
+	 * 						11:撤回-财务管理 12:删除-业务员）
+	 * @return
+	 */
+	@Override
+	public void updateContractPendingEvent(String contractCode,int status){
+		
+		PendingEvent pendingEvent = this.pendingEventMapper.selectByModelCode(contractCode);
+		if(pendingEvent != null){
+			if(status == 12 || status == 7){
+				//删除已完成，所有人都不可以看到待办事件
+				pendingEvent.setIsShow(0);
+				pendingEvent.setStatus(status);
+			}else if(status == 2 || status == 9){
+				//这两状态只有业务管理员角色可看，并且对外显示“待审批-业务管理”状态
+				pendingEvent.setRoleType(1);
+				pendingEvent.setStatus(2);
+			}else if(status == 3 || status == 10){
+				pendingEvent.setRoleType(2);
+				pendingEvent.setStatus(3);
+			}else if(status == 4 || status == 11){
+				pendingEvent.setRoleType(3);
+				pendingEvent.setStatus(4);
+			}else if(status == 1 || status == 5 || status == 6 || status==8){
+				/**
+				 * 该4个状态业务员可看
+				 * 审核不通过后修改合同，状态为“未提交” ；业务管理员未处理，业务员返回，状态为“未提交”
+				 */
+				pendingEvent.setRoleType(0);
+				if(status==8){
+					pendingEvent.setStatus(1);
+				}else{
+					pendingEvent.setStatus(status);
+				}
+			}
+			
+			pendingEvent.setUpdateTime(new Date());
+			
+			this.pendingEventMapper.updateByModelCode(pendingEvent);
+		}
+		
+	}
+}

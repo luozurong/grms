@@ -1,0 +1,29 @@
+package com.hori.grms.service;
+
+import com.github.pagehelper.PageInfo;
+import com.hori.grms.queryBean.PAExceptionQueryBean;
+import com.hori.grms.vo.ProjectActionExceptionVo;
+
+/**
+ * 执行清单异常Service
+ * @author hehj
+ * @datetime 2018年8月14日 上午10:53:45
+ */
+public interface ProjectActionExceptionService {
+
+	/**
+	 * 根据参数查询异常上报记录，根据上报时间倒序
+	 * @param queryBean
+	 * @return
+	 */
+	PageInfo<ProjectActionExceptionVo> listException(PAExceptionQueryBean queryBean);
+
+	/**
+	 * 根据异常记录id修改执行部门确认状态
+	 * @param exceptionRecordId
+	 * @param confirmStatus
+	 * @return
+	 */
+	int changeConfirmStatus(String exceptionRecordId, Short confirmStatus);
+
+}

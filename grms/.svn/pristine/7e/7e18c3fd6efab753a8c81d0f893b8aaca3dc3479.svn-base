@@ -1,0 +1,118 @@
+<%
+	String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
+			+ request.getContextPath();
+%>
+<%@ page language="java" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<!DOCTYPE html>
+<html>
+
+<head lang="en">
+<meta charset="UTF-8">
+<title>功能按钮管理</title>
+<meta http-equiv="X-UA-Compatible" content="edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+<link rel="stylesheet" type="text/css"
+	href="<%=basePath%>/common/css/reset.css" />
+<link rel="stylesheet" type="text/css"
+	href="<%=basePath%>/common/css/default.css" />
+<link rel="stylesheet" type="text/css"
+	href="<%=basePath%>/common/easyui/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css"
+	href="<%=basePath%>/common/easyui/themes/icon.css" />
+<link rel="stylesheet" type="text/css"
+	href="<%=basePath%>/common/css/common.css" />
+<!--<link rel="stylesheet" type="text/css" href="<%=basePath%>/project/css/people-common.css" />-->
+<link rel="stylesheet" type="text/css"
+	href="<%=basePath%>/project/css/people-common.css" />
+<link rel="stylesheet" type="text/css"
+	href="<%=basePath%>/project/css/addProject.css" />
+
+</head>
+
+<body>
+	<input type="text" id="menuId" value="${menuId}" disabled="disabled"
+		hidden="false" />
+	<div class="wrap">
+		<div id="" class="fl back">
+			<a onclick="javascript :history.back(-1);">返回</a>
+
+		</div>
+		<div class="border fl"></div>
+		<div class="topTitle clearfix">
+			<div class="path1 fl">项目管理</div>
+			<div class="path2 fl">新建项目</div>
+		</div>
+		<form action="" method="post">
+			<div class="personal">
+				<div class="title1">个人资料</div>
+				<input type="hidden" type="text" id="userDetailId" value=""
+					maxlength="10" />
+
+				<div>
+					<div>
+						<label> <span>项目名称：</span>
+						</label> 
+						<label> 
+						   <input type="text" id="name" value="" maxlength="10" />
+						</label>
+					</div>
+					
+					<div>
+						<label> <span>客户信息：</span>
+						</label> 
+						<label> 
+							<input type="text" id="customerId" value="" maxlength="10"  hidden="true" />
+						    <input type="text" id="customerName" value="" maxlength="10" hidden="true" readonly="readonly" />						
+						</label>
+						<label> 
+						    <span onclick="addCustomer()">选择客户</span>				
+						</label>
+					</div>
+					
+					<div class="projectPeople">
+					   <div class="projectPeople1"></div>
+					   <div class="projectPeople2"></div>
+					</div>
+					
+					
+
+
+
+				</div>
+
+
+				<div id="alterUserDetail"
+					style="text-align: center; margin-top: 52px;">
+					<input type="submit" value="确定" class="submitButton"
+						onclick="alterDetail()" />
+				</div>
+			</div>
+		</form>
+</div>
+		
+<!-- 添加客户的弹窗-->
+<div id="add_Customer" style="display: none">
+    <div >
+		<table id="customerList"></table>				
+	</div>
+	<div style="position:relative;"><div id="pp" style="background"></div></div>
+</div>
+
+
+
+<a href="<%=basePath%>/project/addProjectAction.html">跳转新建</a>
+
+		<script type="text/javascript"
+			src="<%=basePath%>/common/easyui/jquery.min.js"></script>
+		<script type="text/javascript"
+			src="<%=basePath%>/common/easyui/jquery.easyui.min.js"></script>
+		<script type="text/javascript"
+			src="<%=basePath%>/common/easyui/locale/easyui-lang-zh_CN.js"></script>
+		<script type="text/javascript"
+			src="<%=basePath%>/common/plugin/common.js"></script>
+		<script type="text/javascript"
+			src="<%=basePath%>/project/js/addProject.js"></script>
+</body>
+
+</html>

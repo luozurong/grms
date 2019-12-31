@@ -1,0 +1,145 @@
+package com.hori.grms.queryBean;
+
+import java.util.List;
+
+public class BaseQueryBean {
+	private int pageSize=10;
+	
+	private int pageNumber=1;
+	
+	private int start;
+	private String sortType;
+	
+	private List<String> citys;	
+	
+	private String startTime;
+	
+	private String endTime;
+
+	private List<String> organizationSeqs;	
+	
+	private String type;
+
+	private String dayType;
+	
+	private String weekType;
+	
+	private String monthType;
+	
+	//------------------------------------------------
+	private String sortFiled;//排序字段
+		
+	public int getPageSize() {
+		return pageSize;
+	}
+
+	public void setPageSize(int pageSize) {
+		this.pageSize = pageSize;
+	}
+
+	public int getPageNumber() {
+		if(pageNumber < 1){
+			pageNumber = 1;
+		}
+		return pageNumber;
+	}
+
+	public void setPageNumber(int pageNumber) {
+		this.pageNumber = pageNumber;
+	}
+	
+	public int getStart() {
+		if(pageNumber < 1){
+			pageNumber = 1;
+		}
+		return (pageNumber-1)*pageSize;
+	}
+
+	public 	String getSortType() {
+		return sortType;
+	}
+
+	public void setSortType(String sortType) {
+		this.sortType = sortType;
+	}
+
+	public String getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(String startTime) {
+		this.startTime = startTime;
+	}
+
+	public String getEndTime() {
+		return endTime;
+	}
+
+	public void setEndTime(String endTime) {
+		this.endTime = endTime;
+	}
+
+	
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public String getDayType() {
+		return dayType;
+	}
+
+	public void setDayType(String dayType) {
+		this.dayType = dayType;
+	}
+
+	public String getWeekType() {
+		return weekType;
+	}
+
+	public void setWeekType(String weekType) {
+		this.weekType = weekType;
+	}
+
+	public String getMonthType() {
+		return monthType;
+	}
+
+	public void setMonthType(String monthType) {
+		this.monthType = monthType;
+	}
+
+	public List<String> getCitys() {
+		return citys;
+	}
+
+	public void setCitys(List<String> citys) {
+		this.citys = citys;
+	}
+
+	public List<String> getOrganizationSeqs() {
+		return organizationSeqs;
+	}
+
+	public void setOrganizationSeqs(List<String> organizationSeqs) {
+		this.organizationSeqs = organizationSeqs;
+	}
+
+
+	
+	
+
+
+	public String getSortFiled() {
+		return sortFiled;
+	}
+
+	public void setSortFiled(String sortFiled) {
+		this.sortFiled = sortFiled;
+	}
+	
+}

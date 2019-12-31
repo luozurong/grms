@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hori.grms.dao.ProjectProductMenuMapper" >
+    <resultMap id="BaseResultMap" type="com.hori.grms.model.ProjectProductMenu" >
+        <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="project_product_id" property="projectProductId" jdbcType="VARCHAR" />
+        <result column="product_menu_id" property="productMenuId" jdbcType="VARCHAR" />
+        <result column="buy_num" property="buyNum" jdbcType="INTEGER" />
+        <result column="project_code" property="projectCode" jdbcType="VARCHAR" />
+        <result column="begin_time" property="beginTime" jdbcType="TIMESTAMP" />
+        <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+        <result column="area_names" property="areaNames" jdbcType="LONGVARCHAR" />
+        <result column="locked" property="locked" jdbcType="SMALLINT" />
+        <result column="other_num_1" property="otherNum1" jdbcType="INTEGER" />
+    </resultMap>
+	
+	<!-- 通过项目清单Id查询项目产品明细Vo start -->
+	<resultMap id="ProductMenuVoResultMap" type="com.hori.grms.vo.project.ProductMenuVo" >
+        <!-- <id column="id" property="id" jdbcType="VARCHAR" /> -->
+        <result column="product_type" property="productType" jdbcType="VARCHAR" />
+        <result column="product_menu" property="productMenu" jdbcType="VARCHAR" />
+        <result column="product_spec" property="productSpec" jdbcType="VARCHAR" />
+        <result column="num_limit" property="numLimit" jdbcType="INTEGER" />
+        <result column="num_limit_type" property="numLimitType" jdbcType="SMALLINT" />
+        <result column="buy_num" property="buyNum" jdbcType="INTEGER" />
+        <result column="begin_time" property="beginTime" jdbcType="TIMESTAMP" />
+        <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+        <result column="area_names" property="areaNames" jdbcType="LONGVARCHAR" />
+        <result column="area_ids" property="areaIds" jdbcType="LONGVARCHAR" />
+        <result column="other_num_1" property="otherNum1" jdbcType="INTEGER" />
+        <result column="product_menu_id" property="id" jdbcType="VARCHAR" />
+    </resultMap>
+	
+	<select id="findVoByProductMenuId" resultMap="ProductMenuVoResultMap" parameterType="java.lang.String" >
+        select 
+        pm.product_type , 
+        pm.product_menu ,
+        pm.product_spec ,
+        pm.num_limit ,
+        pm.num_limit_type ,
+        ppm.buy_num,
+        ppm.begin_time,
+        ppm.end_time ,
+        ppm.area_names ,
+        group_concat( distinct ppma.organization_seq separator ',') as area_ids ,
+        ppm.other_num_1,
+        ppm.product_menu_id
+        from project_product_menu ppm 
+        left join project_product_menu_area ppma on ppma.project_product_menu_id = ppm.id  
+        left join product_menu pm on pm.id = ppm.product_menu_id  
+        where project_product_id = #{id,jdbcType=VARCHAR} 
+        group by ppm.id
+    </select>
+	
+	<!-- 通过项目清单Id查询项目产品明细Vo end -->
+	
+    <sql id="Example_Where_Clause" >
+        <where >
+            <foreach collection="oredCriteria" item="criteria" separator="or" >
+                <if test="criteria.valid" >
+                    <trim prefix="(" suffix=")" prefixOverrides="and" >
+                        <foreach collection="criteria.criteria" item="criterion" >
+                            <choose >
+                                <when test="criterion.noValue" >
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue" >
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue" >
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue" >
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+
+    <sql id="Update_By_Example_Where_Clause" >
+        <where >
+            <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+                <if test="criteria.valid" >
+                    <trim prefix="(" suffix=")" prefixOverrides="and" >
+                        <foreach collection="criteria.criteria" item="criterion" >
+                            <choose >
+                                <when test="criterion.noValue" >
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue" >
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue" >
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue" >
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+
+    <sql id="Base_Column_List" >
+        id, project_product_id, product_menu_id, buy_num, project_code, begin_time, end_time, 
+        area_names, locked,other_num_1
+    </sql>
+
+    <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.hori.grms.model.ProjectProductMenuExample" >
+        select
+        <if test="distinct" >
+            distinct
+        </if>
+        'true' as QUERYID,
+        <include refid="Base_Column_List" />
+        from project_product_menu
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+        <if test="orderByClause != null" >
+            order by ${orderByClause}
+        </if>
+    </select>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+        select 
+        <include refid="Base_Column_List" />
+        from project_product_menu
+        where id = #{id,jdbcType=VARCHAR}
+    </select>
+
+    <insert id="insert" parameterType="com.hori.grms.model.ProjectProductMenu" >
+        insert into project_product_menu (id, project_product_id, product_menu_id, 
+            buy_num, project_code, begin_time, 
+            end_time, area_names, locked, other_num_1
+            )
+        values (#{id,jdbcType=VARCHAR}, #{projectProductId,jdbcType=VARCHAR}, #{productMenuId,jdbcType=VARCHAR}, 
+            #{buyNum,jdbcType=INTEGER}, #{projectCode,jdbcType=VARCHAR}, #{beginTime,jdbcType=TIMESTAMP}, 
+            #{endTime,jdbcType=TIMESTAMP}, #{areaNames,jdbcType=LONGVARCHAR}, #{locked,jdbcType=SMALLINT}, #{otherNum1}
+            )
+    </insert>
+
+    <select id="countByExample" parameterType="com.hori.grms.model.ProjectProductMenuExample" resultType="java.lang.Integer" >
+        select count(*) from project_product_menu
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+    </select>
+
+    <update id="updateByExampleSelective" parameterType="map" >
+        update project_product_menu
+        <set >
+            <if test="record.id != null" >
+                id = #{record.id,jdbcType=VARCHAR},
+            </if>
+            <if test="record.projectProductId != null" >
+                project_product_id = #{record.projectProductId,jdbcType=VARCHAR},
+            </if>
+            <if test="record.productMenuId != null" >
+                product_menu_id = #{record.productMenuId,jdbcType=VARCHAR},
+            </if>
+            <if test="record.buyNum != null" >
+                buy_num = #{record.buyNum,jdbcType=INTEGER},
+            </if>
+            <if test="record.projectCode != null" >
+                project_code = #{record.projectCode,jdbcType=VARCHAR},
+            </if>
+            <if test="record.beginTime != null" >
+                begin_time = #{record.beginTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.endTime != null" >
+                end_time = #{record.endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.areaNames != null" >
+                area_names = #{record.areaNames,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="record.locked != null" >
+                locked = #{record.locked,jdbcType=SMALLINT},
+            </if>
+            <if test="record.otherNum1 != null" >
+                other_num_1 = #{record.otherNum1,jdbcType=INTEGER},
+            </if>
+        </set>
+        <if test="_parameter != null" >
+            <include refid="Update_By_Example_Where_Clause" />
+        </if>
+    </update>
+
+    <update id="updateByExample" parameterType="map" >
+        update project_product_menu
+        set id = #{record.id,jdbcType=VARCHAR},
+            project_product_id = #{record.projectProductId,jdbcType=VARCHAR},
+            product_menu_id = #{record.productMenuId,jdbcType=VARCHAR},
+            buy_num = #{record.buyNum,jdbcType=INTEGER},
+            project_code = #{record.projectCode,jdbcType=VARCHAR},
+            begin_time = #{record.beginTime,jdbcType=TIMESTAMP},
+            end_time = #{record.endTime,jdbcType=TIMESTAMP},
+            area_names = #{record.areaNames,jdbcType=LONGVARCHAR},
+            locked = #{record.locked,jdbcType=SMALLINT},
+            other_num_1 = #{otherNum1}
+        <if test="_parameter != null" >
+            <include refid="Update_By_Example_Where_Clause" />
+        </if>
+    </update>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.hori.grms.model.ProjectProductMenu" >
+        update project_product_menu
+        <set >
+            <if test="projectProductId != null" >
+                project_product_id = #{projectProductId,jdbcType=VARCHAR},
+            </if>
+            <if test="productMenuId != null" >
+                product_menu_id = #{productMenuId,jdbcType=VARCHAR},
+            </if>
+            <if test="buyNum != null" >
+                buy_num = #{buyNum,jdbcType=INTEGER},
+            </if>
+            <if test="projectCode != null" >
+                project_code = #{projectCode,jdbcType=VARCHAR},
+            </if>
+            <if test="beginTime != null" >
+                begin_time = #{beginTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="endTime != null" >
+                end_time = #{endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="areaNames != null" >
+                area_names = #{areaNames,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="locked != null" >
+                locked = #{locked,jdbcType=SMALLINT},
+            </if>
+            <if test="otherNum1 != null" >
+                other_num_1 = #{otherNum1,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+        delete from project_product_menu
+        where id = #{id,jdbcType=VARCHAR}
+    </delete>
+
+    <delete id="deleteByExample" parameterType="com.hori.grms.model.ProjectProductMenuExample" >
+        delete from project_product_menu
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+    </delete>
+	
+	<update id="releaseLock">
+        update project_product_menu
+    		set
+    			locked = 0
+        where project_code = #{productCode}
+   	</update>
+   	<!-- 释放清单相关的项目产品id资源 -->
+	<update id="releaseResources">
+        update project_product_menu
+    		set
+    			locked = 0
+        where project_product_id = #{projectProductId}
+   	</update>
+   	
+   	<!-- 查找清单关联的小区数量 -->
+   	<select id="getAreaNumByPPId" parameterType="java.lang.String" resultType="java.lang.Long">
+   		select count(distinct(ppma.organization_seq))
+   		from project_product_menu ppm 
+   		join project_product_menu_area ppma
+   		on ppm.id = ppma.project_product_menu_id
+   		where ppm.project_product_id = #{projectProductId}
+   	</select>
+   	
+   	<!-- 查找 id列表 通过 project_product表的主键id集合 -->
+   	<select id="findByProjectProductIds" resultType="String">
+   	   select id from project_product_menu where 1=1 and 
+   	   project_product_id in 
+   	   <foreach collection="project_products" item="ppId" open="(" close=")"  separator=",">
+   	      #{ppId}
+   	   </foreach>
+   	</select>
+   	
+   	<!--  -->
+   	<select id="findByProjectCode" resultType="String">
+   	    select id from project_product_menu where project_code=#{productCode}
+   	</select>
+   	
+   	<!-- 通过项目编号删除 -->
+   	<delete id="deleteByProjectCode">
+   	    delete from project_product_menu where project_code=#{productCode}
+   	</delete>
+   	<!-- 锁定项目资源 -->
+	<update id="lockResources">
+        update project_product_menu
+    		set
+    			locked = 1
+        where project_code = #{productCode}
+   	</update>
+   	<!-- 获取符合条件的媒管资源 -->
+   	<select id="getMGTotal" resultType="java.lang.Integer">
+   		SELECT
+			SUM(ppm.buy_num)
+		FROM
+			project_product_menu ppm
+		JOIN product_menu pm ON ppm.product_menu_id = pm.id
+		JOIN project_product_menu_area ppma ON ppm.id = ppma.project_product_menu_id
+		WHERE
+			ppm.locked = '1'
+		AND	
+			ppm.product_menu_id = #{productMenuId}
+		AND 
+			ppma.organization_seq = #{organizationSeq}
+		AND
+		( 
+			(DATE_FORMAT(ppm.begin_time, '%Y-%m-%d') >= DATE_FORMAT(#{beginTime}, '%Y-%m-%d') AND DATE_FORMAT(ppm.begin_time, '%Y-%m-%d') &lt;= DATE_FORMAT(#{endTime}, '%Y-%m-%d')) OR
+			(DATE_FORMAT(ppm.end_time, '%Y-%m-%d') >= DATE_FORMAT(#{beginTime}, '%Y-%m-%d') AND DATE_FORMAT(ppm.end_time, '%Y-%m-%d') &lt;= DATE_FORMAT(#{endTime}, '%Y-%m-%d'))
+		)
+   	</select>
+   	<!-- 获取符合条件的用户或者电商资源 -->
+   	<select id="getYHorDSTotal" resultType="java.lang.Integer">
+   		SELECT
+			SUM(ppm.buy_num)
+		FROM
+			project_product_menu ppm
+		JOIN product_menu pm ON ppm.product_menu_id = pm.id
+		WHERE
+			ppm.locked = '1'
+		AND	
+			ppm.product_menu_id = #{productMenuId}
+		AND
+			(DATE_FORMAT(ppm.begin_time, '%Y-%m') = DATE_FORMAT(#{beginTime},'%Y-%m'))
+   	</select>
+	<!-- 查找关联的小区数量 -->
+   	<select id="getAreaNumByPPMId" parameterType="java.lang.String" resultType="java.lang.Long">
+   		select count(distinct(ppma.organization_seq))
+   		from project_product_menu ppm 
+   		join project_product_menu_area ppma
+   		on ppm.id = ppma.project_product_menu_id
+   		where ppma.project_product_menu_id = #{projectProductMenuId}
+   	</select>
+	
+</mapper>

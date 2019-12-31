@@ -1,0 +1,95 @@
+/*.account {
+    margin-left: 0;
+}*/
+.left-name,.right-name {
+    height: 250px;
+    overflow: auto;
+
+}
+.to-right {
+    height: 250px;
+}
+.area-title {
+    margin-top: 20px;
+    height:26px;
+    line-height: 26px;
+    text-align: center;
+    font-size: 14px;
+    color: #222222;
+}
+.area-title1{
+    margin-left: 120px;
+}
+.area-title2{
+    margin-left: 250px;
+}
+
+.list-delete {
+    width:20px;
+    height: 20px;
+    background: url("../images/delete1.png") no-repeat 0 5px;
+}
+
+#roleWin .tree-node-selected .tree-title{
+    background: #FFFFFF;
+    color: #222222;
+}
+.adjust1{
+    margin-left:0;
+}
+#pp{
+    margin-top:0;
+    margin-bottom: 0;
+}
+.tree-wrap{
+    margin-left: 12px;
+    margin-top: 10px;
+}
+.wrap {
+    height: 100%;
+}
+.body-wrap{
+    min-height: calc(100% - 180px);
+}
+.panel-header,
+.panel-body {
+    border-color: #e4e4e4;
+    border-left: none;
+    border-right: none;
+}
+.datagrid-btable{
+    border-left:1px solid transparent !important;
+    border-right:1px solid transparent;
+    border-bottom:1px solid transparent;
+}
+.body-wrap{
+    background-color: #F8f8f8;
+}
+
+/*正在加载 遮罩*/
+.shadeBox{
+    display: none;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    /*background-color: #000000;*/
+    background-color: rgba(0,0,0,.5);
+    left: 0;
+    top: 0;
+    z-index: 999999;
+}
+.tipsInfo{
+    position: absolute;
+    width: 300px;
+    /*height: 50px;*/
+    top: 30%;
+    left: 50%;
+    margin-left: -250px;
+    background-color: #FFFFFF;
+    border-radius: 5px;
+}
+.tipsInfo p{
+    text-align: center;
+    line-height: 80px;
+    color: #222;
+}

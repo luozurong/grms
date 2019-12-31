@@ -1,0 +1,35 @@
+/*
+ * ProjectRole.java
+ * Copyright(C) 20xx-2015 xxxxxx公司
+ * All rights reserved.
+ * -----------------------------------------------
+ * 2018-08-08 Created
+ */
+package com.hori.grms.model;
+
+/**
+ * 项目角色
+ * 
+ * @author 
+ * @version 1.0 2018-08-08
+ */
+public class ProjectRole {
+
+    //id
+    private String id;
+    //名称
+    private String name;
+
+    public String getId() {
+        return id;
+    }
+    public void setId(String id) {
+        this.id = id;
+    }
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+}

@@ -1,0 +1,134 @@
+
+var data2 =[
+    {hander:"1",starttime:"20150714",sex:"man",Mstatus:"ok",endtime:"20170254","time":"2017-05-19","productid":"FI-SW-01","productname":"Koi","unitcost":10.00,"status":"P","listprice":36.50,"attr1":"Large","itemid":"EST-1"},
+    {hander:"2",starttime:"20150714",sex:"man",Mstatus:"ok",endtime:"20170254","time":"2017-05-19","productid":"K9-DL-01","productname":"Dalmation","unitcost":12.00,"status":"P","listprice":18.50,"attr1":"Spotted Adult Female","itemid":"EST-10"},
+    {hander:"3",starttime:"20150714",sex:"man",Mstatus:"ok",endtime:"20170254","time":"2017-05-19","productid":"RP-SN-01","productname":"Rattlesnake","unitcost":12.00,"status":"P","listprice":38.50,"attr1":"Venomless","itemid":"EST-11"},
+        {hander:"4",starttime:"20150714",sex:"man",Mstatus:"ok",endtime:"20170254","time":"2017-05-19","productid":"RP-SN-01","productname":"Rattlesnake","unitcost":12.00,"status":"P","listprice":38.50,"attr1":"Venomless","itemid":"EST-11"},
+    {hander:"5",starttime:"20150714",sex:"man",Mstatus:"ok",endtime:"20170254","time":"2017-05-19","productid":"RP-SN-01","productname":"Rattlesnake","unitcost":12.00,"status":"P","listprice":38.50,"attr1":"Venomless","itemid":"EST-11"},
+    {hander:"6",starttime:"20150714",sex:"man",Mstatus:"ok",endtime:"20170254","time":"2017-05-19","productid":"RP-SN-01","productname":"Rattlesnake","unitcost":12.00,"status":"P","listprice":38.50,"attr1":"Venomless","itemid":"EST-11"},
+    {hander:"7",starttime:"20150714",sex:"man",Mstatus:"ok",endtime:"20170254","time":"2017-05-19","productid":"RP-SN-01","productname":"Rattlesnake","unitcost":12.00,"status":"P","listprice":38.50,"attr1":"Venomless","itemid":"EST-11"},
+    {hander:"8",starttime:"20150714",sex:"man",Mstatus:"ok",endtime:"20170254","time":"2017-05-19","productid":"RP-SN-01","productname":"Rattlesnake","unitcost":12.00,"status":"P","listprice":38.50,"attr1":"Venomless","itemid":"EST-11"},
+    {hander:"9",starttime:"20150714",sex:"man",Mstatus:"ok",endtime:"20170254","time":"2017-05-19","productid":"RP-SN-01","productname":"Rattlesnake","unitcost":12.00,"status":"P","listprice":38.50,"attr1":"Venomless","itemid":"EST-11"},
+    {hander:"0",starttime:"20150714",sex:"man",Mstatus:"ok",endtime:"20170254","time":"2017-05-19","productid":"RP-SN-01","productname":"Rattlesnake","unitcost":12.00,"status":"P","listprice":38.50,"attr1":"Venomless","itemid":"EST-11"},
+    {hander:"11",starttime:"20150714",sex:"man",Mstatus:"ok",endtime:"20170254","time":"2017-05-19","productid":"RP-SN-01","productname":"Rattlesnake","unitcost":12.00,"status":"P","listprice":38.50,"attr1":"Venomless","itemid":"EST-11"},
+    {hander:"21",starttime:"20150714",sex:"man",Mstatus:"ok",endtime:"20170254","time":"2017-05-19","productid":"RP-SN-01","productname":"Rattlesnake","unitcost":12.00,"status":"P","listprice":38.50,"attr1":"Venomless","itemid":"EST-11"},
+
+    {hander:"12",starttime:"20150714",sex:"man",Mstatus:"ok",endtime:"20170254","time":"2017-05-19","productid":"RP-SN-01","productname":"Rattlesnake","unitcost":12.00,"status":"P","listprice":26.50,"attr1":"Rattleless","itemid":"EST-12"},
+    {hander:"13",starttime:"20150714",sex:"man",Mstatus:"ok",endtime:"20170254","time":"2017-05-19","productid":"RP-LI-02","productname":"Iguana","unitcost":12.00,"status":"P","listprice":35.50,"attr1":"Green Adult","itemid":"EST-13"},
+];
+
+
+//格式化时间
+$("#startTime").datebox({
+    value : '2017-05-22',
+    editable : false,
+    onSelect : function(beginDate){
+        $('.datebox-2').datebox('calendar').calendar({
+            validator: function(date){
+                return beginDate<=date;//<=
+            }
+        });
+    }
+});
+$("#endTime").datebox({
+    value : '2017-05-22',
+    editable : false,
+    onSelect : function(endDate){
+        $('.datebox-1').datebox('calendar').calendar({
+            validator: function(date){
+                return endDate>=date;
+            }
+        });
+    }
+});
+
+/**
+*表格
+*/
+$('#dg').datagrid({    
+    data:data2.slice(0,10),
+    fitColumns :true,
+    scrollbarSize:0, 
+    onLoadSuccess:function(){
+        $(".datagrid-cell-check").addClass('dataCheck');
+        $(".datagrid-header-check").addClass('dataCheck');
+    },
+    columns:[[//相应调整显示栏
+        {
+            field:'sex',
+            title:'项目D',
+            width:100,
+            formatter: function(value,row,index){
+				if (value=="man"){
+					return "女";
+				} else {
+					return "男";
+				}
+			}
+        },    
+        {
+            field:'starttime',
+            title:'项目名称',
+            width:100
+        },    
+        {
+            field:'time',
+            title:'执行清单ID',
+            width:100
+        },
+        {
+            field:'hander',
+            title:'执行开始时间',
+            width:100,
+            styler: function(value,row,index){
+				if (value < 5){
+					return 'color:red;';
+				}else{
+					return 'color:#0066CC;';
+				}
+			}
+        },  
+        {
+            field:'Mstatus',
+            title:'执行结束时间',
+            width:100
+        }
+    ]]    
+});
+
+
+/**
+*表格中复选框样式
+*/
+function inputStyle(){
+    $(".datagrid-cell-check,.datagrid-header-check").each(function(){
+        if($(this).find("input").is(':checked')){
+            $(this).addClass('dataChecked');
+        }else{
+            $(this).removeClass("dataChecked");
+        }
+    });
+}
+$(".datagrid-row input").click(function(){
+    inputStyle();
+});
+$(".datagrid-header-check input").click(function(){
+    if($(this).is(":checked")){
+        $(this).parent().addClass("dataChecked");  
+    }else{
+        $(this).parent().removeClass("dataChecked");
+    }
+    setTimeout(function(){
+        inputStyle();
+    },100)
+});
+$(".datagrid-row").click(function(){
+    setTimeout(function(){
+        //inputStyle();
+    },100)
+});
+
+
+
+
+

@@ -1,0 +1,38 @@
+<div >
+	<div >
+		<!--筛选条件-->
+		<div class="filter">地区：
+			<input name="sheng" id="province_selt"/>
+			<input name="shi" id="city_selt"/>
+			<input name="qu" id="area_selt" />
+			<input name="jie" id="town_selt" />
+				<span>小区类型：</span>
+				<input name="areaTypeC" id="areaTypeC" />
+<!-- 				<select id="areaType" class="easyui-combobox" name="dept" style="width:120px;height:34px">
+				    <option value="">请选择</option>
+					<option value="1">云对讲项目</option>
+					<option value="2">工程项目</option>
+					<option value="3">样板演示小区</option>
+					<option value="0">测试小区</option>
+				</select> --><br/>
+		</div>
+		<div class="filter">
+			转化情况：
+			<input type="checkbox" name="translateStatus" value="1"/>完成转化
+			<input type="checkbox" name="translateStatus" value="2"/>试点转化
+			<input type="checkbox" name="translateStatus" value="0"/>未转化
+			<input id="keyword" class="easyui-searchbox" data-options="prompt:'请输入小区名称',height:34,width:180,searcher:searchData">
+			<a id="my-btn" class="easyui-linkbutton" data-options="width:90,height:34,plain:true" onclick="searchData()" style="margin-right: 10px">搜索</a>
+			<a id="my-btn" class="easyui-linkbutton" data-options="width:90,height:34,plain:true" onclick="resetSearch()">重置</a>		
+		</div>
+	</div><br/>
+	<div>
+		<!--数据表-->
+	    	 <div id="areaCheckboxInfos" style="margin-top:10px;"></div>
+	    	 <div id="areaInfospp" style="text-align:left"></div>	
+	</div>
+	<div class="add_footer">
+		<a id="btn" class="easyui-linkbutton" data-options="width:120,height:40,plain:true" onclick="communitySure()">确定</a>
+	</div>
+</div>
+<script src="../dialog/js/addCheckBoxCommunity.js" type="text/javascript" charset="utf-8"></script>

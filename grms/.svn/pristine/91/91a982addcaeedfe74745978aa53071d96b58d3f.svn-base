@@ -1,0 +1,26 @@
+package com.hori.grms.controller;
+
+import java.util.Date;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.hori.grms.model.Test;
+import com.hori.grms.service.TestService;
+
+@Controller
+@RequestMapping("test")
+public class TestController {
+	@Autowired
+	private TestService testService;
+	
+	@RequestMapping("/insert")
+	public void insertCon(){
+		Test vo=new Test();
+		vo.setCreateTime(new Date());
+		vo.setName("Test");
+		testService.insert(vo);
+	}
+
+}

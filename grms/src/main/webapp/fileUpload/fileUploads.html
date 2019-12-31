@@ -1,0 +1,34 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>页面中多处文件上传按钮demo</title>
+</head>
+<body>
+<script src="../js/jquery-1.10.2.min.js"></script>
+<script src="../js/jquery-form.js"></script>
+<script src="../fileUpload/js/fileUpload.js"></script>
+
+	<form id="upfileForm">
+	
+		<table border="1">
+		<tr>
+			<td>文件<td>
+			<td>操作<td>
+		<tr>
+		<tr>
+			<td>&nbsp;<td>
+			<td><input type="file" class="file_input"  onchange="uploads(this)"/><td>
+		<tr>
+		<tr>
+			<td>&nbsp;<td>
+			<td><input type="file" class="file_input"  onchange="uploads(this)"/><td>
+		<tr>
+		</table>
+		
+	</form>
+		<!-- 图片显示区域 -->
+	<div>
+		<img id="img1">
+	</div>
+</body>
+<html>

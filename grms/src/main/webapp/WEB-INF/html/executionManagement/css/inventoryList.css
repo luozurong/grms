@@ -1,0 +1,67 @@
+/*副标题栏样式*/
+
+.subheading {
+	width: 100%;
+	line-height: 54px;
+	font-size: 14px;
+	color: #000;
+	box-sizing: border-box;
+	padding-right: 27px;
+}
+
+.subheading h2 {
+	padding-left: 27px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	background-color: #e4e4e4;
+	border: 1px solid #797979;
+}
+
+
+/*查询导出栏*/
+
+.searchBox {
+	margin-bottom: 30px;
+}
+
+.searchBox form {
+	display: inline-block;
+	white-space: normal;
+}
+
+.searchBox button {
+	min-width: 138px;
+	line-height: 36px;
+	font-size: 14px;
+	color: #222;
+	text-align: center;
+	border: 1px solid #222;
+	border-radius: 5px;
+}
+
+
+/**/
+
+.textInputBox {
+	margin-right: 30px;
+	margin-top: 30px;
+	white-space: nowrap;
+	height: 36px;
+	display: inline-block;
+}
+
+.textInputBox input {
+	margin-left: 10px;
+	min-width: 150px;
+	font-size: 14px;
+	line-height: 34px;
+	color: #222;
+	border: 1px solid #666;
+}
+
+.textInputBox p {
+	display: inline-block;
+	line-height: 36px;
+	vertical-align: bottom;
+}

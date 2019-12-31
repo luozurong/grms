@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context" xsi:schemaLocation="
+http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans.xsd
+http://www.springframework.org/schema/context 
+http://www.springframework.org/schema/context/spring-context.xsd
+http://www.springframework.org/schema/tx 
+http://www.springframework.org/schema/tx/spring-tx-3.0.xsd ">
+
+	<!-- 引入属性文件 -->
+	<context:property-placeholder location="classpath:/com/hori/grms/resources/config.properties"/>
+	<!-- 自动扫描注入 -->
+	<context:component-scan base-package="com.hori.grms.service" />
+	<context:component-scan base-package="com.hori.grms.dao.jdbc" />  
+	<context:component-scan base-package="com.hori.grms.component" />
+	<!-- 自动扫描注入 -->
+	<!-- <context:component-scan base-package="com.hori.bigData.app.servlet" /> -->
+	 <!-- <context:component-scan base-package="com.jlit.bigData.dao." />  -->
+	<!-- 事务管理代理 -->
+	<tx:annotation-driven transaction-manager="transactionManager"
+		proxy-target-class="true" />
+</beans>

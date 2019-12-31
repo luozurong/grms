@@ -1,0 +1,38 @@
+package com.hori.grms.service.impl;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.hori.grms.dao.DepartmentBusinessAreaMapper;
+import com.hori.grms.dao.DepartmentBusinessTypeMapper;
+import com.hori.grms.model.DepartmentBusinessType;
+import com.hori.grms.service.DepartmentBusinessService;
+@Service
+public class DepartmentBusinessServiceImpl implements DepartmentBusinessService {
+
+	@Autowired
+	private DepartmentBusinessTypeMapper businessTypeMapper;
+	
+	@Autowired
+	private DepartmentBusinessAreaMapper businessAreaMapper;
+	
+	@Override
+	public List<DepartmentBusinessType> getBusinessTypeList(String condition) {
+		// TODO Auto-generated method stub
+		return businessTypeMapper.getBusinessTypeList(condition);
+	}
+
+	@Override
+	public void delDepartmentBusiness(String id) {
+		// TODO Auto-generated method stub
+		businessTypeMapper.delDepartmentBusiness(id);
+	}
+
+	@Override
+	public void insert(DepartmentBusinessType type) {
+		// TODO Auto-generated method stub
+		businessTypeMapper.insert(type);
+	}
+}

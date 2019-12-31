@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html style="height: 100%;">
+	<head>
+	<meta charset="UTF-8">
+	<title>合立运维管理系统</title>
+	<meta http-equiv="X-UA-Compatible" content="edge" />
+    <link rel="stylesheet" type="text/css" href="../common/easyui/themes/default/easyui.css" />
+    <link rel="stylesheet" type="text/css" href="../common/css/reset.css" />
+    <link rel="stylesheet" type="text/css" href="../common/css/common.css" />
+	<link rel="stylesheet" type="text/css" href="css/addCustomerMessager.css"/>
+	</head>
+	<body>
+		<div class="addCustomerMessager">
+			<div class="addCustomer-item">
+				<span class="addCustomer-item-name">业务员：</span>
+				<span>旺财</span>
+			</div>
+			<div class="addCustomer-item">
+				<span class="addCustomer-item-name">客户名称：</span>
+				<input class="addCustomer-item-input" type="" name="">
+			</div>
+			<div class="addCustomer-item">
+				<span class="addCustomer-item-name">客户地址：</span>
+				<span>
+					<select class="addCustomer-item-select"></select>
+					<select class="addCustomer-item-select"></select>
+					<select class="addCustomer-item-select"></select>
+					<input class="addCustomer-item-input" type="" name="" placeholder="详细地址">
+				</span>
+			</div>
+			<div class="addCustomer-item">
+				<span class="addCustomer-item-name">客户类型：</span>
+				<select class="addCustomer-item-select"></select>
+			</div>
+			<div class="addCustomer-item">
+				<span class="addCustomer-item-name">主要经营部门：</span>
+				<input class="addCustomer-item-input" type="" name="">
+			</div>
+			<div class="addCustomer-item">
+				<span class="addCustomer-item-name">所属部门：</span>
+				<input class="addCustomer-item-input" type="" name="">
+			</div>
+			<div class="addCustomer-item">
+				<span class="addCustomer-item-name">负责人名称：</span>
+				<input class="addCustomer-item-input" type="" name="">
+			</div>
+			<div class="addCustomer-item">
+				<span class="addCustomer-item-name">负责人电话：</span>
+				<input class="addCustomer-item-input" type="" name="">
+			</div>
+			<div class="addCustomer-item">
+				<span class="addCustomer-item-name">主要联系人名称：</span>
+				<input class="addCustomer-item-input" type="" name="">
+			</div>
+			<div class="addCustomer-item">
+				<span class="addCustomer-item-name">主要联系人电话：</span>
+				<input  class="addCustomer-item-input" type="" name="">
+			</div>
+			<div class="addCustomer-item">
+				<span class="addCustomer-item-name">备注说明：</span>
+				<textarea></textarea>
+			</div>
+			<div>
+				<span>添加</span>
+				<span>取消</span>
+			</div>
+		</div>
+        <script type="text/javascript"	src="../common/easyui/jquery.min.js"></script>
+        <script type="text/javascript"	src="../common/easyui/jquery.easyui.min.js"></script>
+        <script type="text/javascript"  src="../common/easyui/locale/easyui-lang-zh_CN.js" ></script>
+        <script type="text/javascript"	src="../common/plugin/common.js"></script>
+        <script src="js/addCustomerMessager.js" type="text/javascript" charset="utf-8"></script>
+	</body>
+</html>

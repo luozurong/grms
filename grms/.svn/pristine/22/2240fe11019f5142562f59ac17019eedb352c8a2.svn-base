@@ -1,0 +1,102 @@
+package com.hori.grms.service;
+
+import java.util.List;
+
+import com.hori.grms.model.Attachment;
+import com.hori.grms.model.CloseCaseInfo;
+import com.hori.grms.model.Project;
+import com.hori.grms.queryBean.CloseCaseQueryBean;
+import com.hori.grms.vo.CloseCaseVo;
+
+public interface CloseCaseService {
+	
+	/**
+	 * 获取结案列表
+	 * @param queryBean
+	 * @return
+	 */
+	public List<CloseCaseVo> getCloseCases(CloseCaseQueryBean queryBean);
+	
+	/**
+	 * 获取结案列表总数
+	 * @param queryBean
+	 * @return
+	 */
+	public int getCloseCaseCount(CloseCaseQueryBean queryBean);
+	
+	/**
+	 * 根据附件id获取附件
+	 * @param id
+	 * @return
+	 */
+	public Attachment getAttachmentById(String id);
+	
+	/**
+	 * 根据收款计划编号获取待结案状态的结案
+	 * @param backMoneyPlanCode
+	 * @return
+	 */
+	public CloseCaseInfo getCloseCaseForBackMoney(String backMoneyPlanCode);
+	
+	/**
+	 * 将待结案状态更新为已结案
+	 * @param backMoneyPlanCode
+	 * @return
+	 */
+	public int updateCloseCaseForBackMoney(String backMoneyPlanCode);
+	
+	/**
+	 * 执行人员提交/撤回结案
+	 * @param ids
+	 * @param status
+	 * @param roleType
+	 * @return
+	 */
+	public int updateStatusForAction(List<String> ids, Integer status, Integer roleType);
+	
+	/**
+	 * 业务人员处理/撤回结案
+	 * @param ids
+	 * @param status
+	 * @return
+	 */
+	public int updateStatusForBusiness(List<String> ids, Integer status);
+	
+	/**
+	 * 上传附件
+	 * @param ids
+	 * @param url
+	 * @param urlName
+	 * @return
+	 */
+	public int uploadAttachment(List<Attachment> attachments);
+	
+	/**
+	 * 根据id删除附件（这里只删除路径）
+	 * @param ids
+	 * @return
+	 */
+	public int deleteAttachments(List<String> ids);
+	
+	/**
+	 * 保存
+	 * @param closeCaseInfo
+	 * @return
+	 */
+	public int save(CloseCaseInfo closeCaseInfo);
+
+	/**
+	 * 根据项目编号创建结案记录
+	 * @param project
+	 * @param createrAccount 创建者账号
+	 * @param roleType 角色类型
+	 */
+	void createCloseCaseInfo(Project project, String createrAccount);
+
+	/**
+	 * 根据项目编码查找结案记录的数量
+	 * @param projectCode
+	 * @return
+	 */
+	long countByProjectCode(String projectCode);
+}

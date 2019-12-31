@@ -1,0 +1,18 @@
+package com.hori.grms.dao;
+
+import com.hori.grms.model.BackMoneyPlanPeriods;
+
+
+public interface BackMoneyPlanPeriodsMapper {
+    int deleteByPrimaryKey(String id);
+
+    int insert(BackMoneyPlanPeriods record);
+
+    int insertSelective(BackMoneyPlanPeriods record);
+
+    BackMoneyPlanPeriods selectByPrimaryKey(String id);
+
+    int updateByPrimaryKeySelective(BackMoneyPlanPeriods record);
+
+    int updateByPrimaryKey(BackMoneyPlanPeriods record);
+}

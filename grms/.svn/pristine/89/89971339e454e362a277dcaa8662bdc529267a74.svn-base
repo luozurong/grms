@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.hori.grms.dao.CloseCaseMapper" >
+
+	<resultMap id="closeCaseMap" type="com.hori.grms.vo.CloseCaseVo" >
+    	<id column="id"  property="id" />
+	    <result column="close_case_code" property="closeCaseCode" />
+	    <result column="project_code" property="projectCode" />
+	    <result column="project_name" property="projectName" />
+	    <result column="contract_code" property="contractCode" />
+	    <result column="contract_name" property="contractName" />
+	    <result column="action_time" property="actionTime" />
+	    <result column="action_area" property="actionArea" />
+	    <result column="back_money_plan_code" property="backMoneyPlanCode" />
+	    <result column="type" property="type" />
+	    <result column="status" property="status" />
+	    <result column="role_type" property="roleType" />
+	    <result column="creater_account" property="createrAccount" />
+	    <result column="project_creater_account" property="projectCreaterAccount" />
+	    <result column="create_time" property="createTime" />
+	</resultMap>
+  
+	<select id="getCloseCases" resultMap="closeCaseMap">
+		SELECT id,close_case_code,project_code,project_name,contract_code,contract_name,action_time,action_area,
+			back_money_plan_code,type,status,role_type,create_time
+		FROM close_case_info WHERE 1=1
+		<if test="keyword != null and keyword != ''">
+			AND (close_case_code LIKE #{keyword} 
+				or project_name LIKE #{keyword} 
+				or contract_name LIKE #{keyword}
+				or back_money_plan_code LIKE #{keyword})
+		</if>
+		<if test="createTimeStart != null and createTimeStart != ''">
+			AND create_time &gt;=#{createTimeStart}
+		</if>
+		<if test="createTimeEnd != null and createTimeEnd != ''">
+			AND create_time &lt;=#{createTimeEnd}
+		</if>
+		<if test="actionTimeStart != null and actionTimeStart != ''">
+			AND action_time &gt;=#{actionTimeStart}
+		</if>
+		<if test="actionTimeEnd != null and actionTimeEnd != ''">
+			AND action_time &lt;=#{actionTimeEnd}
+		</if>
+		<if test="type != null">
+			AND type=#{type}
+		</if>
+		<if test="status != null">
+			AND status=#{status}
+		</if>
+		<if test="roleType != null and roleType != -1">
+			AND role_type=#{roleType}
+		</if>
+		<if test="createrAccount != null and createrAccount != ''">
+			AND creater_account=#{createrAccount}
+		</if>
+		<if test="projectCreaterAccount != null and projectCreaterAccount != ''">
+			AND project_creater_account=#{projectCreaterAccount}
+		</if>
+		ORDER BY create_time DESC LIMIT #{pageIndex},#{pageSize} 
+	</select>
+	
+	<select id="getCloseCaseCount" resultType="int">
+		SELECT COUNT(*) FROM close_case_info WHERE 1=1
+		<if test="keyword != null and keyword != ''">
+			AND (close_case_code like #{keyword} 
+				or project_name like #{keyword} 
+				or contract_name like #{keyword} 
+				or back_money_plan_code like #{keyword})
+		</if>
+		<if test="createTimeStart != null and createTimeStart != ''">
+			AND create_time &gt;=#{createTimeStart}
+		</if>
+		<if test="createTimeEnd != null and createTimeEnd != ''">
+			AND create_time &lt;=#{createTimeEnd}
+		</if>
+		<if test="actionTimeStart != null and actionTimeStart != ''">
+			AND action_time &gt;=#{actionTimeStart}
+		</if>
+		<if test="actionTimeEnd != null and actionTimeEnd != ''">
+			AND action_time &lt;=#{actionTimeEnd}
+		</if>
+		<if test="type != null">
+			AND type=#{type}
+		</if>
+		<if test="status != null">
+			AND status=#{status}
+		</if>
+		<if test="roleType != null and roleType != -1">
+			AND role_type=#{roleType}
+		</if>
+		<if test="createrAccount != null and createrAccount != ''">
+			AND creater_account=#{createrAccount}
+		</if>
+		<if test="projectCreaterAccount != null and projectCreaterAccount != ''">
+			AND project_creater_account=#{projectCreaterAccount}
+		</if>
+	</select>
+	
+	<select id="getAttachmentById" resultType="attachment">
+		SELECT * FROM attachment WHERE id=#{id}
+	</select>
+	
+	<select id="getAttachmentByCloseCaseId" resultType="attachment">
+		SELECT * FROM attachment WHERE correlation_id=#{closeCaseId}
+	</select>
+	
+	<select id="getCloseCaseById" resultType="closeCaseInfo">
+		SELECT * FROM close_case_info WHERE id=#{id}
+	</select>
+	
+	<select id="getCloseCaseByProjectCode" resultType="closeCaseInfo">
+		SELECT * FROM close_case_info WHERE project_code=#{projectCode} AND role_type IN(4,5,6,7)
+	</select>
+	
+	<select id="getNotCommitCloseCases" resultType="closeCaseInfo">
+		SELECT * FROM close_case_info cci 
+		WHERE cci.project_code=(SELECT project_code FROM close_case_info WHERE id=#{id}) 
+			AND cci.status &gt;=1 AND cci.status &lt;=4
+	</select>
+	
+	<select id="getCloseCasesByIdAndStatus" resultType="closeCaseInfo">
+		SELECT * FROM close_case_info cci 
+		WHERE cci.project_code=(SELECT project_code FROM close_case_info WHERE id=#{id}) 
+			AND cci.status=#{status}
+	</select>
+	
+	<select id="getCloseCaseForBackMoney" resultType="closeCaseInfo">
+		SELECT * FROM close_case_info WHERE back_money_plan_code=#{backMoneyPlanCode} AND role_type=0 AND status=7
+	</select>
+	
+	<update id="updateCloseCaseForBackMoney">
+		UPDATE close_case_info SET `status`=8 WHERE back_money_plan_code=#{backMoneyPlanCode}
+	</update>
+	
+	<update id="commit">
+		UPDATE close_case_info SET `status`=#{status} WHERE id=#{id}
+	</update>
+	
+	<update id="handle">
+		UPDATE close_case_info SET `status`=#{status} WHERE close_case_code=#{closeCaseCode}
+		<if test="userType == 0">
+			AND role_type=0
+		</if>
+		<if test="userType == 1">
+			AND role_type IN(4,5,6,7)
+		</if>
+		<if test="userType != 0 and userType != 1">
+			AND 1=0
+		</if>
+	</update>
+	
+	<insert id="uploadAttachment">
+		insert into attachment(id,file_url,file_name,type,correlation_id,is_extra)
+			values(#{id},#{fileUrl},#{fileName},#{type},#{correlationId},#{isExtra})
+	</insert>
+	
+	<delete id="deleteAttachment">
+		delete from attachment WHERE id=#{id}
+	</delete>
+	
+	<insert id="save" parameterType="closeCaseInfo">
+		insert into close_case_info(id,close_case_code,project_code,project_name,contract_code,contract_name,
+			action_time,action_area,back_money_plan_code,type,status,role_type,creater_account,
+			project_creater_account,create_time)
+		values(#{id},#{closeCaseCode},#{projectCode},#{projectName},#{contractCode},#{contractName},
+			#{actionTime},#{actionArea},#{backMoneyPlanCode},#{type},#{status},#{roleType},#{createrAccount},
+			#{projectCreaterAccount},NOW())
+	</insert>
+	
+	<!-- 根据项目编码计算生成结案记录的数量 -->
+	<select id="countByProjectCode" parameterType="java.lang.String" resultType="long">
+		select count(id) from close_case_info where project_code = #{projectCode}
+	</select>
+	
+	<delete id="delete">
+		DELETE FROM close_case_info WHERE id=#{id}
+	</delete>
+	
+	<update id="changeStatusByProjectCode">
+		update close_case_info set type = ${type}
+		where project_code = #{projectCode}
+	</update>
+	
+</mapper>

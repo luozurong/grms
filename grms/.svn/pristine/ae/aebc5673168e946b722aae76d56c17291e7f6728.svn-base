@@ -1,0 +1,86 @@
+package com.hori.grms.controller;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.hori.grms.model.CustomerType;
+import com.hori.grms.model.ProjectRole;
+import com.hori.grms.service.CustomerTypeService;
+import com.hori.grms.service.ProjectRoleService;
+/**
+ * 收款计划
+ * @author dell
+ *
+ */
+@Controller
+@RequestMapping("backMoneyPlanController")
+public class BackMoneyPlanController{
+	
+	@Autowired
+	CustomerTypeService customerTypeService;
+	
+	@Autowired
+	ProjectRoleService projectRoleService;
+	
+	@RequestMapping("/list")
+	public String list(HttpServletRequest request){		
+		
+		return "/systemSettings/otherSets.jsp";
+	}
+	
+	/*@RequestMapping("/getCustomerType")
+	@ResponseBody
+	public List<CustomerType> getCustomerType(HttpServletRequest request){		
+		List<CustomerType> list = customerTypeService.getCustomerType();
+		return list;
+	}
+	
+	@RequestMapping("/getProjectRole")
+	public List<ProjectRole> getProjectRole(HttpServletRequest request){		
+		List<ProjectRole> list = projectRoleService.getProjectRole();
+		return list;
+	}
+	
+	
+	@RequestMapping("/save")
+	public void save(HttpServletRequest request,String customerType,String customerTypeName,String projectRole,String projectRoleName){	
+		//删除
+		customerTypeService.delAll();
+		projectRoleService.delAll();
+		
+		//保存客户类型
+		String[] cId = customerType.split(",");
+		String[] cName = customerTypeName.split(",");
+		for(int i = 0;i < cId.length;i++){
+			if(!cName[i].equals("")&&cName[i]!=null){
+					CustomerType customerTypeNew = new CustomerType();
+					customerTypeNew.setId(cId[i]);
+					customerTypeNew.setName(cName[i]);
+					customerTypeService.insert(customerTypeNew);
+			}
+		}
+		
+		//保存项目角色
+		String[] pId = projectRole.split(",");
+		String[] pName = projectRoleName.split(",");
+		for(int i = 0;i < pId.length;i++){
+			if(!pName[i].equals("")&&pName[i]!=null){
+				ProjectRole projectRoleNew = new ProjectRole();
+				projectRoleNew.setId(pId[i]);
+				projectRoleNew.setName(pName[i]);
+				projectRoleService.insert(projectRoleNew);
+			}
+		}
+	
+	}*/
+	
+}

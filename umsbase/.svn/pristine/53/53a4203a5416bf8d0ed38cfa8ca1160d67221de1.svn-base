@@ -1,0 +1,175 @@
+package com.hori.jobtask;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.hori.dao.queryBean.CommunityQueryBean;
+import com.hori.model.Community;
+import com.hori.model.SynchronizationLog;
+import com.hori.service.CommunityService;
+import com.hori.service.SynchronizationLogService;
+import com.hori.utils.DateUtil;
+
+/**
+ * 同步小区数据的定时任务
+ */
+@Component("synchronizCommunityTask")
+public class SynchronizCommunityTask {
+	Logger log = Logger.getLogger(SynchronizCommunityTask.class);
+
+	@Autowired
+	private CommunityService communityService;
+
+
+
+	@Autowired
+	private SynchronizationLogService synchronizationLogService;
+
+
+	/**
+	 * 同步小区信息
+	 */
+	public void synchronizedCommunity() {
+		log.info(DateUtil.getDateStr(new Date()) + "开始同步小区信息........");
+		CommunityQueryBean queryBean = new CommunityQueryBean();
+		List<Community> AllCommunities = this.communityService.getAddCommunityByTime(queryBean); // 从对讲获取需要同步新增的小区信息
+		List<Community> uomsCommunities = new ArrayList<Community>();
+		List<Community> addCommunities = new ArrayList<Community>();
+		List<Community> updateCommunities = new ArrayList<Community>();
+		Map<String, Community> uomsMap = new HashMap<String, Community>();
+		SynchronizationLog logs = null;
+		if (AllCommunities != null && AllCommunities.size() > 0) {
+			List<String> organizationSeq = new ArrayList<String>();
+			for (Community community : AllCommunities) {
+				organizationSeq.add(community.getOrganizationSeq());
+			}
+			queryBean.setOrganizationSeqs(organizationSeq);
+			uomsCommunities = this.communityService.getByQueryBean(queryBean); // 需要更新的数据
+			if (uomsCommunities != null && uomsCommunities.size() > 0) {
+				for (Community community : uomsCommunities) {
+					uomsMap.put(community.getOrganizationSeq(), community);
+				}
+
+				for (Community community : AllCommunities) {
+					boolean flag = false;
+					boolean flagUpdate = false;
+					Community uomsCommunity = uomsMap.get(community.getOrganizationSeq());
+					if (uomsCommunity != null) { // 表示存在
+						if (!community.getCommunityName().equals(uomsCommunity.getCommunityName())) {
+							uomsCommunity.setCommunityName(community.getCommunityName());
+							flagUpdate = true;
+						}
+						if (!community.getGrandCardCount().equals(uomsCommunity.getGrandCardCount())) {
+							uomsCommunity.setGrandCardCount(community.getGrandCardCount());
+							flagUpdate = true;
+						}
+						if (!community.getAddress().equals(uomsCommunity.getAddress())) {
+							uomsCommunity.setAddress(community.getAddress());
+							flagUpdate = true;
+						}
+						if (flagUpdate) {
+							updateCommunities.add(uomsCommunity);
+						}
+						flag = true;
+					} else {
+						flag = false;
+					}
+					if (!flag) {
+						addCommunities.add(community);
+					}
+				}
+				try {
+					if (addCommunities != null && addCommunities.size() > 0) {
+						this.communityService.bachSave(addCommunities);
+						log.info(DateUtil.getDateStr(new Date()) + ":同步新增小区信息完毕........");
+						logs = new SynchronizationLog();
+						String content = "新增的小区机构编号：";
+						for (Community community : addCommunities) {
+							content = content + community.getOrganizationSeq() + ",";
+						}
+						content = content.substring(0, content.length() - 1);
+						logs.setLogsContent(content);
+						logs.setCreateTime(new Date());
+						logs.setType(4);
+						logs.setStatus(1);
+						synchronizationLogService.add(logs);// 向日志表插入数据
+					}
+				} catch (Exception e) {
+					logs = new SynchronizationLog();
+					String content = "同步新增小区失败";
+					logs.setLogsContent(content);
+					logs.setCreateTime(new Date());
+					logs.setType(4);
+					logs.setStatus(2);
+					synchronizationLogService.add(logs);// 向日志表插入数据
+					e.printStackTrace();
+				}
+
+				try {
+					if (updateCommunities != null && updateCommunities.size() > 0) {
+						this.communityService.updateCommunitys(updateCommunities);
+						log.info(DateUtil.getDateStr(new Date()) + ":同步更新小区信息完毕........");
+						logs = new SynchronizationLog();
+						String content = "更新的小区机构号：";
+						for (Community community : updateCommunities) {
+							content = content + community.getOrganizationSeq() + ",";
+						}
+						content = content.substring(0, content.length() - 1);
+						logs.setLogsContent(content);
+						logs.setCreateTime(new Date());
+						logs.setType(5);
+						logs.setStatus(1);
+						synchronizationLogService.add(logs); // 向日志表插入数据
+					}
+				} catch (Exception e) {
+					logs = new SynchronizationLog();
+					String content = "同步更新小区失败";
+					logs.setLogsContent(content);
+					logs.setCreateTime(new Date());
+					logs.setType(4);
+					logs.setStatus(2);
+					synchronizationLogService.add(logs);// 向日志表插入数据
+					e.printStackTrace();
+				}
+
+			} else {
+				try {
+					this.communityService.bachSave(AllCommunities);
+					log.info(DateUtil.getDateStr(new Date()) + ":同步新增小区信息完毕........");
+					logs = new SynchronizationLog();
+					String content = "新增的小区机构编号：";
+					for (Community community : AllCommunities) {
+						content = content + community.getOrganizationSeq() + ",";
+					}
+					content = content.substring(0, content.length() - 1);
+					logs.setLogsContent(content);
+					logs.setCreateTime(new Date());
+					logs.setType(4);
+					logs.setStatus(1);
+					synchronizationLogService.add(logs);// 向日志表插入数据
+				} catch (Exception e) {
+					logs = new SynchronizationLog();
+					String content = "同步新增小区失败";
+					logs.setLogsContent(content);
+					logs.setCreateTime(new Date());
+					logs.setType(4);
+					logs.setStatus(2);
+					synchronizationLogService.add(logs);// 向日志表插入数据
+					e.printStackTrace();
+				}
+			}
+		} else {
+			log.info(DateUtil.getDateStr(new Date()) + ":无小区信息同步........");
+		}
+
+	}
+
+	
+}

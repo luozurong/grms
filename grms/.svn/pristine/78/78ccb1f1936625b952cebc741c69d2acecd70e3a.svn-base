@@ -1,0 +1,270 @@
+/**
+ * 
+ */
+package com.hori.grms.service.impl;
+
+import java.util.Date;
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.hori.grms.dao.CustomerMapper;
+import com.hori.grms.dao.ProjectMapper;
+import com.hori.grms.dao.ProjectPeopleMapper;
+import com.hori.grms.dao.ProjectProductMenuMapper;
+import com.hori.grms.model.Customer;
+import com.hori.grms.model.Project;
+import com.hori.grms.model.ProjectApproveLog;
+import com.hori.grms.model.ProjectPeople;
+import com.hori.grms.queryBean.ProjectQueryBean;
+import com.hori.grms.service.ProjectApproveLogService;
+import com.hori.grms.service.ProjectService;
+import com.hori.grms.util.UUIDGeneratorUtil;
+import com.hori.grms.vo.ProjectDetailsVo;
+import com.hori.grms.vo.project.ProjectVo;
+
+/**
+ * @ClassName: ProjectServiceImpl
+ * @Description: 项目
+ * @author zhuqiang
+ * @date 2018年8月8日 下午6:49:43
+ */
+@Service("projectService")
+public class ProjectServiceImpl implements ProjectService {
+
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+	@Autowired
+	private ProjectMapper projectMapper;
+
+	@Autowired
+	private CustomerMapper customerMapper;
+
+	@Autowired
+	private ProjectPeopleMapper projectPeopleMapper;
+	
+	@Autowired
+	private ProjectApproveLogService projectApproveLogService;
+	
+	private ProjectProductMenuMapper projectProductMenuMapper;
+
+	@Override
+	public List<Project> list(ProjectQueryBean projectQueryBean) {
+		return projectMapper.list(projectQueryBean);
+	}
+
+	@Override
+	public ProjectDetailsVo findProjectDetailsVoByProjectCode(String projectCode) {
+		return projectMapper.findProjectDetailsVoByProjectCode(projectCode);
+	}
+
+	@Override
+	public ProjectVo findProjectModel(String productCode) {
+		// 1.查找项目信息 project
+		ProjectVo projectVo = projectMapper.findProjectByProjectCode(productCode);
+
+		if (StringUtils.isNotBlank(projectVo.getCustomerId())) {
+			Customer customer = customerMapper.selectByPrimaryKey(projectVo.getCustomerId());
+			if(customer!=null){
+			projectVo.setCustomerInfo(customer.getContactor() + "-" + customer.getDepartment() + "-" + customer.getName());
+			}
+		}
+
+		// 2. 项目联系人信息 project-people
+		List<ProjectPeople> projectPeoples = projectPeopleMapper.findByProjectCode(productCode);
+        if(projectPeoples!=null){
+		      projectVo.setProjectPeoples(projectPeoples);
+        }
+
+		return projectVo;
+
+	}
+	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
+	public void revoke(String productCode,String userName,String userAccount) throws Exception {
+
+		// 撤回项目编号不能为空
+		if (StringUtils.isEmpty(productCode)) {
+
+			throw new Exception("项目编号参数不能为空！！");
+
+		}
+
+		Project project = projectMapper.selectByProductCode(productCode);
+
+		if (null == project) {
+
+			throw new Exception("项目不存在！！");
+
+		}
+
+		if (project.getStatus() != 0) {
+
+			throw new Exception("项目状态为待审核的项目才能进行撤回操作！！");
+
+		}
+		
+		ProjectApproveLog projectApproveLog = createApproveLog(4,productCode,userName,userAccount,null);
+
+		projectApproveLogService.inserLog(projectApproveLog);
+		
+		projectMapper.revoke(productCode);
+
+	}
+
+	/**
+	 * 注解式事务 事务隔离级别和传播属性都采用默认 注意： 1.
+	 * 默认配置下，spring只有在抛出的异常为运行时unchecked异常时才回滚该事务，也就是抛出的异常为RuntimeException的子类(
+	 * Errors也会导致事务回滚)，而抛出checked异常则不会导致事务回滚。
+	 * 可以明确的配置在抛出那些异常时回滚事务，包括checked异常。也可以明确定义那些异常抛出时不回滚事务。
+	 * 我们这里指定无论抛出unchecked异常还是cheched异常都执行事务回滚
+	 * 2.默认情况下，只有来自外部的方法调用才会被AOP代理捕获，也就是，类内部方法调用本类内部的其他方法并不会引起事务行为，
+	 * 即使被调用方法使用@Transactional注解进行修饰
+	 * 
+	 * @throws Exception
+	 */
+	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
+	public void delet(String productCode,String userName,String userAccount) throws Exception {
+
+		// 要删除的项目编号不能为空
+		if (StringUtils.isEmpty(productCode)) {
+
+			throw new Exception("项目编号参数不能为空！！");
+
+		}
+
+		Project project = projectMapper.selectByProductCode(productCode);
+
+		if (null == project) {
+
+			throw new Exception("项目不存在！！");
+
+		}
+
+		if (project.getStatus() != 2 && project.getStatus() != 3 && project.getStatus() != 4) {
+
+			throw new Exception("项目当前状态不允许进行删除操作！！");
+
+		}
+		
+		ProjectApproveLog projectApproveLog = createApproveLog(-1,productCode,userName,userAccount,null);
+		//保存操作日志
+		projectApproveLogService.inserLog(projectApproveLog);
+		//项目状态改为删除状态
+		projectMapper.delet(productCode);
+		
+		logger.info("项目："+productCode+"删除成功");
+
+	}
+	
+	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
+	public void stopProject(String productCode, String remark,String userName,String userAccount) throws Exception {
+
+		// 要终止的项目编号不能为空
+		if (StringUtils.isEmpty(productCode)) {
+
+			throw new Exception("项目编号参数不能为空！！");
+
+		}
+
+		Project project = projectMapper.selectByProductCode(productCode);
+
+		if (null == project) {
+
+			throw new Exception("项目不存在！！");
+
+		}
+
+		if (project.getStatus() != 1) {
+
+			throw new Exception("项目当前状态不允许进行删除操作！！");
+		}
+		
+		//合同状态为完成不可终止立项
+		
+		
+		
+		//改变项目状态
+		project.setStatus((short) 3);
+		//生成项目操作日志
+		ProjectApproveLog projectApproveLog = createApproveLog(3,productCode,userName,userAccount,remark);
+		//更新项目
+		projectMapper.stopProject(productCode);
+		//释放资源
+		projectProductMenuMapper.releaseLock(productCode);
+		//保存操作日志
+		projectApproveLogService.inserLog(projectApproveLog);
+		
+		logger.info("项目："+productCode+"终止成功");
+		
+	}
+
+	public int total(ProjectQueryBean projectQueryBean) {
+
+		return projectMapper.total(projectQueryBean);
+	}
+	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
+    public void examProject(String productCode, String remark,String userName,String userAccount,int examResult){
+		
+		
+		
+		
+		ProjectApproveLog projectApproveLog = createApproveLog(examResult,productCode,userName,userAccount,remark);
+
+		projectApproveLogService.inserLog(projectApproveLog);
+	}
+	/**
+	 * 项目立项
+	 */
+	@Override
+	public void saveProject(ProjectVo projectVo) {
+		// 封装Project对象
+		// TODO 待续..........
+		// 根据项目id 判断是立项还是更改立项
+		if (StringUtils.isBlank(projectVo.getId())) {
+			// 立项
+
+		} else {
+			// 更新项目信息
+
+		}
+	}
+
+
+
+	/**
+	 * 生成操作日志
+	 * @param status 状态：-1删除  0待审核 1审核通过 2审核不通过 3立项终止 4撤回
+	 * @param productCode 项目编号
+	 * @param userName 审核人名字
+	 * @param userAccount 审核人帐号
+	 * @param remark 审核/终止意见备注
+	 */
+	private ProjectApproveLog createApproveLog(int status,String productCode,String userName,String userAccount,String remark){
+		
+		ProjectApproveLog projectApproveLog = new ProjectApproveLog();
+		
+		projectApproveLog.setId(UUIDGeneratorUtil.generateUUID());
+		
+		projectApproveLog.setApproveTime(new Date());
+		
+		projectApproveLog.setCreaterAccount(userAccount);
+		
+		projectApproveLog.setCreaterName(userName);
+		
+		projectApproveLog.setProjectCode(productCode);
+		
+		projectApproveLog.setRemark(remark);
+		
+		return projectApproveLog;
+	}
+	
+	
+
+}

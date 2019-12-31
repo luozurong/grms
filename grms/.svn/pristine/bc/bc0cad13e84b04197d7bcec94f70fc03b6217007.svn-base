@@ -1,0 +1,243 @@
+package com.hori.grms.controller;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.alibaba.fastjson.JSON;
+import com.hori.grms.model.Project;
+import com.hori.grms.model.ProjectPeople;
+import com.hori.grms.queryBean.ProjectQueryBean;
+import com.hori.grms.service.ProjectPeopleService;
+import com.hori.grms.service.ProjectProductService;
+import com.hori.grms.service.ProjectService;
+import com.hori.grms.vo.ProjectDetailsVo;
+import com.hori.grms.vo.project.ProjectMenuVo;
+import com.hori.grms.vo.project.ProjectVo;
+
+
+/**
+ * 项目管理controller
+ * 
+ * @author Chenrw
+ * @date 2018年8月9日
+ */
+@Controller
+@RequestMapping("/project")
+public class ProjectController extends BaseController {
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+	@Autowired
+	private ProjectService projectService;
+	
+	@Autowired
+	private ProjectPeopleService projectPeopleService;
+	@Autowired
+	private ProjectProductService projectProductService;
+	
+	
+	/**
+	 * 跳转项目列表页面
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping("/list")
+	public String getProjectList(HttpServletRequest request, HttpServletResponse response) {
+
+		return "/project/projectList.jsp";
+	}
+	/**
+	 * 获取项目列表数据
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value ="/getlistData",produces="text/html;charset=UTF-8;")
+	@ResponseBody
+	public String getProjectListData(HttpServletRequest request, HttpServletResponse response) {
+		
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		
+		try {
+			String parameter = request.getParameter("projectQueryBean");
+
+			ProjectQueryBean projectQueryBean = JSON.parseObject(parameter, ProjectQueryBean.class);
+
+			if (null == projectQueryBean) {
+				projectQueryBean = new ProjectQueryBean();
+			}
+			List<Project> list = projectService.list(projectQueryBean);
+			
+			int total = projectService.total(projectQueryBean);
+			
+			resultMap.put("success", true);
+			resultMap.put("rows", list);
+			resultMap.put("total", total);
+			
+		} catch (Exception e) {
+			
+			logger.info("错误原因："+e.getMessage());
+			resultMap.put("success", false);
+		
+		}
+		
+		
+		return JSON.toJSONStringWithDateFormat(resultMap,"yyyy-MM-dd");
+	}
+	
+	/**
+	 * 
+	 * @param type  0-新建,1-修改
+	 * @param productCode
+	 * @return
+	 */
+	@RequestMapping("/addProject")
+	public String addProject(@RequestParam(value="type",required=false) Integer type,@RequestParam(value="productCode",required=false) String productCode){
+		HttpSession session=getSession();
+		//新建
+		if(type==null||type==0){
+			session.removeAttribute("projectModel");
+		}else if(type==1){
+		   //修改,查找并封装数据
+		   ProjectVo projectModel=projectService.findProjectModel(productCode);
+		}
+		
+		return "/project/addProject.jsp";
+	}
+	
+	@RequestMapping("/addProjectAction")
+	public String addProjectAction(){
+		return "/project/addProjectProdect.jsp";
+	}
+	
+	/**
+	 * 撤回项目
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value ="/revoke")
+	@ResponseBody
+	public String revokeProject(HttpServletRequest request, HttpServletResponse response) {
+		
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			
+			String id = request.getParameter("id");
+			
+			projectService.revoke(id);
+
+			resultMap.put("success", true);
+			
+		} catch (Exception e) {
+			resultMap.put("success", false);
+		}
+		
+		return JSON.toJSONString(resultMap);
+	}
+	@RequestMapping("/viewProject")
+	public String viewProject(HttpServletRequest request, HttpServletResponse response){
+		String projectId = request.getParameter("projectId");
+		if(null!=projectId&&!projectId.equals("")) {   //判断ID是否为空
+			ProjectDetailsVo projectVo =  projectService.findProjectDetailsVoByID(projectId);
+			List<ProjectPeople>  projectPeopleList = projectPeopleService.findByProjectId(projectId);
+			projectVo.setRoles(projectPeopleList);
+			List<ProjectMenuVo>  projectProductList = projectProductService.findVoByProjectCode(projectId);
+			request.setAttribute("projectProductListStr", JSON.toJSONStringWithDateFormat(projectProductList,"yyyy年MM月dd日   HH:mm:ss"));
+			request.setAttribute("projectVo", projectVo);
+		}
+		
+		return "/project/projectView.jsp";
+	}
+	
+	/**
+	 * 删除项目
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value ="/delet")
+	@ResponseBody
+	public String deletProject(HttpServletRequest request, HttpServletResponse response) {
+		
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			
+			String id = request.getParameter("id");
+			
+			projectService.delet(id);
+
+			resultMap.put("success", true);
+			
+		} catch (Exception e) {
+			resultMap.put("success", false);
+		}
+		
+		return JSON.toJSONString(resultMap);
+	}
+	/**
+	 * 终止项目
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value ="/stopProject")
+	@ResponseBody
+	public String stopProject(HttpServletRequest request, HttpServletResponse response) {
+		
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			
+			String id = request.getParameter("projectId");
+			
+			projectService.stopProject(id);
+			
+			resultMap.put("success", true);
+			
+		} catch (Exception e) {
+			resultMap.put("success", false);
+		}
+		
+		return JSON.toJSONString(resultMap);
+	}
+	/**
+	 * 项目审核
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value ="/exam")
+	@ResponseBody
+	public String examProject(HttpServletRequest request, HttpServletResponse response) {
+		
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			
+			String id = request.getParameter("projectId");
+			
+			
+			resultMap.put("success", true);
+			
+		} catch (Exception e) {
+			resultMap.put("success", false);
+		}
+		
+		return JSON.toJSONString(resultMap);
+	}
+	
+	
+	
+}

@@ -1,0 +1,9 @@
+package com.hori.grms.queryBean;
+/**
+ * 项目查询QueryBean
+ * @author Chenrw
+ * @date 2018年8月9日
+ */
+public class ProjectQueryBean {
+	
+}

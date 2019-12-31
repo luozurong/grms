@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hori.grms.dao.ProjectRoleMapper" >
+  <resultMap id="BaseResultMap" type="com.hori.grms.model.ProjectRole" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="isDel" property="isDel" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, name ,isDel
+  </sql>
+  <select id="selectAll" resultType="com.hori.grms.model.ProjectRole">
+  	select * from project_role where isDel = '0'
+  </select>
+  
+  
+  <insert id="insert" parameterType="com.hori.grms.model.ProjectRole" >
+    insert into project_role (id, name ,isDel)
+    values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{isDel,jdbcType=VARCHAR})
+  </insert>
+  
+  <delete id="delAll">
+  	delete from project_role
+  </delete>
+  
+  <select id="findProjectRoleList" resultType="map">
+    select * from project_role where isDel = '0'
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from project_role
+    where id = #{id,jdbcType=VARCHAR}
+    and isDel = '0'
+  </select>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.hori.grms.model.ProjectRole" >
+    update project_role
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="isDel != null" >
+        isDel = #{isDel,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

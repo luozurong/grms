@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hori.grms.dao.AreaMapper" >
+  <resultMap id="BaseResultMap" type="com.hori.grms.model.Area" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="area_name" property="areaName" jdbcType="VARCHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="serial" property="serial" jdbcType="VARCHAR" />
+    <result column="user_seq" property="userSeq" jdbcType="VARCHAR" />
+    <result column="organization_seq" property="organizationSeq" jdbcType="VARCHAR" />
+    <result column="family_pass_is_open" property="familyPassIsOpen" jdbcType="DECIMAL" />
+    <result column="family_pass_level" property="familyPassLevel" jdbcType="VARCHAR" />
+    <result column="comment" property="comment" jdbcType="VARCHAR" />
+    <result column="image_addr" property="imageAddr" jdbcType="VARCHAR" />
+    <result column="propertyName" property="propertyname" jdbcType="VARCHAR" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="province" property="province" jdbcType="VARCHAR" />
+    <result column="city" property="city" jdbcType="VARCHAR" />
+    <result column="country" property="country" jdbcType="VARCHAR" />
+    <result column="town" property="town" jdbcType="VARCHAR" />
+    <result column="doorplate_addr" property="doorplateAddr" jdbcType="VARCHAR" />
+    <result column="contact_name" property="contactName" jdbcType="VARCHAR" />
+    <result column="logitude" property="logitude" jdbcType="VARCHAR" />
+    <result column="latitude" property="latitude" jdbcType="VARCHAR" />
+    <result column="life_plate_addr_level" property="lifePlateAddrLevel" jdbcType="VARCHAR" />
+    <result column="life_plate_addr_vertical" property="lifePlateAddrVertical" jdbcType="VARCHAR" />
+    <result column="property_company_id" property="propertyCompanyId" jdbcType="VARCHAR" />
+    <result column="property_management_id" property="propertyManagementId" jdbcType="VARCHAR" />
+    <result column="village_committee_id" property="villageCommitteeId" jdbcType="VARCHAR" />
+    <result column="village_choose_way" property="villageChooseWay" jdbcType="VARCHAR" />
+    <result column="street_office_info_id" property="streetOfficeInfoId" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="creator_id" property="creatorId" jdbcType="VARCHAR" />
+    <result column="creator_account" property="creatorAccount" jdbcType="VARCHAR" />
+    <result column="level_no" property="levelNo" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="region_name" property="regionName" jdbcType="VARCHAR" />
+    <result column="area_type" property="areaType" jdbcType="VARCHAR" />
+    <result column="authorize_type" property="authorizeType" jdbcType="VARCHAR" />
+    <result column="android_life_configure_id" property="androidLifeConfigureId" jdbcType="VARCHAR" />
+    <result column="android_life_configure_url" property="androidLifeConfigureUrl" jdbcType="VARCHAR" />
+    <result column="ios_life_configure_id" property="iosLifeConfigureId" jdbcType="VARCHAR" />
+    <result column="ios_life_configure_url" property="iosLifeConfigureUrl" jdbcType="VARCHAR" />
+    <result column="house_life_configure_id" property="houseLifeConfigureId" jdbcType="VARCHAR" />
+    <result column="house_life_configure_url" property="houseLifeConfigureUrl" jdbcType="VARCHAR" />
+    <result column="peration_id" property="perationId" jdbcType="VARCHAR" />
+    <result column="peration_name" property="perationName" jdbcType="VARCHAR" />
+    <result column="peration_account" property="perationAccount" jdbcType="VARCHAR" />
+    <result column="peration_level_no" property="perationLevelNo" jdbcType="VARCHAR" />
+    <result column="implement_id" property="implementId" jdbcType="VARCHAR" />
+    <result column="implement_name" property="implementName" jdbcType="VARCHAR" />
+    <result column="implement_account" property="implementAccount" jdbcType="VARCHAR" />
+    <result column="implement_level_no" property="implementLevelNo" jdbcType="VARCHAR" />
+    <result column="operator_id" property="operatorId" jdbcType="VARCHAR" />
+    <result column="operator_name" property="operatorName" jdbcType="VARCHAR" />
+    <result column="operator_account" property="operatorAccount" jdbcType="VARCHAR" />
+    <result column="operator_level_no" property="operatorLevelNo" jdbcType="VARCHAR" />
+    <result column="hidden" property="hidden" jdbcType="VARCHAR" />
+    <result column="translate_status" property="translateStatus" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.hori.grms.model.Area" extends="BaseResultMap" >
+    <result column="area_tree" property="areaTree" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, area_name, address, serial, user_seq, organization_seq, family_pass_is_open, 
+    family_pass_level, comment, image_addr, propertyName, phone, province, city, country, 
+    town, doorplate_addr, contact_name, logitude, latitude, life_plate_addr_level, life_plate_addr_vertical, 
+    property_company_id, property_management_id, village_committee_id, village_choose_way, 
+    street_office_info_id, create_time, creator_id, creator_account, level_no, update_time, 
+    region_name, area_type, authorize_type, android_life_configure_id, android_life_configure_url, 
+    ios_life_configure_id, ios_life_configure_url, house_life_configure_id, house_life_configure_url, 
+    peration_id, peration_name, peration_account, peration_level_no, implement_id, implement_name, 
+    implement_account, implement_level_no, operator_id, operator_name, operator_account, 
+    operator_level_no, hidden
+  </sql>
+  <sql id="Blob_Column_List" >
+    area_tree
+  </sql>
+  
+  
+  
+  
+  <select id="getByOrgSeq" resultMap="BaseResultMap" parameterType="java.lang.String"  >
+     SELECT * FROM area  WHERE 1=1
+     <if test="organizationSeq != null and organizationSeq != '' ">
+		    AND organization_seq = #{organizationSeq,jdbcType=VARCHAR}
+		</if> 
+  </select>
+  <resultMap id="MapDistrictResultMap" type="com.hori.grms.vo.MapDistrictVo" >
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="value" property="value" jdbcType="INTEGER" />
+    <result column="value1" property="value1" jdbcType="INTEGER" />
+  </resultMap>
+  <select id="getProvinceAreaTotal" resultMap="MapDistrictResultMap">
+    SELECT COUNT(*) as value, 
+	province as name FROM area 
+	WHERE 1=1 and province IS NOT NULL GROUP BY province;
+  </select>
+  
+  <select id="getCityAreaTotalByCode" resultMap="MapDistrictResultMap" parameterType="java.lang.String"   >
+     SELECT  at1.value AS VALUE , tst.VALUE AS VALUE1 ,at1.name AS name  FROM talk_serial_total AS tst ,area_total at1 WHERE tst.NAME= at1.NAME   
+      <if test="code != null and code != '' ">
+		    and tst.province = #{code,jdbcType=VARCHAR}
+	  </if> 
+	  ;
+  </select>
+  
+  <select id="getCountryAreaTotalByCode" resultMap="MapDistrictResultMap" parameterType="com.hori.grms.queryBean.AreaQueryBean"   >
+    SELECT SUM(ctst.value) AS value1 ,SUM(cat.value) AS value ,cat.country AS name FROM country_talk_serial_total AS ctst ,country_area_total AS cat WHERE cat.country=ctst.country 
+      <if test="province != null and province != '' ">
+		    and cat.province = #{province,jdbcType=VARCHAR}
+		</if> 
+      <if test="city != null and city != '' ">
+		    and cat.name = #{city,jdbcType=VARCHAR}
+		</if> 
+        GROUP BY cat.country;
+  </select>
+  <select id="getAreaTotal" resultType="java.lang.Long" >
+    SELECT COUNT(*) FROM  area WHERE 1=1 ;
+  </select>
+  
+  <resultMap id="EnclosureResultsResultMap" type="com.hori.grms.vo.EnclosureResultsVo" >
+    <result column="total" property="total" jdbcType="DECIMAL" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+  </resultMap>
+  <select id="getEnclosureResultsByDay" resultMap="EnclosureResultsResultMap" parameterType="com.hori.grms.queryBean.EnclosureResultsQueryBean" >
+    SELECT COUNT(*) as total,translate_status as type FROM area WHERE 1=1
+    <!-- <if test="startTime != null and startTime !=''">
+       AND create_time >=''
+    </if> -->
+	<if test="endTime != null and endTime != ''">
+		      <![CDATA[
+		      AND create_time <= #{endTime,jdbcType=VARCHAR} 
+		       ]]>
+	</if>
+	 GROUP BY translate_status 
+  </select>
+	
+	<resultMap id="areaVoMap" type="com.hori.grms.vo.AreaVo">
+		<id column="id" property="id"/>
+		<result column="area_name" property="areaName"/>
+		<result column="address" property="address"/>
+		<result column="organization_Seq" property="organizationSeq"/>
+	</resultMap>
+	
+	<!-- area -->
+	<select id="getProvinces" resultType="string" parameterType="string">
+		SELECT province FROM area GROUP BY province 
+	</select>
+
+	<select id="getCitysByProvince" resultType="string" parameterType="string">
+		SELECT city FROM area WHERE province=#{province} GROUP BY city
+	</select>
+	
+	<select id="getCountrysByCity" resultType="string" parameterType="string">
+		SELECT country FROM area WHERE city=#{city} GROUP BY country
+	</select>
+
+	<select id="getTownsByCountry" resultType="string" parameterType="string">
+		SELECT town FROM area WHERE country=#{country} GROUP BY town
+	</select>
+	
+	<select id="getCummunitys" resultMap="areaVoMap">
+		SELECT area_name,address,organization_Seq 
+		FROM area 
+		WHERE 1=1 
+		<if test="province != null and province != ''">
+			AND province=#{province}
+		</if>
+		<if test="citys != null and citys.size() > 0">
+			AND city in
+			<foreach collection="citys" index="index" item="city" open="(" separator="," close=")">
+				#{city}
+			</foreach>
+		</if>
+		<if test="country != null and country != ''">
+			AND country=#{country}
+		</if>
+		<if test="keyword != null and keyword != ''">
+			AND area_name LIKE #{keyword}
+		</if>
+	</select>
+
+	<select id="getCummunityBySeq" resultMap="BaseResultMap" parameterType="string">
+		SELECT * FROM area WHERE organization_Seq=#{seq}
+	</select>
+	
+	<!-- province,city,country,town -->
+	<select id="getNameByCode" resultType="string" parameterType="string">
+		SELECT name FROM pro_city_area_town WHERE code=#{code}
+	</select>
+
+
+
+  <select id="getAreaInfoPages" resultMap="BaseResultMap" parameterType="com.hori.grms.queryBean.AreaQueryBean"   >
+     SELECT area_name,address,area_type,translate_status,organization_seq from area where 1=1 
+      <if test="province != null and province != '' ">
+		    and province = #{province,jdbcType=VARCHAR}
+	  </if> 
+      <if test="city != null and city != '' ">
+		    and city = #{city,jdbcType=VARCHAR}
+		</if> 		
+      <if test="citys != null">
+      		and city in
+		    <foreach collection="citys" index="index" item="item" open="(" separator="," close=")">
+		    	#{item}
+		    </foreach>
+		</if> 			
+      <if test="country != null and country != '' ">
+		    and country = #{country,jdbcType=VARCHAR}
+	  </if>
+      <if test="town != null and town != '' ">
+		    and town = #{town,jdbcType=VARCHAR}
+	  </if>		  
+      <if test="areaType != null and areaType != '' ">
+		    and area_type = #{areaType,jdbcType=VARCHAR}
+	  </if>
+      <if test="areaCategory != null and areaCategory != '' ">
+		    and area_category = #{areaCategory,jdbcType=VARCHAR}
+	  </if>	 	  
+      <if test="areaName != null and areaName != '' ">
+		    and area_name like '%${areaName}%'
+	  </if>	  
+      <if test="translateStatus != null and translateStatus != '' ">
+		    and translate_status in
+		    <foreach collection="translateStatus" index="index" item="item" open="(" separator="," close=")">
+		    	#{item}
+		    </foreach>
+	  </if>
+	  	  limit #{start},#{pageSize}
+  </select>
+  
+  
+    <select id="getAreaInfos" resultMap="BaseResultMap"  parameterType="com.hori.grms.queryBean.AreaQueryBean"   >
+     SELECT area_name,organization_seq from area where 1=1 
+      <if test="province != null and province != '' ">
+		    and province = #{province,jdbcType=VARCHAR}
+	  </if> 
+      <if test="city != null and city != '' ">
+		    and city = #{city,jdbcType=VARCHAR}
+		</if> 		
+      <if test="citys != null">
+      		and city in
+		    <foreach collection="citys" index="index" item="item" open="(" separator="," close=")">
+		    	#{item}
+		    </foreach>
+		</if>		
+      <if test="country != null and country != '' ">
+		    and country = #{country,jdbcType=VARCHAR}
+	  </if>
+      <if test="town != null and town != '' ">
+		    and town = #{town,jdbcType=VARCHAR}
+	  </if>		  
+      <if test="areaType != null and areaType != '' ">
+		    and area_type = #{areaType,jdbcType=VARCHAR}
+	  </if>
+      <if test="areaCategory != null and areaCategory != '' ">
+		    and area_category = #{areaCategory,jdbcType=VARCHAR}
+	  </if>	 	  
+      <if test="areaName != null and areaName != '' ">
+		    and area_name like '%${areaName}%'
+	  </if>	  
+      <if test="translateStatus != null and translateStatus != '' ">
+		    and translate_status in
+		    <foreach collection="translateStatus" index="index" item="item" open="(" separator="," close=")">
+		    	#{item}
+		    </foreach>
+	  </if>
+  </select>
+  
+  <select id="getSearchAreaTotal" resultType="java.lang.Integer" parameterType="com.hori.grms.queryBean.AreaQueryBean" >
+    SELECT COUNT(*) FROM  area WHERE 1=1 
+      <if test="province != null and province != '' ">
+		    and province = #{province,jdbcType=VARCHAR}
+	  </if> 
+      <if test="city != null and city != '' ">
+		    and city = #{city,jdbcType=VARCHAR}
+		</if> 
+      <if test="citys != null">
+      		and city in
+		    <foreach collection="citys" index="index" item="item" open="(" separator="," close=")">
+		    	#{item}
+		    </foreach>
+		</if> 				
+      <if test="country != null and country != '' ">
+		    and country = #{country,jdbcType=VARCHAR}
+	  </if>
+      <if test="town != null and town != '' ">
+		    and town = #{town,jdbcType=VARCHAR}
+	  </if>	  
+      <if test="areaType != null and areaType != '' ">
+		    and area_type = #{areaType,jdbcType=VARCHAR}
+	  </if>
+      <if test="areaCategory != null and areaCategory != '' ">
+		    and area_category = #{areaCategory,jdbcType=VARCHAR}
+	  </if>	  
+      <if test="areaName != null and areaName != '' ">
+		    and area_name like '%${areaName}%'
+	  </if>	  
+      <if test="translateStatus != null and translateStatus != '' ">
+		    and translate_status in
+		    <foreach collection="translateStatus" index="index" item="item" open="(" separator="," close=")">
+		    	#{item}
+		    </foreach>
+	  </if>    
+  </select>
+  
+  	<select id="getTranslatedOrgs" resultType="string" parameterType="string">
+		SELECT organization_seq FROM area where translate_status in(1,2)
+	</select>
+	
+	  <select id="getRegionSearchOrgs" resultType="string" parameterType="com.hori.grms.queryBean.AreaQueryBean" >
+		SELECT organization_seq FROM area where 1=1
+      <if test="province != null and province != '' ">
+		    and province = #{province,jdbcType=VARCHAR}
+	  </if> 
+      <if test="city != null and city != '' ">
+		    and city = #{city,jdbcType=VARCHAR}
+		</if> 		
+      <if test="country != null and country != '' ">
+		    and country = #{country,jdbcType=VARCHAR}
+	  </if>
+      <if test="town != null and town != '' ">
+		    and town = #{town,jdbcType=VARCHAR}
+	  </if>	  
+      <if test="areaType != null and areaType != '' ">
+		    and area_type = #{areaType,jdbcType=VARCHAR}
+	  </if>
+      <if test="areaName != null and areaName != '' ">
+		    and area_name like '%${areaName}%'
+	  </if>	  
+      <if test="translateStatus != null and translateStatus != '' ">
+		    and translate_status in
+		    <foreach collection="translateStatus" index="index" item="item" open="(" separator="," close=")">
+		    	#{item}
+		    </foreach>
+	  </if>    		
+	</select>
+	
+</mapper>

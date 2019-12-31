@@ -1,0 +1,148 @@
+var pageNoAll='1';
+var pageSizeAll='10';
+$(function(){
+	$('#startTime').datebox({    
+	    required:true   
+	}); 
+	$('#endTime').datebox({    
+	    required:true   
+	}); 
+	$('#searchBtn').linkbutton({  
+		
+	});
+	
+	findMenu(pageSizeAll,pageNoAll);
+	
+	
+})
+
+
+
+//查询数据
+function findMenu(pageSize,pageNo){
+	var projectName=$('#projectName').val();
+	var startTime=$('#startTime').val();
+	var endTime=$('#endTime').val();
+	var actionStatus=$('#actionStatus').val();
+	var projectExceptionStatus=$('#projectExceptionStatus').val();
+	
+	pageNo=pageNoAll;
+	pageSize=pageSizeAll;
+	var projectQueryBean='{"projectName":"'+projectName+'","startTime":"'+startTime+'","endTime":"'+endTime
+	+'","actionStatus":"'+actionStatus+'","projectExceptionStatus":"'+projectExceptionStatus
+	+'","pageNumber":"'+pageNo+'","pageSize":"'+pageSize+'"}';
+	
+	console.log(projectQueryBean)
+	
+    $.ajax({  
+        type : "POST",  //提交方式  
+        url : "/grms/projectAction/getlistData.html",//路径  
+        dataType : "json",//数据，这里使用的是Json格式进行传输  
+        data:  {"projectQueryBean":projectQueryBean},  
+        success : function(result) {//返回数据根据结果进行相应的处理  
+            if ( result.success) {  
+            	var data2=result.rows;
+            	var total=result.total;
+            	refresh(data2);
+            	/*
+            	paginationpage(total,data2);*/
+            	
+            } else {  
+            	
+            }  
+        }  
+    }); 
+}
+
+
+
+//刷新表格数据
+function refresh(data){
+//	表格数据渲染
+  $('#dg').datagrid({
+      border:true,
+      scrollbarSize:0,
+      nowrap:false,//允许换行
+      data:data,
+      emptyMsg:'<span>无记录</span>',
+      onLoadSuccess:function(){ //dom操作
+          $('#dg').datagrid('resize');
+      },
+      columns:[[
+          {
+              field:'productCode',
+              title:'项目编号',
+              width:450,
+              align:'left'
+          },
+          {
+              field:'name',
+              title:'项目名称',
+              width:300,
+              align:'left'
+              
+          },
+          {
+              field:'beginTime',
+              title:'执行开始时间',
+              width:220,
+              align:'left'
+          },
+          {
+              field:'endTime',
+              title:'执行结束时间',
+              width:220,
+              align:'left'
+          },
+          {
+              field:'actionStatus',
+              title:'项目状态',
+              width:190,
+              align:'left',
+              formatter:function(value){
+            	  if(value==0){
+            		  return "未执行"; 
+            	  }else if(value==1){
+            		  return "执行中";
+            	  }else if(value==2){
+            		  return "执行完成";
+            	  }
+              }
+          },
+          {
+              field:'exceptionStatus',
+              title:'项目异常',
+              width:190,
+              align:'left',
+              formatter: function(value,row,index){
+            	  if(row.actionStatus!=1){
+            		  return "正常"
+            	  }
+            	  
+            	  if(value==0){
+            		  return "正常"
+            	  }else if(value==1){
+            		  return "异常"
+            	  }
+                
+              }
+          },
+          
+          {
+              field:'handle',
+              title:'操作',
+              width:574,
+              align:'left',
+              formatter: function(value,row,index){
+              	//处理操作得按钮（根据用户的类型）
+              	var status = row.status
+              	
+              	var detailWorkOrder = '<a href="javascript:;" data-id="1" onclick="projectOperation(1,\''+index+'\')">查看</a>  ';
+              	var workOrder = "";
+              	
+                return workOrder;
+              }
+          }
+      ]]
+  });
+}

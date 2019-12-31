@@ -1,0 +1,21 @@
+package com.hori.grms.dao;
+
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
+import com.hori.grms.model.BackMoneyPlanPeriods;
+
+
+public interface BackMoneyPlanPeriodsMapper {
+
+    int insertSelective(BackMoneyPlanPeriods record);
+
+    BackMoneyPlanPeriods selectByPrimaryKey(String id);
+
+    int updateByPrimaryKeySelective(BackMoneyPlanPeriods record);
+
+	List<BackMoneyPlanPeriods> getPeriodsListByPlanCode(@Param("backMoneyPlanCode")String backMoneyPlanCode);
+
+	void deleteByCode(@Param("backMoneyPlanCode")String backMoneyPlanCode);
+}

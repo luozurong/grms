@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+PUBLIC "-//ibatis.apache.org//DTD Config 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-config.dtd">
+<configuration>
+	<!-- 配置property的另一种方式，不同的配置方式关系到分页拦截器取property时候使用的不同方法 -->
+	 <settings>
+	    <!-- 开启 Ehcache-->
+		<setting name="cacheEnabled" value="true"/>
+		
+		<!--mybatis 返回map为null  处理  -->
+		<setting name="callSettersOnNulls" value="true"/>
+		 <setting name="logImpl" value="STDOUT_LOGGING" />
+		 <!-- 开启驼峰命名 -->
+		 <setting name="mapUnderscoreToCamelCase" value="true"/>
+	</settings> 
+	
+	<plugins>
+		<!-- <plugin interceptor="com.hori.grms.interceptor.PageInterceptor">
+		    配置数据库方言  目前只有mysql和oracle两种
+			<property name="dialect" value="mysql"/>
+			此处可以根据实际情况配置 此配置表明只要是查询带有Page结尾的语句才真正地进行分页处理，但是实际是所有连接都先进入拦截器，然后再判断是否带有Page结尾
+			<property name="pageSqlId" value=".*Page$" />
+		</plugin> -->
+		<plugin interceptor="com.github.pagehelper.PageInterceptor">
+			<property name="helperDialect" value="mysql"/>
+			<!-- 启用合理化时，如果pageNum<1会查询第一页，如果pageNum>pages会查询最后一页 -->
+			<property name="reasonable" value="true"/>
+			<!-- 支持通过Mapper接口参数来传递分页参数 -->
+			<property name="supportMethodsArguments" value="true"/>
+			<property name="params" value="count=countSql"/>
+		</plugin>
+	</plugins>
+	
+	<!-- <typeAliases>
+	   <typeAlias type="com.hori.bigData.model.UserRequestAnalysis" alias="userRequestAnalysis"/>
+	</typeAliases> -->
+</configuration>

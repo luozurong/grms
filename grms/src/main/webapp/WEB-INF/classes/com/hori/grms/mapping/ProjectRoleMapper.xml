@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hori.grms.dao.ProjectRoleMapper" >
+  <resultMap id="BaseResultMap" type="com.hori.grms.model.ProjectRole" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <select id="selectAll" resultType="com.hori.grms.model.ProjectRole">
+  	select * from project_role
+  </select>
+  
+  
+  <insert id="insert" parameterType="com.hori.grms.model.ProjectRole" >
+    insert into project_role (id, name)
+    values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR})
+  </insert>
+  
+  <delete id="delAll">
+  	delete from project_role
+  </delete>
+  
+  <select id="findProjectRoleList" resultType="map">
+    select * from project_role
+  </select>
+</mapper>

@@ -1,0 +1,829 @@
+package com.hori.grms.controller;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFRichTextString;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.CellRangeAddress;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.github.pagehelper.PageInfo;
+import com.hori.grms.model.BackMoneyPlan;
+import com.hori.grms.model.BackMoneyPlanPeriods;
+import com.hori.grms.model.CloseCaseInfo;
+import com.hori.grms.model.Project;
+import com.hori.grms.model.ProjectAction;
+import com.hori.grms.model.ProjectActionException;
+import com.hori.grms.model.ProjectProduct;
+import com.hori.grms.queryBean.BackMoneyPlanQueryBean;
+import com.hori.grms.service.BackMoneyPlanPeriodsService;
+import com.hori.grms.service.BackMoneyPlanService;
+import com.hori.grms.service.CloseCaseService;
+import com.hori.grms.service.PendingEventService;
+import com.hori.grms.service.ProjectActionExceptionService;
+import com.hori.grms.service.ProjectService;
+import com.hori.grms.util.ExportExcelUtil;
+import com.hori.grms.util.UUIDGeneratorUtil;
+import com.hori.grms.vo.BackMoneyPlanVo;
+import com.hori.grms.vo.CloseCaseVo;
+import com.hori.grms.vo.ContractDetailVo;
+import com.hori.grms.vo.ContractVo;
+import com.hori.grms.vo.project.ProductMenuVo;
+import com.hori.grms.vo.project.ProjectMenuVo;
+import com.hori.vo.UserDetailLoginVo;
+/**
+ * 收款计划
+ * @author dell
+ *
+ */
+@Controller
+@RequestMapping("backMoneyPlan")
+public class BackMoneyPlanController extends BaseController{
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+	
+	@Autowired
+	BackMoneyPlanService backMoneyPlanService;
+	@Autowired
+	BackMoneyPlanPeriodsService backMoneyPlanPeriodsService;
+	@Autowired
+	CloseCaseService closeCaseService;
+	@Autowired
+	ProjectActionExceptionService projectActionExceptionService;
+	@Autowired
+	ProjectService proService;
+	@Autowired
+	PendingEventService pendingEventService;
+	@RequestMapping("/list")
+	public String list(HttpServletRequest request){	
+		
+		//待办事件跳转
+	    String backMoneyCode = request.getParameter("backMoneyCode");
+		String pendingParamType = request.getParameter("pendingParamType");
+		if("1".equals(pendingParamType)){
+			request.getSession().setAttribute("backMoneyCode", backMoneyCode);
+			request.getSession().setAttribute("pendingParamType", pendingParamType);
+		}
+		
+		return "/backMoneyPlan/backMoneyPlan.jsp";
+	}
+	
+	//回款计划列表
+	@RequestMapping("/getBackMoneyPlanList")
+	@ResponseBody
+	public String getBackMoneyPlanList(HttpServletRequest request, HttpServletResponse response){
+		Map<String,Object> resultMap = new HashMap<String, Object>();
+		try{
+			String selectCondition = request.getParameter("selectCondition");
+			String condition = request.getParameter("condition");
+			String backMoneyStatus = request.getParameter("backMoneyStatus");
+			String startTime = request.getParameter("startTime");
+			String endTime = request.getParameter("endTime");
+			//数据域账号列
+			String userString="";
+			String userType=(String)request.getSession().getAttribute("userType");
+			byte roleType=(byte) request.getSession().getAttribute("roleType");
+			if(roleType==0){//业务员
+				//角色类型
+				//数据域
+				byte dataArea=(byte) request.getSession().getAttribute("dataArea");
+				
+				if(dataArea!=2){
+					List<String> userList=(List<String>)request.getSession().getAttribute("userList");
+					for(int i=0;i<userList.size();i++){
+						if(i==0){
+							userString="'"+userList.get(i)+"'";
+						}else{
+							userString=userString+",'"+userList.get(i)+"'";
+						}
+					}
+				}
+			}
+			//待办事件跳转
+			String pendingParamType = (String)request.getSession().getAttribute("pendingParamType");
+			if("1".equals(pendingParamType) && pendingParamType != null){
+				String backMoneyCode = (String)request.getSession().getAttribute("backMoneyCode");
+				selectCondition = "0";
+				condition = backMoneyCode;
+			}
+			BackMoneyPlanQueryBean queryBean = new BackMoneyPlanQueryBean();
+			queryBean.setBackMoneyStatus(backMoneyStatus);
+			queryBean.setCondition(condition);
+			queryBean.setEndTime(endTime);
+			queryBean.setSelectCondition(selectCondition);
+			queryBean.setStartTime(startTime);
+			queryBean.setUserString(userString);
+			
+			List<BackMoneyPlanVo> list = backMoneyPlanService.getBackMoneyPlanListByCondition(queryBean);
+			
+			resultMap.put("data", list);
+			resultMap.put("success", true);
+		}catch(Exception e){
+			e.printStackTrace();
+			resultMap.put("success", false);
+		}finally {
+			//待办事件跳转
+			request.getSession().removeAttribute("pendingParamType");
+			request.getSession().removeAttribute("backMoneyCode");
+		}
+		return JSON.toJSONStringWithDateFormat(resultMap, "yyyy-MM-dd HH:mm:ss");
+	}
+	
+	
+	//合同列表
+	@RequestMapping("/getContractList")
+	@ResponseBody
+	public String getContractList(HttpServletRequest request, HttpServletResponse response){
+		Map<String,Object> resultMap = new HashMap<String, Object>();
+		try{
+			String condition = request.getParameter("condition");
+			List<ContractDetailVo> list = backMoneyPlanService.getContractList(condition);
+			PageInfo<ContractDetailVo> pageInfo = new PageInfo<ContractDetailVo>(list);
+			resultMap.put("rows", pageInfo.getList());
+			resultMap.put("total", pageInfo.getTotal());
+			resultMap.put("success", true);
+		}catch(Exception e){
+			e.printStackTrace();
+			resultMap.put("success", false);
+		}
+		return JSON.toJSONStringWithDateFormat(resultMap, "yyyy-MM-dd HH:mm:ss");
+	}
+	
+	//合同详情
+	@RequestMapping("/getContractDetail")
+	@ResponseBody
+	public String getContractDetail(HttpServletRequest request, HttpServletResponse response){
+		Map<String,Object> resultMap = new HashMap<String, Object>();
+		try{
+			String contractCode = request.getParameter("contractCode");
+			ContractDetailVo contractVo = backMoneyPlanService.getContractDetail(contractCode);
+			resultMap.put("contractVo", contractVo);
+			resultMap.put("success", true);
+		}catch(Exception e){
+			logger.info("发送异常"+e.getMessage());
+			resultMap.put("success", false);
+		}
+		return JSON.toJSONString(resultMap);
+	}
+	
+	//新增回款计划页
+	@RequestMapping("/jumpToCreateBackMoneyPlan")
+	public String jumpToCreateBackMoneyPlan(HttpServletRequest request){
+		
+		String contractCode = request.getParameter("contractCode");
+		ContractDetailVo contractVo = backMoneyPlanService.getContractDetail(contractCode);
+		
+		request.setAttribute("contractVo", contractVo);
+		return "/backMoneyPlan/createBackMoneyPlan.jsp";
+	}
+	
+	//编辑回款计划页
+	@RequestMapping("/jumpToEditBackMoneyPlan")
+	public String jumpToEditBackMoneyPlan(HttpServletRequest request){
+		String contractCode = request.getParameter("contractCode");
+		String backMoneyPlanCode = request.getParameter("backMoneyPlanCode");
+		List<BackMoneyPlanPeriods> list = backMoneyPlanPeriodsService.getPeriodsListByPlanCode(backMoneyPlanCode);
+		ContractDetailVo contractVo = backMoneyPlanService.getContractDetail(contractCode);
+		request.setAttribute("contractVo", contractVo);
+		request.setAttribute("backMoneyPlanCode", backMoneyPlanCode);
+		request.setAttribute("list", list);
+		
+		return "/backMoneyPlan/editBackMoneyPlan.jsp";
+	}
+	
+	//审核计划页
+	@RequestMapping("/jumpToCheckBackMoneyPlan")
+	public String jumpToCheckBackMoneyPlan(HttpServletRequest request){
+		//合同code
+		String contractCode = request.getParameter("contractCode");
+		String backMoneyPlanCode = request.getParameter("backMoneyPlanCode");
+		//合同信息
+		ContractDetailVo contractVo = backMoneyPlanService.getContractDetail(contractCode);
+		List<BackMoneyPlanPeriods> list = backMoneyPlanPeriodsService.getPeriodsListByPlanCode(backMoneyPlanCode);
+		
+		request.setAttribute("list", list);
+		request.setAttribute("contractVo", contractVo);
+		request.setAttribute("backMoneyPlanCode", backMoneyPlanCode);
+		
+		return "/backMoneyPlan/checkBackMoneyPlan.jsp";
+	}
+	
+	//跳转计划详情页
+	@RequestMapping("/jumpToPlanDetail")
+	public String jumpToPlanDetail(HttpServletRequest request){
+		//合同code
+		String contractCode = request.getParameter("contractCode");
+		//收款计划code
+		String backMoneyPlanCode = request.getParameter("backMoneyPlanCode");
+		//合同信息
+		ContractDetailVo contractVo = backMoneyPlanService.getContractDetail(contractCode);
+		//回款计划信息
+		BackMoneyPlan backMoneyPlan = backMoneyPlanService.getBackMoneyPlanByCode(backMoneyPlanCode);
+		//角色类型
+		byte roleType=(byte) request.getSession().getAttribute("roleType");
+		request.setAttribute("roleType",roleType);
+		
+		request.setAttribute("createrName", backMoneyPlan.getCreaterName());
+		request.setAttribute("createTime", backMoneyPlan.getCreateTime());
+		request.setAttribute("contractVo", contractVo);
+		request.setAttribute("backMoneyPlanCode",backMoneyPlanCode);
+		List<String> listStatus = new ArrayList<String>();
+		String planStatus = "";
+		List<BackMoneyPlanPeriods> list = backMoneyPlanPeriodsService.getPeriodsListByPlanCode(backMoneyPlanCode);
+		if(list!=null&&list.size()>0){
+			for (BackMoneyPlanPeriods backMoneyPlanPeriods : list) {
+				/**TODO**/
+				//获取每个子计划状态
+				listStatus.add(backMoneyPlanPeriods.getStatus().toString());
+			}
+		}
+		boolean flag = true;
+		for (String status : listStatus) {
+			if(status.equals("0")){//子计划有一个为未还款
+				flag = false;
+			}
+		}
+		if(flag){
+			planStatus = "已收款";
+		}else{
+			planStatus = "待收款";
+		}
+		request.setAttribute("planStatus",planStatus);
+		
+		return "/backMoneyPlan/backMoneyPlanDetail.jsp";
+	}
+	
+	//跳转登记详情页
+	@RequestMapping("/jumpToPlanRegister")
+	public String jumpToPlanRegister(HttpServletRequest request){
+		//合同code
+		String contractCode = request.getParameter("contractCode");
+		//收款计划code
+		String backMoneyPlanCode = request.getParameter("backMoneyPlanCode");
+		//合同信息
+		ContractDetailVo contractVo = backMoneyPlanService.getContractDetail(contractCode);
+		//回款子计划列表
+		BackMoneyPlan backMoneyPlan = backMoneyPlanService.getBackMoneyPlanByCode(backMoneyPlanCode);
+		request.setAttribute("createrName", backMoneyPlan.getCreaterName());
+		request.setAttribute("createTime", backMoneyPlan.getCreateTime());
+		request.setAttribute("contractVo", contractVo);
+		request.setAttribute("contractCode", contractCode);
+		request.setAttribute("backMoneyPlanCode", backMoneyPlanCode);
+		List<String> listStatus = new ArrayList<String>();
+		String planStatus = "";
+		List<BackMoneyPlanPeriods> list = backMoneyPlanPeriodsService.getPeriodsListByPlanCode(backMoneyPlanCode);
+		if(list!=null&&list.size()>0){
+			for (BackMoneyPlanPeriods backMoneyPlanPeriods : list) {
+				//获取每个子计划状态
+				listStatus.add(backMoneyPlanPeriods.getStatus().toString());
+			}
+		}
+		boolean flag = true;
+		for (String status : listStatus) {
+			if(status.equals("0")){//子计划有一个为未还款
+				flag = false;
+			}
+		}
+		if(flag){
+			planStatus = "已收款";
+		}else{
+			planStatus = "待收款";
+		}
+		request.setAttribute("list", list);
+		request.setAttribute("planStatus",planStatus);
+		return "/backMoneyPlan/backMoneyPlanRegister.jsp";
+	}
+	
+	//提交回款计划
+	@RequestMapping(value="/saveBackMoneyPlan" )
+	@ResponseBody
+	public String saveBackMoneyPlan(HttpServletRequest request, HttpServletResponse response,@RequestBody List<BackMoneyPlanPeriods> planList){
+		Map<String,Object> resultMap = new HashMap<String, Object>();
+		HttpSession session = getSession();
+		try{
+			//{"planList":[{"type":"1","planBackTime":"2018-08-24","planBackMoney":"120000","remark":"123"}]}
+			String contractCode =  request.getParameter("contractCode");
+			
+			String userAccount = (String) session.getAttribute("userAccount");
+			String userName = (String) session.getAttribute("userName");
+			//根据合同名称查项目信息
+			Project project = proService.getByContractCode(contractCode);
+			//生成32位收款计划编号
+			String backMoneyPlanCode = UUIDGeneratorUtil.generateUUID();
+			BackMoneyPlan backMoneyPlan = new BackMoneyPlan();
+			backMoneyPlan.setId(UUIDGeneratorUtil.generateUUID());
+			backMoneyPlan.setBackMoneyPlanCode(backMoneyPlanCode);
+			backMoneyPlan.setContractCode(contractCode);
+			backMoneyPlan.setCreaterName(userName);
+			backMoneyPlan.setCreaterAccount(userAccount);
+			backMoneyPlan.setCreaterLevel("1");
+			backMoneyPlan.setCreateTime(new Date());
+			backMoneyPlan.setCheckStatus((short)0);
+			backMoneyPlanService.insertSelective(backMoneyPlan,planList);
+			
+			pendingEventService.createBackMoneyPendingEventByShenHe(project.getName(),project.getProductCode(),backMoneyPlanCode,
+					userAccount,userName);
+			pendingEventService.updateBackMoneyPendingEventByContractEnd(project.getProductCode());
+			resultMap.put("success", true);
+		}catch(Exception e){
+			e.printStackTrace();
+			resultMap.put("success", false);
+		}
+		return JSON.toJSONString(resultMap);
+	}
+	
+	//编辑回款计划
+	@RequestMapping("/editBackMoneyPlan")
+	@ResponseBody
+	public String editBackMoneyPlan(HttpServletRequest request, HttpServletResponse response,@RequestBody List<BackMoneyPlanPeriods> planList){
+		Map<String,Object> resultMap = new HashMap<String, Object>();
+		try{
+			for (BackMoneyPlanPeriods planPeriods : planList) {
+				BackMoneyPlanPeriods backMoneyPlanPeriods = backMoneyPlanPeriodsService.selectByPrimaryKey(planPeriods.getId());
+				if(backMoneyPlanPeriods!=null){//非空为更新
+					backMoneyPlanPeriods.setPlanBackMoney(planPeriods.getPlanBackMoney());
+					//SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+					backMoneyPlanPeriods.setPlanBackTime(planPeriods.getPlanBackTime());
+					backMoneyPlanPeriods.setRemark(planPeriods.getRemark());
+					backMoneyPlanPeriods.setType(planPeriods.getType());
+					backMoneyPlanPeriodsService.updateByPrimaryKeySelective(backMoneyPlanPeriods);
+				}else{//空为新建
+					backMoneyPlanPeriods = new BackMoneyPlanPeriods();
+					backMoneyPlanPeriods.setBackMoneyPlanCode(planPeriods.getBackMoneyPlanCode());
+					backMoneyPlanPeriods.setId(UUIDGeneratorUtil.generateUUID());
+					backMoneyPlanPeriods.setPlanBackMoney(planPeriods.getPlanBackMoney());
+					//SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+					backMoneyPlanPeriods.setPlanBackTime(planPeriods.getPlanBackTime());
+					backMoneyPlanPeriods.setRemark(planPeriods.getRemark());
+					backMoneyPlanPeriods.setType(planPeriods.getType());
+					backMoneyPlanPeriods.setStatus((short)0);
+					backMoneyPlanPeriodsService.insertSelective(backMoneyPlanPeriods);
+				}
+			}
+			resultMap.put("success", true);
+		}catch(Exception e){
+			e.printStackTrace();
+			resultMap.put("success", false);
+		}
+		return JSON.toJSONString(resultMap);
+	}
+	
+	//删除回款计划（逻辑删除）
+	@RequestMapping("/delBackMoneyPlan")
+	@ResponseBody
+	public String delBackMoneyPlan(HttpServletRequest request, HttpServletResponse response){
+		Map<String,Object> resultMap = new HashMap<String, Object>();
+		try{
+			String backMoneyPlanCode = request.getParameter("backMoneyPlanCode");
+			//回款计划 逻辑删除
+			BackMoneyPlan backMoneyPlan = backMoneyPlanService.getBackMoneyPlanByCode(backMoneyPlanCode);
+			backMoneyPlan.setCheckStatus((short)-1);
+			backMoneyPlanService.updateByPrimaryKeySelective(backMoneyPlan);
+			//子计划 物理删除
+			backMoneyPlanPeriodsService.deleteByCode(backMoneyPlanCode);
+			resultMap.put("success", true);
+		}catch(Exception e){
+			e.printStackTrace();
+			resultMap.put("success", false);
+		}
+		return JSON.toJSONString(resultMap);
+	}
+	
+	//审核
+	@RequestMapping("/checkerBackMoneyPlan")
+	@ResponseBody
+	public String checkerBackMoneyPlan(HttpServletRequest request, HttpServletResponse response){
+		Map<String,Object> resultMap = new HashMap<String, Object>();
+		HttpSession session = getSession();
+		try{
+			String type = request.getParameter("type");
+			String backMoneyPlanCode = request.getParameter("backMoneyPlanCode");
+			String userAccount = (String) session.getAttribute("userAccount");
+			String userName = (String) session.getAttribute("userName");
+			BackMoneyPlan backMoneyPlan = backMoneyPlanService.getBackMoneyPlanByCode(backMoneyPlanCode);
+			Project project = proService.getByContractCode(backMoneyPlan.getContractCode());
+			if(type.equals("1")){//审核通过
+				//back_money_plan表审核状态改为 “已审核”
+				backMoneyPlan.setCheckerAccount(userAccount);
+				backMoneyPlan.setCheckerName(userName);
+				backMoneyPlan.setCheckerTime(new Date());
+				backMoneyPlan.setCheckStatus((short)1);
+				backMoneyPlanService.updateByPrimaryKeySelective(backMoneyPlan);
+				//back_money_plan_periods表状态改为“待付款”
+				List<BackMoneyPlanPeriods> backList = backMoneyPlanPeriodsService.getPeriodsListByPlanCode(backMoneyPlanCode);
+				for (BackMoneyPlanPeriods backMoneyPlanPeriods : backList) {
+					backMoneyPlanPeriods.setStatus((short)0);
+					backMoneyPlanPeriodsService.updateByPrimaryKeySelective(backMoneyPlanPeriods);
+				}
+				pendingEventService.updateBackMoneyPendingEventByShenHe(project.getProductCode(),backMoneyPlanCode,1);
+				
+			}else if(type.equals("2")){//审核不通过
+				pendingEventService.updateBackMoneyPendingEventByShenHe(project.getProductCode(),backMoneyPlanCode,2);
+			}
+			
+			resultMap.put("success", true);
+		}catch(Exception e){
+			e.printStackTrace();
+			resultMap.put("success", false);
+		}
+		return JSON.toJSONString(resultMap);
+	}
+	
+	//撤回
+	@RequestMapping("/withdrawBackMoneyPlan")
+	@ResponseBody
+	public String withdrawBackMoneyPlan(HttpServletRequest request, HttpServletResponse response){
+		Map<String,Object> resultMap = new HashMap<String, Object>();
+		try{
+			String backMoneyPlanCode = request.getParameter("backMoneyPlanCode");
+			//back_money_plan表审核状态改为 “待审核”
+			BackMoneyPlan backMoneyPlan = backMoneyPlanService.getBackMoneyPlanByCode(backMoneyPlanCode);
+			backMoneyPlan.setCheckStatus((short)0);
+			backMoneyPlanService.updateByPrimaryKeySelective(backMoneyPlan);
+			//back_money_plan_periods表状态改为？
+			
+			Project project = proService.getByContractCode(backMoneyPlan.getContractCode());
+			pendingEventService.updateBackMoneyPendingEventByShenHe(project.getProductCode(),backMoneyPlanCode,6);
+			resultMap.put("success", true);
+		}catch(Exception e){
+			e.printStackTrace();
+			resultMap.put("success", false);
+		}
+		return JSON.toJSONString(resultMap);
+	}
+	
+	//计划详情
+	@RequestMapping("/getBackMoneyPlanDetail")
+	@ResponseBody
+	public String getBackMoneyPlanDetail(HttpServletRequest request, HttpServletResponse response){
+		Map<String,Object> resultMap = new HashMap<String, Object>();
+		try{
+			String backMoneyPlanCode = request.getParameter("backMoneyPlanCode");
+			
+			List<BackMoneyPlanPeriods> backList = backMoneyPlanPeriodsService.getPeriodsListByPlanCode(backMoneyPlanCode);
+			resultMap.put("backList", backList);
+			resultMap.put("success", true);
+		}catch(Exception e){
+			e.printStackTrace();
+			resultMap.put("success", false);
+		}
+		return JSON.toJSONStringWithDateFormat(resultMap, "yyyy-MM-dd");
+	}
+	
+	//登记回款/扣款
+	@RequestMapping("/enregisterMoney")
+	@ResponseBody
+	public String enregisterMoney(HttpServletRequest request, HttpServletResponse response){
+		Map<String,Object> resultMap = new HashMap<String, Object>();
+		HttpSession session = getSession();
+		String userAccount = (String) request.getSession().getAttribute("userAccount");
+		String userName = (String) request.getSession().getAttribute("userName");
+		UserDetailLoginVo userDetailLoginVo=(UserDetailLoginVo) request.getSession().getAttribute("userDetailVo");
+		try{
+			//1为回款，2为扣款
+			String type = request.getParameter("type");
+			//子计划ID
+			String id = request.getParameter("id");
+			//实际回款/扣款
+			String realMoney = request.getParameter("realMoney");
+			//审批意见
+			String realBackRemark = request.getParameter("realBackRemark");
+			//到账时间（回款）
+			String realBackTime = request.getParameter("realBackTime");
+			//合同code
+			String contractCode = request.getParameter("contractCode");
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			
+			BackMoneyPlanPeriods backMoneyPlanPeriods = backMoneyPlanPeriodsService.selectByPrimaryKey(id);
+			//1.3实际回款≠计划回款金额，
+			//到账时间≠计划回款时间；
+			//实际扣款≠计划扣款金额时，子计划状态更新为异常。
+			//需做项目判断，如项目为执行中转态，则流转到执行管理生产异常清单，由业务管理人员进行审批操作。如项目为执行完成状态，则不再生成执行清单。
+			Project project = proService.getByContractCode(contractCode);
+			if(Double.parseDouble(realMoney)!=backMoneyPlanPeriods.getPlanBackMoney() || !realBackTime.equals(sdf.format(backMoneyPlanPeriods.getPlanBackTime()))){
+				//回款异常，插入一条异常处理
+				backMoneyPlanPeriods.setStatus((short)2);
+				//判断项目是否在执行中
+				if(project.getActionStatus()!=2){//项目未执行完成  产生异常
+					ProjectActionException pae = new ProjectActionException();
+					pae.setId(UUIDGeneratorUtil.generateUUID());
+					pae.setProjectCode(project.getProductCode());
+					pae.setType((short) 2);
+					pae.setExceptionRemark(realBackRemark);
+					pae.setCreateTime(new Date());
+					pae.setDepartmentId(userDetailLoginVo.getDepartId());
+					pae.setDepartmentName(userDetailLoginVo.getDepartName());
+
+					pae.setBusinessType("0");
+					pae.setStatus((short) 0);
+					
+					pae.setCreaterAccount(userAccount);
+					pae.setCreaterName(userName);
+					projectActionExceptionService.insertMoneyException(pae);
+					//待办事件（异常）
+					pendingEventService.createBackMoneyPendingEventByMoneyException(project.getName(),project.getProductCode(),id,14,1);
+				}
+				
+			}else{
+				backMoneyPlanPeriods.setStatus((short)1);
+				//待办事件（已回款）
+				pendingEventService.updateBackMoneyPendingEventByTask(project.getProductCode(),id,0);
+				pendingEventService.updateBackMoneyPendingEventByActionException(project.getProductCode(),id);
+			}
+			
+			backMoneyPlanPeriods.setRealBackTime(sdf.parse(realBackTime));
+			backMoneyPlanPeriods.setRealBackMoney(Double.parseDouble(realMoney));
+			backMoneyPlanPeriods.setRealBackRemark(realBackRemark);
+			backMoneyPlanPeriods.setRegisterAccount(userAccount);
+			backMoneyPlanPeriods.setRegisterTime(new Date());
+			backMoneyPlanPeriodsService.updateByPrimaryKeySelective(backMoneyPlanPeriods);
+			
+			resultMap.put("success", true);
+		}catch(Exception e){
+			e.printStackTrace();
+			resultMap.put("success", false);
+		}
+		return JSON.toJSONString(resultMap);
+	}
+	
+	//全部到账
+	@RequestMapping("/allToAccount")
+	@ResponseBody
+	public String allToAccount(HttpServletRequest request, HttpServletResponse response){
+		Map<String,Object> resultMap = new HashMap<String, Object>();
+		try{
+			//到账的code
+			String backMoneyPlanCodes = request.getParameter("backMoneyPlanCodes");
+			String[] codes = backMoneyPlanCodes.split(",");
+			
+			for(int i = 0;i < codes.length;i++){
+				if(!codes[i].equals("")&&codes[i]!=null){
+					boolean flag = true;
+					List<BackMoneyPlanPeriods> backList = backMoneyPlanPeriodsService.getPeriodsListByPlanCode(codes[i]);
+					for (BackMoneyPlanPeriods periods : backList) {
+						if(periods.getStatus()!=1){//子计划全部为已收款才能进行“到账”
+							flag = false;
+						}
+					}
+					if(flag){//到账：结案管理改为已结案，回款计划改为已结案
+						CloseCaseInfo closeCaseInfo = closeCaseService.getCloseCaseForBackMoney(codes[i]);
+						if(closeCaseInfo!=null){
+							if(closeCaseInfo.getStatus()==7){//待结案
+								BackMoneyPlan backMoneyPlan = backMoneyPlanService.getBackMoneyPlanByCode(codes[i]);
+								backMoneyPlan.setCheckStatus((short)2);
+								backMoneyPlanService.updateByPrimaryKeySelective(backMoneyPlan);
+								closeCaseService.updateCloseCaseForBackMoney(codes[i]);
+							}
+						}else{
+							resultMap.put("title", "结案管理异常");
+						}
+					}else{
+						resultMap.put("title", "部分收款计划操作不成功");
+					}
+				}
+			}
+			
+			resultMap.put("success", true);
+		}catch(Exception e){
+			e.printStackTrace();
+			resultMap.put("success", false);
+		}
+		return JSON.toJSONString(resultMap);
+	}
+	
+	
+	
+	//导出
+	@RequestMapping(value ="/exportBackMoneyPlan")
+	public void exportBackMoneyPlan(HttpServletRequest request, HttpServletResponse response) {
+		//String projectCode = request.getParameter("projectCode");
+		//if(null!=projectCode&&!projectCode.equals("")) {   //判断ID是否为空
+			
+			//List<ProjectMenuVo>  projectProductList = projectProductService.findVoByProjectCode(projectCode);
+			List<BackMoneyPlanVo> backMoneyPlanList = backMoneyPlanService.getBackMoneyPlanList();
+			
+			if(backMoneyPlanList!=null&&backMoneyPlanList.size()>0) {
+				
+				HSSFWorkbook workbook = new HSSFWorkbook();
+				HSSFSheet sheet = workbook.createSheet("回款计划");			
+				/*################################表头部分设置START################################*/
+				// 表头字体设置
+				HSSFFont headerfont = workbook.createFont();
+				// 字体加粗 	
+				headerfont.setBoldweight(Font.BOLDWEIGHT_BOLD);  
+				
+				//表头style设置
+				HSSFCellStyle headerStyle = workbook.createCellStyle();
+				// 设置长文本自动换行
+				headerStyle.setFont(headerfont);
+				
+				//水平方向对齐
+				headerStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+				// 垂直方向的对齐方式
+				headerStyle.setVerticalAlignment(HSSFCellStyle.ALIGN_CENTER);
+				
+				//设置边框
+				headerStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+				headerStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
+				headerStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
+				headerStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+				
+				//设置背景颜色
+				headerStyle.setFillBackgroundColor(IndexedColors.LIGHT_CORNFLOWER_BLUE.getIndex());
+				/*################################表头部分设置END################################*/  
+				
+				/*################################普通单元格部分设置START################################*/
+				// 创建样式
+				HSSFFont commonfont = workbook.createFont();
+				HSSFCellStyle commonStyle = workbook.createCellStyle();
+				commonStyle.setWrapText(true);
+				commonStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER); // 水平居中    
+				commonStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);//垂直居中 
+				commonStyle.setFont(commonfont);
+				//水平方向对齐
+				commonStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+				//设置边框
+				commonStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+				commonStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
+				commonStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
+				commonStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+				/*################################普通单元格部分设置END################################*/
+				//生成第一行标题行
+				//XSSFRow fristHeadRow = sheet.createRow(0);
+				
+				//生成第一行表头行
+				String[] headers = {"收款计划ID","项目ID","合同ID","合同名称","客户名称","业务员","合同总金额","合同实收金额","合同未收金额","扣款金额","计划收款状态","子计划ID","计划收款日期","收款类型","回款款项属性","计划收款金额","实收金额","未收金额","收款状态"};
+				HSSFRow headerRow = sheet.createRow(0);
+				HSSFRichTextString text;
+			    for (int i = 0; i < headers.length; i++) {
+			    	HSSFCell cell = headerRow.createCell(i);
+			    	cell.setCellStyle(headerStyle);
+			    	text = new HSSFRichTextString(headers[i]);
+					cell.setCellValue(text);
+				}
+			    int rowNum = 1;
+			    SimpleDateFormat fmt1 = new SimpleDateFormat("yyyy年MM月dd日");
+			    SimpleDateFormat fmt2 = new SimpleDateFormat("yyyy年MM月dd日   HH:mm");
+			    for(BackMoneyPlanVo vo : backMoneyPlanList) {
+			    	//查询收款计划下的子计划
+			    	List<BackMoneyPlanPeriods> periodsList = backMoneyPlanPeriodsService.getPeriodsListByPlanCode(vo.getBackMoneyPlanCode());
+			    	
+			    		sheet.addMergedRegion(new CellRangeAddress(rowNum,rowNum+(periodsList.size()-1),0,0));
+			    		sheet.addMergedRegion(new CellRangeAddress(rowNum,rowNum+(periodsList.size()-1),1,1));
+			    		sheet.addMergedRegion(new CellRangeAddress(rowNum,rowNum+(periodsList.size()-1),2,2));
+			    		sheet.addMergedRegion(new CellRangeAddress(rowNum,rowNum+(periodsList.size()-1),3,3));
+			    		sheet.addMergedRegion(new CellRangeAddress(rowNum,rowNum+(periodsList.size()-1),4,4));
+			    		sheet.addMergedRegion(new CellRangeAddress(rowNum,rowNum+(periodsList.size()-1),5,5));
+			    		sheet.addMergedRegion(new CellRangeAddress(rowNum,rowNum+(periodsList.size()-1),6,6));
+			    		sheet.addMergedRegion(new CellRangeAddress(rowNum,rowNum+(periodsList.size()-1),7,7));
+			    		sheet.addMergedRegion(new CellRangeAddress(rowNum,rowNum+(periodsList.size()-1),8,8));
+			    		sheet.addMergedRegion(new CellRangeAddress(rowNum,rowNum+(periodsList.size()-1),9,9));
+			    		sheet.addMergedRegion(new CellRangeAddress(rowNum,rowNum+(periodsList.size()-1),10,10));
+			    		int row1 = 1;
+			    		for(BackMoneyPlanPeriods periods : periodsList) {
+			    			
+			    				int s=0;
+			    				HSSFRow row = sheet.createRow(rowNum++);
+			    				
+			    				//收款计划ID
+			    				HSSFCell cell = row.createCell(s++);
+			    				cell.setCellStyle(commonStyle);
+			    				cell.setCellValue(vo.getBackMoneyPlanCode());
+			    				//项目ID
+			    				cell = row.createCell(s++);
+			    				cell.setCellStyle(commonStyle);
+			    				cell.setCellValue(vo.getContractCode());
+			    				//合同ID
+			    				cell = row.createCell(s++);
+			    				cell.setCellStyle(commonStyle);
+			    				cell.setCellValue(vo.getProjectCode());
+			    				//合同名称
+			    				cell = row.createCell(s++);
+			    				cell.setCellStyle(commonStyle);
+			    				cell.setCellValue(vo.getContractName());
+			    				//客户名称
+			    				cell = row.createCell(s++);
+			    				cell.setCellStyle(commonStyle);
+			    				cell.setCellValue(vo.getCustomerName());
+			    				//业务员
+			    				cell = row.createCell(s++);
+			    				cell.setCellStyle(commonStyle);
+			    				cell.setCellValue(vo.getCreaterName());
+			    				//合同总金额
+			    				cell = row.createCell(s++);
+			    				cell.setCellStyle(commonStyle);
+			    				cell.setCellValue(vo.getMoney());
+			    				//合同实收金额
+			    				cell = row.createCell(s++);
+			    				cell.setCellStyle(commonStyle);
+			    				cell.setCellValue(vo.getCollectedMoney());
+			    				//合同未收金额
+			    				cell = row.createCell(s++);
+			    				cell.setCellStyle(commonStyle);
+			    				cell.setCellValue(vo.getUnCollectedMoney());
+			    				//扣款金额
+			    				cell = row.createCell(s++);
+			    				cell.setCellStyle(commonStyle);
+			    				cell.setCellValue(vo.getReduceMoney());
+			    				//计划收款状态
+			    				cell = row.createCell(s++);
+			    				cell.setCellStyle(commonStyle);
+			    				cell.setCellValue(vo.getPlanStatus());
+			    				//子计划ID
+			    				cell = row.createCell(s++);
+			    				cell.setCellStyle(commonStyle);
+			    				cell.setCellValue(periods.getId());
+			    				//计划收款日期
+			    				cell = row.createCell(s++);
+			    				cell.setCellStyle(commonStyle);
+			    				cell.setCellValue(fmt1.format(periods.getPlanBackTime()));
+			    				//收款类型
+			    				cell = row.createCell(s++);
+			    				cell.setCellStyle(commonStyle);
+			    				if(periods.getType()==1||periods.getType()==2){
+			    					cell.setCellValue("回款");
+			    				}else if(periods.getType()==3){
+			    					cell.setCellValue("扣款");
+			    				}
+			    				//回款款项属性
+			    				cell = row.createCell(s++);
+			    				cell.setCellStyle(commonStyle);
+			    				if(periods.getType()==1){
+			    					cell.setCellValue("进度款");
+			    				}else if(periods.getType()==2){
+			    					cell.setCellValue("结算款");
+			    				}else if(periods.getType()==3){
+			    					cell.setCellValue("扣款");
+			    				}
+			    				//计划收款金额
+			    				cell = row.createCell(s++);
+			    				cell.setCellStyle(commonStyle);
+			    				cell.setCellValue(periods.getPlanBackMoney());
+			    				//实收金额
+			    				cell = row.createCell(s++);
+			    				cell.setCellStyle(commonStyle);
+			    				if(periods.getRealBackMoney()==null){//未记录回款记录
+			    					cell.setCellValue(0.00);
+			    				}else{
+			    					cell.setCellValue(periods.getRealBackMoney());
+			    				}
+			    				//未收金额
+			    				cell = row.createCell(s++);
+			    				cell.setCellStyle(commonStyle);
+			    				if(periods.getRealBackMoney()==null){//未记录回款记录
+			    					cell.setCellValue(periods.getPlanBackMoney());
+			    				}else{
+			    					cell.setCellValue(vo.getMoney()-periods.getRealBackMoney());
+			    				}
+			    				//收款状态
+			    				cell = row.createCell(s++);
+			    				cell.setCellStyle(commonStyle);
+			    				if(periods.getStatus()==0){
+			    					cell.setCellValue("未回款");
+			    				}else if(periods.getStatus()==1){
+			    					cell.setCellValue("已回款");
+			    				}else if(periods.getStatus()==2){
+			    					cell.setCellValue("回款异常");
+			    				}
+			    		}
+			    	}
+			    
+			    for (int i = 0; i < headers.length; i++) {
+			    	sheet.autoSizeColumn(i);
+			    	if(sheet.getColumnWidth(i) < 20*256){
+			    		sheet.setColumnWidth(i, 20*256);
+			    	}
+				}
+			    ExportExcelUtil.downSpcialFile("收款计划.xls",workbook,request,response);
+			}
+		}
+
+	//}
+}

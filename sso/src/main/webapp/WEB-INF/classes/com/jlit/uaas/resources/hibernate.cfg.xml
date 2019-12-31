@@ -1,0 +1,15 @@
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+	"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+	<session-factory>
+		<property name="jdbc.batch_size">20</property>
+		<property name="format_sql">false</property>
+		<property name="show_sql">false</property>
+		<property name="hibernate.cache.region.factory_class">org.hibernate.cache.SingletonEhCacheRegionFactory</property>
+		<property name="cache.use_second_level_cache">true</property>
+		<property name="cache.use_query_cache">true</property>
+		<!-- 用户信息 -->
+		<mapping class="com.jlit.uaas.model.User"/>	
+	</session-factory>
+</hibernate-configuration>

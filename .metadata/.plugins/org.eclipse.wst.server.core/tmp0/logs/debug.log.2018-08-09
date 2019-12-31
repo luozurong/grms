@@ -1,0 +1,16 @@
+2018-08-09 08:43:34,974 INFO[com.alibaba.druid.pool.DruidDataSource:785] 
+ {dataSource-1} inited
+2018-08-09 08:43:37,377 INFO[org.hibernate.validator.internal.util.Version:30] 
+ HV000001: Hibernate Validator 5.2.4.Final
+2018-08-09 08:44:02,337 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ À¹½ØÆ÷À¹½Øurl:http://localhost:8080/grms/
+2018-08-09 08:55:58,177 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ À¹½ØÆ÷À¹½Øurl:http://127.0.0.1:8080/grms/
+2018-08-09 08:56:16,594 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ À¹½ØÆ÷À¹½Øurl:http://127.0.0.1:8080/grms/
+2018-08-09 08:56:21,085 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ À¹½ØÆ÷À¹½Øurl:http://127.0.0.1:8080/grms/nologin
+2018-08-09 08:56:21,635 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ À¹½ØÆ÷À¹½Øurl:http://127.0.0.1:8080/grms/
+2018-08-09 08:56:26,800 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ À¹½ØÆ÷À¹½Øurl:http://127.0.0.1:8080/grms/

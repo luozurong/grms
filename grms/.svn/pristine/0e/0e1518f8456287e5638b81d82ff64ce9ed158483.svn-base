@@ -1,0 +1,134 @@
+/**
+ * 
+ */
+package com.hori.grms.service.impl;
+
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import com.hori.grms.dao.ProjectMapper;
+import com.hori.grms.model.Project;
+import com.hori.grms.queryBean.ProjectQueryBean;
+import com.hori.grms.service.ProjectService;
+import com.hori.grms.vo.ProjectDetailsVo;
+import com.hori.grms.vo.project.ProjectVo;
+
+
+/**
+ * @ClassName: ProjectServiceImpl
+ * @Description: 项目
+ * @author zhuqiang
+ * @date 2018年8月8日 下午6:49:43
+ */
+@Service("projectService")
+public class ProjectServiceImpl implements ProjectService {
+
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+	@Autowired
+	private ProjectMapper projectMapper;
+
+	@Override
+	public List<Project> list(ProjectQueryBean projectQueryBean) {
+		return projectMapper.list(projectQueryBean);
+	}
+
+	@Override
+	public ProjectDetailsVo findProjectDetailsVoByID(String projectId) {
+		return projectMapper.findProjectDetailsVoByID(projectId);
+	}
+
+	@Override
+	public ProjectVo findProjectModel(String productCode) {
+		// TODO 待续.............
+		//1.查找项目信息  project
+		
+		//2. 项目联系人信息 project-people
+		
+		/**
+		 * product_menu
+		 * project_product_menu
+		 * project_product_menu_area
+		 */
+		//3.项目1-执行清单
+		
+		//3.项目2-执行清单
+		
+		//4.项目3-执行清单
+		
+		//5.项目4-执行清单
+		
+		//附件清单  attchments
+		return null;
+	}
+
+	@Override
+	public void revoke(String id) throws Exception {
+
+		// 撤回项目id不能为空
+		if (StringUtils.isEmpty(id)) {
+
+			throw new Exception("项目id参数不能为空！！");
+
+		}
+
+		Project project = projectMapper.selectByPrimaryKey(id);
+
+		if (null == project) {
+
+			throw new Exception("项目不存在！！");
+
+		}
+
+		if (project.getStatus() != 0) {
+
+			throw new Exception("项目状态为待审核的项目才能进行撤回操作！！");
+
+		}
+
+		projectMapper.revoke(id);
+
+	}
+
+	@Override
+	public void delet(String id) throws Exception {
+
+		// 要删除的项目id不能为空
+		if (StringUtils.isEmpty(id)) {
+
+			throw new Exception("项目id参数不能为空！！");
+
+		}
+
+		Project project = projectMapper.selectByPrimaryKey(id);
+
+		if (null == project) {
+
+			throw new Exception("项目不存在！！");
+
+		}
+
+		if (project.getStatus() != 2 && project.getStatus()!=3 && project.getStatus()!=4) {
+
+			throw new Exception("项目当前状态不允许进行删除操作！！");
+
+		}
+		
+		projectMapper.delet(id);
+	}
+
+	@Override
+	public void stopProject(String id) throws Exception {
+		
+	}
+
+	@Override
+	public int total(ProjectQueryBean projectQueryBean) {
+		
+		return projectMapper.total(projectQueryBean);
+	}
+}

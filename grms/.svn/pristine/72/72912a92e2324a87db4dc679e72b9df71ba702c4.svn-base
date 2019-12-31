@@ -1,0 +1,106 @@
+package com.hori.grms.queryBean;
+
+import java.util.Date;
+
+/**
+ * 执行清单queryBean
+ * @author hehj
+ * @datetime 2018年8月10日 上午10:16:45
+ */
+public class ProjectActionQueryBean {
+	// 项目名称
+	private String projectName;
+	// 执行开始时间(社区运营对应执行日期)
+	private Date startTime;
+	// 执行结束时间
+	private Date endTime;
+	// 项目状态
+	private int projectStatus;
+	// 项目异常状态
+	private int projectExceptionStatus;
+	// 小区地址：省
+	private String province;
+	// 小区地址：市
+	private String country;
+	// 小区地址：区/县
+	private String area;
+	// 小区名称
+	private String areaName;
+	// 执行状态
+	private int actionStatus;
+	// 执行清单id
+	private String actionCode;
+	public String getProjectName() {
+		return projectName;
+	}
+	public void setProjectName(String projectName) {
+		this.projectName = projectName;
+	}
+	public Date getStartTime() {
+		return startTime;
+	}
+	public void setStartTime(Date startTime) {
+		this.startTime = startTime;
+	}
+	public Date getEndTime() {
+		return endTime;
+	}
+	public void setEndTime(Date endTime) {
+		this.endTime = endTime;
+	}
+	public int getProjectStatus() {
+		return projectStatus;
+	}
+	public void setProjectStatus(int projectStatus) {
+		this.projectStatus = projectStatus;
+	}
+	public int getProjectExceptionStatus() {
+		return projectExceptionStatus;
+	}
+	public void setProjectExceptionStatus(int projectExceptionStatus) {
+		this.projectExceptionStatus = projectExceptionStatus;
+	}
+	public String getProvince() {
+		return province;
+	}
+	public void setProvince(String province) {
+		this.province = province;
+	}
+	public String getCountry() {
+		return country;
+	}
+	public void setCountry(String country) {
+		this.country = country;
+	}
+	public String getArea() {
+		return area;
+	}
+	public void setArea(String area) {
+		this.area = area;
+	}
+	public String getAreaName() {
+		return areaName;
+	}
+	public void setAreaName(String areaName) {
+		this.areaName = areaName;
+	}
+	public int getActionStatus() {
+		return actionStatus;
+	}
+	public void setActionStatus(int actionStatus) {
+		this.actionStatus = actionStatus;
+	}
+	public String getActionCode() {
+		return actionCode;
+	}
+	public void setActionCode(String actionCode) {
+		this.actionCode = actionCode;
+	}
+	@Override
+	public String toString() {
+		return "ProjectActionQueryBean [projectName=" + projectName + ", startTime=" + startTime + ", endTime="
+				+ endTime + ", projectStatus=" + projectStatus + ", projectExceptionStatus=" + projectExceptionStatus
+				+ ", province=" + province + ", country=" + country + ", area=" + area + ", areaName=" + areaName
+				+ ", actionStatus=" + actionStatus + ", actionCode=" + actionCode + "]";
+	}
+}

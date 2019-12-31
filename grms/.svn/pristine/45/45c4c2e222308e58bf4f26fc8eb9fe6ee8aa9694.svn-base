@@ -1,0 +1,139 @@
+/**
+ * 
+ */
+package com.hori.grms.service;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import com.hori.grms.model.Project;
+import com.hori.grms.queryBean.ProjectQueryBean;
+import com.hori.grms.vo.AreaDataRspVo.AreaData;
+import com.hori.grms.vo.ProjectDetailsVo;
+import com.hori.grms.vo.project.ProjectMenuVo;
+import com.hori.grms.vo.project.ProjectVo;
+
+
+/** 
+ * @ClassName: ProjectService 
+ * @Description: 项目
+ * @author zhuqiang
+ * @date 2018年8月8日 下午6:48:40 
+ */
+public interface ProjectService {
+	/**
+	 * 查询项目列表
+	 * @param projectQueryBean
+	 * @return
+	 */
+	List<Project> list(ProjectQueryBean projectQueryBean);
+	/**
+	 * 通过Code查询项目详情Vo
+	 * @param projectId
+	 * @return
+	 */
+	ProjectDetailsVo findProjectDetailsVoByProjectCode(String projectCode);	
+	
+	/**
+	 * 查询项目列表总数
+	 * @param projectQueryBean
+	 * @return
+	 */
+	int total(ProjectQueryBean projectQueryBean);
+
+	/**
+	 * 查找指定项目香关信息并封装
+	 * @param productCode
+	 * @return
+	 */
+	ProjectVo findProjectModel(String productCode);	
+	
+	/**
+	 * 撤回项目
+	 * @param productCode 项目编号
+	 * @param userName	操作人名称
+	 * @param userAccount	操作人帐号
+	 * @throws Exception 
+	 */
+	void revoke(String productCode,String userName,String userAccount) throws Exception;
+	
+	/**
+	 * 删除项目
+	 * @param productCode
+	 * @param userName	操作人名称
+	 * @param userAccount	操作人帐号
+	 */
+	void delet(String productCode,String userName,String userAccount) throws Exception;
+	
+	/**
+	 * 立项(项目)终止
+	 * @param productCode 项目编号
+	 * @param remark 立项终止意见
+	 * @param userName	操作人名称
+	 * @param userAccount	操作人帐号
+	 */
+	void stopProject(String productCode, String remark,String userName,String userAccount) throws Exception;
+	/**
+	 * 项目立项
+	 * @param projectVo
+	 * @param userAccount  用户账号
+	 * @param userName 用户姓名
+	 * @param departId 用户部门id
+	 * @param areaDatas  小区信息
+	 */
+	void saveProject(ProjectVo projectVo, String userAccount, String userName, String departId, Map<String, AreaData> areaDatas);	
+	
+	/**
+	 * 立项审核
+	 * @param productCode 项目编号
+	 * @param remark	审核意见
+	 * @param userName	操作人名称
+	 * @param userAccount	操作人帐号
+	 * @param examResult	审核结果
+	 * @param flag 状态，为1时检查资源是否被占用
+	 * @throws Exception
+	 */
+	void examProject(String productCode, String remark,String userName,String userAccount,short examResult) throws Exception;	
+	/**
+	 * 
+	 * @param productCode
+	 * @param examResult
+	 */
+	boolean examDate(String productCode,short examResult);	
+	/**
+	 * 根据项目编号获取
+	 * @param code
+	 * @return
+	 */
+	Project  getByCode(String code);
+	/**
+	 * @param projectMenuVos
+	 * @return
+	 */
+	boolean checkDate(List<ProjectMenuVo> projectMenuVos);
+	
+	/**
+	 * 立项时校验数据是否冲突
+	 * @param projectMenuVos  
+	 * @return 返回冲突的位置   key：1,2,3,4  List<String> 冲突位置名称
+	 */
+	Map<Integer,Set<String>> checkDateSave(List<ProjectMenuVo> projectMenuVos);
+
+	/**
+	 * 根据合同编号获取
+	 * @param contractCode
+	 * @return
+	 */
+	Project getByContractCode(String contractCode);
+
+	int update(Project project);
+	/**
+	 * 终止项目前校验
+	 * @param productCode
+	 * @return
+	 * @throws Exception 
+	 */
+	boolean stop(String productCode) throws Exception;
+
+}

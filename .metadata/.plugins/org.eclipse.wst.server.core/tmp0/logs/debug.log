@@ -1,0 +1,98 @@
+2018-08-15 09:25:53,768 INFO[com.alibaba.druid.pool.DruidDataSource:785] 
+ {dataSource-1} inited
+2018-08-15 09:25:56,399 INFO[com.alibaba.druid.pool.DruidDataSource:1514] 
+ {dataSource-1} closed
+2018-08-15 09:25:56,403 ERROR[org.springframework.web.context.ContextLoader:353] 
+ Context initialization failed
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'attachmentController' defined in file [E:\hlztCode\sanweiProject\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\grms\WEB-INF\classes\com\hori\grms\controller\AttachmentController.class]: Instantiation of bean failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.hori.grms.controller.AttachmentController]: Constructor threw exception; nested exception is java.lang.Error: Unresolved compilation problems: 
+	The import com.hori.grms.model.Attachment cannot be resolved
+	The import com.hori.grms.pageModel cannot be resolved
+	The import com.hori.grms.util.Result cannot be resolved
+	Json cannot be resolved to a type
+	Json cannot be resolved to a type
+	Attachment cannot be resolved to a type
+	Attachment cannot be resolved to a type
+	Attachment cannot be resolved to a type
+	Attachment cannot be resolved to a type
+	Json cannot be resolved to a type
+	Json cannot be resolved to a type
+	Attachment cannot be resolved to a type
+	Attachment cannot be resolved to a type
+	Attachment cannot be resolved to a type
+	Attachment cannot be resolved to a type
+	Attachment cannot be resolved to a type
+
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateBean(AbstractAutowireCapableBeanFactory.java:1105)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1050)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:510)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:482)
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject(AbstractBeanFactory.java:305)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:230)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:301)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:196)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:772)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:834)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:537)
+	at org.springframework.web.context.ContextLoader.configureAndRefreshWebApplicationContext(ContextLoader.java:446)
+	at org.springframework.web.context.ContextLoader.initWebApplicationContext(ContextLoader.java:328)
+	at org.springframework.web.context.ContextLoaderListener.contextInitialized(ContextLoaderListener.java:107)
+	at org.apache.catalina.core.StandardContext.listenerStart(StandardContext.java:4853)
+	at org.apache.catalina.core.StandardContext.startInternal(StandardContext.java:5314)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:145)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1407)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1397)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.hori.grms.controller.AttachmentController]: Constructor threw exception; nested exception is java.lang.Error: Unresolved compilation problems: 
+	The import com.hori.grms.model.Attachment cannot be resolved
+	The import com.hori.grms.pageModel cannot be resolved
+	The import com.hori.grms.util.Result cannot be resolved
+	Json cannot be resolved to a type
+	Json cannot be resolved to a type
+	Attachment cannot be resolved to a type
+	Attachment cannot be resolved to a type
+	Attachment cannot be resolved to a type
+	Attachment cannot be resolved to a type
+	Json cannot be resolved to a type
+	Json cannot be resolved to a type
+	Attachment cannot be resolved to a type
+	Attachment cannot be resolved to a type
+	Attachment cannot be resolved to a type
+	Attachment cannot be resolved to a type
+	Attachment cannot be resolved to a type
+
+	at org.springframework.beans.BeanUtils.instantiateClass(BeanUtils.java:163)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:89)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateBean(AbstractAutowireCapableBeanFactory.java:1098)
+	... 22 more
+Caused by: java.lang.Error: Unresolved compilation problems: 
+	The import com.hori.grms.model.Attachment cannot be resolved
+	The import com.hori.grms.pageModel cannot be resolved
+	The import com.hori.grms.util.Result cannot be resolved
+	Json cannot be resolved to a type
+	Json cannot be resolved to a type
+	Attachment cannot be resolved to a type
+	Attachment cannot be resolved to a type
+	Attachment cannot be resolved to a type
+	Attachment cannot be resolved to a type
+	Json cannot be resolved to a type
+	Json cannot be resolved to a type
+	Attachment cannot be resolved to a type
+	Attachment cannot be resolved to a type
+	Attachment cannot be resolved to a type
+	Attachment cannot be resolved to a type
+	Attachment cannot be resolved to a type
+
+	at com.hori.grms.controller.AttachmentController.<init>(AttachmentController.java:29)
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:62)
+	at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
+	at java.lang.reflect.Constructor.newInstance(Constructor.java:423)
+	at org.springframework.beans.BeanUtils.instantiateClass(BeanUtils.java:147)
+	... 24 more
+2018-08-15 09:29:31,183 INFO[com.alibaba.druid.pool.DruidDataSource:785] 
+ {dataSource-1} inited
+2018-08-15 09:29:34,909 INFO[org.hibernate.validator.internal.util.Version:30] 
+ HV000001: Hibernate Validator 5.2.4.Final

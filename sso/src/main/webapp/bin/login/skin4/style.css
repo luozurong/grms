@@ -1,0 +1,405 @@
+/* 
+* @Author: jie
+* @Date:   2015-10-23 16:33:39
+* @Last Modified time: 2015-10-26 13:59:16
+*/
+
+/****************login style***************/
+#main_div .login_main{
+    width: 100%;
+    height: 458px;
+    background: #0297fe url(../images/bg.png) center no-repeat;
+    padding-top: 70px;
+    margin-top: 0px;
+    
+}
+.login_main .login_con{
+    width: 390px;
+    height: 408px;
+    background: #fff;
+    margin: 0 auto;
+}
+.login_con h2{
+    height: 58px;
+    line-height: 57px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #222;
+    padding-left: 25px;
+    border-bottom: 1px solid #dcdcdc;
+}
+.login_con .lab_left{
+    display: inline-block;
+    width: 82px;
+    text-align: right;
+    color: #666;
+}
+.login_con{
+
+}
+.login_con .form_out{
+/*    padding-left: 35px;*/
+}
+.login_con .inp_div{
+    width: 100%;
+    margin: 40px 0px;
+}
+.login_con .inp{
+    width: 242px;
+    height: 38px;
+    border: 1px solid #dcdcdc;
+    margin-left: 10px;
+    padding-left: 10px;
+}
+.login_con .btn{
+    display: block;
+    width: 316px;
+    height: 40px;
+    line-height: 40px;
+    font-size: 16px;
+    font-family: "Microsoft Yahei";
+    color: #fff;
+    background: #0086ec;
+    margin: 0 auto;
+    border: none;
+    margin: 0 auto;
+    cursor: pointer;
+}
+.footer{
+    width: 100%;
+    color: #999;
+    background: #fff;
+    text-align: center;
+    padding-top: 38px;
+}
+.footer .foot_color{
+    color: #92c8e3;
+    padding-right: 15px;
+}
+
+/************patient_information style***********************/
+.contents{
+    width: 1185px;
+    background: #fff;
+    position: relative;
+    margin: 0 auto;
+    margin-top: 20px;
+    padding-bottom: 10px;
+}
+.contents h2{
+    font-size: 16px;
+    line-height: 58px;
+    color: #333;
+}
+.contents .chajian{
+	position: absolute;
+	
+	top:10px;
+	right:10px;
+}
+.contents a{
+  color: #168fe6;  
+}
+.contents h2 span{
+    display: inline-block;
+    width: 4px;
+    height: 17px;
+    background: #fd9828;
+    margin-right: 10px;
+    float: left;
+    margin-top: 20px;
+}
+.contents .basic_info{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+.contents .con_p,.contents .posi_p{
+    line-height: 35px;
+    padding-left: 20px;
+    color: #666;
+}
+.contents .con_p span lable{
+    display: inline-block;
+    width: 200px;
+}
+.contents .con_p span .lab_width{
+    display: inline-block;
+    width: 150px;
+}
+.contents .con_p span .lab_width_last{
+    width: 660px;
+}
+.contents .notice{
+    width: 170px;
+    height: 65px;
+    background: #e0e0e0;
+    line-height: 28px;
+    position: absolute;
+    top: 78px;
+    right: 20px;
+    color: #999;
+}
+.contents .notice img{
+    float: left;
+    margin: 18px 15px;
+}
+.contents .notice .p1{
+    font-size: 18px;
+    color: red;
+    margin-top: 5px;
+}
+.contents .notice .p2{
+    font-size: 18px;
+    color: orange;
+    margin-top: 5px;
+}
+.contents .notice .p3{
+    font-size: 18px;
+    color: yellow;
+    margin-top: 5px;
+}
+.contents .notice .p4{
+    font-size: 18px;
+    color: blue;
+    margin-top: 5px;
+}
+.pat_box{
+    padding-left: 20px;
+    margin-bottom: 25px;
+}
+.pat_box span{
+    display: inline-block;
+    width: 90px;
+    height: 44px;
+    line-height: 38px;
+    text-align: center;
+    margin-right: 5px;
+}
+.pat_box span.on{
+    background: url(../images/btn.png) 0 0 no-repeat;
+    color: #fff;
+}
+/*****/
+.table_bg thead,.hos_table thead,.table_out table thead{
+    background: #e4e4e4;
+    color: #333;
+    font-weight: bold;
+    
+}
+.table_bg thead tr td{
+    height: 60px;
+}
+thead tr td .color_two{
+    color: #646464;
+    font-weight: normal;
+}
+.table_bg tbody tr td{
+    height: 50px;
+}
+.table_bg{
+/*    width: 90%;*/
+
+}
+.table_bg td{
+    width: 14%;
+}
+.tr_width .td01{
+    width: 15%;
+}
+.tr_width .td02{
+    position: relative;
+    color: red;
+}
+.tr_width .td02 span{
+    display: inline-block;
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    background: url(../images/doc_sugge.png) 0 0 no-repeat;
+    right: 3px;
+    top: 10px;
+    color: #449cd0;
+    cursor: pointer;
+}
+.table_bg tbody tr .td01{
+    padding: 0px 5px;
+}
+.table_bg tbody tr .td01 p{
+    line-height: 28px;
+}
+.table_bg tbody tr .td01 .p2{
+    padding-left: 10px;
+}
+.td_posi{
+    position: relative;
+    background: url(../images/line2.png) center no-repeat;
+}
+.time{
+    position: absolute;
+    left: 30px;
+    bottom: 2px;
+}
+.itcast{
+    position: absolute;
+    right: 30px;
+    top: 2px;
+}
+/*****/
+.info_foot{
+    padding-top: 0px;
+    height: 50px;
+    margin-top:20px;
+    background: #2f353a;
+}
+.info_foot p{
+   
+    line-height: 50px;
+    display: inline-block;
+}
+.table_out table,.table_bg,.hos_table{
+    width: 1143px;
+    margin: 0 auto;
+    /*border: 1px solid #dadada;*/
+    text-align: center;
+    background: #dbdbdb;
+    border-collapse: separate;
+    border-spacing: 1px;
+}
+.table_out table tr,.hos_table tr{
+    background: #fff;
+}
+.table_out table thead tr,.hos_table thead tr{
+    background: #eee;
+    height: 60px;
+}
+.td_wid{
+    width: 30%;
+}
+.table_out table tbody td,.hos_table tbody td{
+    height: 40px;
+}
+.divContent{
+    /*width: 1185px;*/
+    /*margin: 0 auto;*/
+    text-align: center;
+    font-size: 14px;
+    color: #999;
+    background: #fff;
+    padding: 20px 0px 10px;
+}
+.divContent span, .divContent a{
+    display: inline-block;
+}
+.divContent span{
+    width: 68px;
+    height: 28px;
+    line-height: 28px;
+    padding-left: 15px;
+    background: #fff url(../images/ic_left.png) 10px center no-repeat;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.divContent a{
+    width: 28px;
+    height: 28px;
+    color: #999;
+    line-height: 28px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+.divContent a.aSelect{
+    width: 30px;
+    height: 30px;
+    background: #088cd7;
+    color: #fff;
+}
+/***********hospital information style*************/
+.con_return{
+    width: 1185px;
+    background: #fff;
+    margin: 0 auto;
+    margin-top: 20px;
+}
+.con_return a{
+    display: inline-block;
+    width: 68px;
+    line-height: 22px;
+    text-align: center;
+    color: #fff;
+    border: 1px solid #ccc;
+    margin: 15px;
+    margin-left: 20px;
+    background: #178fe6;
+}
+.contents dl dt{
+    float: left;
+}
+.contents dl dt img{
+    vertical-align: top;
+}
+.contents dl dd{
+    float: left;
+    padding-left: 25px;
+}
+.contents dl dd p{
+    line-height: 30px;
+    color: #999;
+}
+.conten_01{
+    width: 1170px;
+    padding-top: 10px;
+    overflow: hidden;
+    padding-left: 15px;
+}
+.contents .posi_p{
+    color: #000;
+    background: url(../images/circle.png) 0 14px no-repeat;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+.contents .posi_p lable{
+    color: #666;
+}
+.labout_div{
+    float: left;
+    padding-right: 10px;
+    padding-bottom: 12px;
+}
+.labout_div lable{
+    padding-right: 5px;
+}
+.labout_div input{
+    padding: 3px 0px;
+    padding-left: 8px;
+    border: 1px solid #ccc;
+}
+.labout_div .chaxun_btn{
+    border: none;
+    display: block;
+    width: 70px;
+    height: 26px;
+    /*line-height: 26px;*/
+    text-align: center;
+    background: #0086ec;
+    color: #fff;
+    padding: 0px;
+    margin: 0px;
+    border-radius: 4px;
+}
+/*********patient_information style*******************/
+.patient_ul01,.patient_ul02,.patient_ul03{
+    padding-left: 20px;
+}
+.patient_ul01 li,.patient_ul03 li{
+    width: 30%;
+    line-height: 30px;
+    float: left;
+}
+.patient_ul02 li{
+    line-height: 30px;
+}
+.patient_ul03 .ul03_li02{
+    width: 50%;
+}

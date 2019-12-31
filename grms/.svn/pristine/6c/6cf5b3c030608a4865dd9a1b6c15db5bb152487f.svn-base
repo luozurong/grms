@@ -1,0 +1,151 @@
+var win = $("#roleWin");//区别弹窗里的树
+var ums_server_url = "http://127.0.0.1:8090/ums";
+
+
+$(function(){
+
+	$(".department-choose span").click(function(){
+		if($(this).hasClass("department-choose-active")){
+			$(this).removeClass("department-choose-active");
+		}else{
+			$(this).addClass("department-choose-active");
+		}
+	})
+
+	//roleWin();
+});
+
+/*地区树*/
+function roleWin(obj,index){
+    var title = "";
+    addbutton();
+    var dataId = $(obj).attr("data-id");
+    var checkedItems=new Array() ;
+    title = "详情";
+    var checkedItem = $('#dg').datagrid('getData').rows[index];
+    checkedItems[0]=checkedItem;
+    $(".the-bottom").hide();
+    $(".detail-wrap").css("height","439px");
+    initTreeArea('','','',checkedItems[0].userId,'detail');  
+
+    wrapMaskShow();//父级遮罩显示
+    $('body').css('overflow','hidden');//禁止滚动
+    $('#roleWin').window({
+        width:580,
+        height:500,
+        modal:true,
+        collapsible:false,
+        minimizable:false,
+        maximizable:false,
+        closable:true,
+        draggable:false,
+        resizable:false,
+        inline:false,
+        title:title,
+        //ok:"删除",
+        //cancel:"取消",
+        onClose : function(){
+            wrapMaskHide();//父级遮罩隐藏
+            $('body').css('overflow','auto');//恢复滚动
+        }
+    });
+    winHiSelfAdaptation($('#roleWin'));//弹窗定位
+    $('.quxiao').click(function(){
+        $('#roleWin').window('close');
+    	$('#button').remove();
+
+    })
+
+    $('.comfirm').click(function(){
+    	if(dataId != 1){
+    		confirmData1(checkedItems);
+    	}
+        $('#roleWin').window('close');
+    	$('#button').remove();
+    })
+
+
+
+}
+
+
+//分配区域
+function initTreeArea(parentId,target,layer,userId,status){
+	 $.ajax({  
+         type : "POST",  //提交方式  
+         url : ums_server_url+"areaManagementAction!getSystemArea.html",//路径  
+ 		 data:{"id":parentId,"layer":layer,"userId":userId,"status":status},
+ 		 beforeSend: function () {
+           showShade(true , "耗时操作，数据加载中");
+        	},
+         dataType : "json",//数据，这里使用的是Json格式进行传输  
+         success : function(result) {//返回数据根据结果进行相应的处理  
+        	   if ( result.success) {  
+               	var treejson;
+               	treejson=result.obj.menuPro;
+               	if(parentId==''){
+                 	append2(treejson);
+                   	initdataList(result.obj.authorizeArea);
+
+            	 }else{
+            		 $('#box2').tree('append', {
+            				parent: target,
+            				data:treejson
+            		 })
+
+            	 }
+               showShade(false , "耗时操作，数据加载中");
+
+               } else {       	
+               }     
+         }  
+     }); 
+	
+}
+
+
+
+function addbutton(){
+    $('#roleWin').append('<div id="button" class="the-bottom clearfix" ><span class="quxiao fl" >取消</span><span class="comfirm fl" >保存</span></div>');
+
+}
+
+
+
+//确定
+function saveData(){
+	var departmentName = $("#departmentName").text();
+	var departmentId = $("#departmentId").val();
+	var businessType = "1";
+	var province = "";
+	var provinceName = "";
+	var city = "";
+	var cityName = "";
+	$.ajax({
+		type:"POST",
+		url:"/grms/departmentBusiness/save",
+		data:{"departmentId":departmentId,"departmentName":departmentName,"businessType":businessType,"province":province,"provinceName":provinceName,
+				"city":city,"cityName":cityName},
+		dataType:"json",
+		success:function(result){
+			if(result.success){
+				alert("创建成功");
+			}else{
+				alert("创建失败");
+			}
+		}
+	})
+		
+	
+}
+
+
+//取消
+function cancel(){
+	window.history.go(-1);
+}
+
+
+
+
+

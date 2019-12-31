@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hori.grms.dao.BackMoneyPlanPeriodsMapper" >
+  <resultMap id="BaseResultMap" type="com.hori.grms.model.BackMoneyPlanPeriods" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="back_money_plan_code" property="backMoneyPlanCode" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="SMALLINT" />
+    <result column="plan_back_time" property="planBackTime" jdbcType="TIMESTAMP" />
+    <result column="plan_back_money" property="planBackMoney" jdbcType="DECIMAL" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="real_back_money" property="realBackMoney" jdbcType="DECIMAL" />
+    <result column="real_back_time" property="realBackTime" jdbcType="TIMESTAMP" />
+    <result column="real_back_remark" property="realBackRemark" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="SMALLINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, back_money_plan_code, type, plan_back_time, plan_back_money, remark, real_back_money, 
+    real_back_time, real_back_remark, status
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from back_money_plan_periods
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="getPeriodsListByPlanCode" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from back_money_plan_periods
+    where back_money_plan_code = #{backMoneyPlanCode,jdbcType=VARCHAR}
+  </select>
+  
+  
+  <delete id="deleteByCode" parameterType="java.lang.String" >
+    delete from back_money_plan_periods
+    where back_money_plan_code = #{backMoneyPlanCode,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insertSelective" parameterType="com.hori.grms.model.BackMoneyPlanPeriods" >
+    insert into back_money_plan_periods
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="backMoneyPlanCode != null" >
+        back_money_plan_code,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="planBackTime != null" >
+        plan_back_time,
+      </if>
+      <if test="planBackMoney != null" >
+        plan_back_money,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="realBackMoney != null" >
+        real_back_money,
+      </if>
+      <if test="realBackTime != null" >
+        real_back_time,
+      </if>
+      <if test="realBackRemark != null" >
+        real_back_remark,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="backMoneyPlanCode != null" >
+        #{backMoneyPlanCode,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=SMALLINT},
+      </if>
+      <if test="planBackTime != null" >
+        #{planBackTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="planBackMoney != null" >
+        #{planBackMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="realBackMoney != null" >
+        #{realBackMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="realBackTime != null" >
+        #{realBackTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="realBackRemark != null" >
+        #{realBackRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=SMALLINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.hori.grms.model.BackMoneyPlanPeriods" >
+    update back_money_plan_periods
+    <set >
+      <if test="backMoneyPlanCode != null" >
+        back_money_plan_code = #{backMoneyPlanCode,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=SMALLINT},
+      </if>
+      <if test="planBackTime != null" >
+        plan_back_time = #{planBackTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="planBackMoney != null" >
+        plan_back_money = #{planBackMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="realBackMoney != null" >
+        real_back_money = #{realBackMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="realBackTime != null" >
+        real_back_time = #{realBackTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="realBackRemark != null" >
+        real_back_remark = #{realBackRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=SMALLINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

@@ -1,0 +1,329 @@
+var dataStatus = null;
+var pageNoAll='1';
+var pageSizeAll='10';
+var mapButton = {};
+$(function(){
+	//初始化项目状态选择值
+	dataStatus = -2;
+	
+	//格式化时间
+    $(".datebox-1").datebox({
+        value : '',
+        editable : false,
+        onSelect : function(startDate){
+            $('.datebox-2').datebox('calendar').calendar({
+                validator: function(date){
+                    return startDate<=date;//<=
+                }
+            });
+        }
+    });
+    //格式化时间
+    $(".datebox-2").datebox({
+        value : '',
+        editable : false,
+        onSelect : function(endDate){
+            $('.datebox-1').datebox('calendar').calendar({
+                validator: function(date){
+                    return endDate>=date;//<=
+                }
+            });
+        }
+    });
+    initButton();
+    selectAll();
+	
+	
+})
+
+function initButton(){
+	//
+
+	mapButton['select'] = 1;
+
+	var menuUrl="/grms/pendingEvent/pendingEventList.html";
+    $.ajax({  
+        type : "POST",  //提交方式  
+        url : "/ums/initButtonAction!initMenuButton.html",//路径  
+        data:{"menuUrl":menuUrl},
+        dataType : "json",//数据，这里使用的是Json格式进行传输  
+        success : function(result) {//返回数据根据结果进行相应的处理  
+            if ( result.success) {
+            	
+            	//比较需要隐藏的按钮
+            	var buttonObject= result.obj;
+            	var admin=result.msg;
+            	if(admin!="admin"){
+            	var temp=1;
+            	for(var prop in mapButton){
+            		temp=1;
+            		for(var j=0;j<buttonObject.length;j++){
+            			if(prop==buttonObject[j].resourceCode){
+            				temp=0;
+            				break;
+            				}
+            			}
+            			if(temp==1){
+            				mapButton[prop]=0;
+            			}
+            		}
+              	if(mapButton['select']==0){
+              		$("#select").hide();
+              	}
+            }else{
+            	userType=0;
+            }
+              //refreshall();
+            } else {  
+            	
+            }  
+        }  
+    }); 
+    
+}
+
+function selectAll(){
+	pageNoAll='1';
+	  $('#pp').pagination({
+	        pageNumber:1
+	     
+	    });
+	  search('','');
+}
+
+//查询数据
+function search(pageSize,pageNo){
+	var key=$('#key').val();
+	var startDate= $(".datebox-1").datebox('getValue');
+	var endDate=$(".datebox-2").datebox('getValue');
+	
+	pageNo=pageNoAll;
+	pageSize=pageSizeAll;
+	var pendingEventQueryBean='{"key":"'+key+'","startDate":"'+startDate+'","endDate":"'+endDate
+	+'","pageNumber":"'+pageNo+'","pageSize":"'+pageSize+'"}';
+	
+    $.ajax({  
+        type : "POST",  //提交方式  
+        url : "/grms/pendingEvent/getListData.html",//路径  
+        dataType : "json",//数据，这里使用的是Json格式进行传输  
+        data:  {"pendingEventQueryBean":pendingEventQueryBean},  
+        success : function(result) {//返回数据根据结果进行相应的处理  
+            if ( result.success) {  
+            	var data2=result.rows;
+            	var total=result.total;
+            	refresh(data2);
+            	paginationpage(total,data2);
+            	
+            	
+            } else {  
+            	
+            }  
+        }  
+    }); 
+}
+
+//刷新表格数据
+function refresh(data){
+//	表格数据渲染
+    $('#dg').datagrid({
+        border:true,
+        scrollbarSize:0,
+        nowrap:false,//允许换行
+        data:data,
+        emptyMsg:'<span>无记录</span>',
+        onLoadSuccess:function(){ //dom操作
+            $('#dg').datagrid('resize');
+        },
+        columns:[[
+            {
+                field:'projectName',
+                title:'项目名称',
+                width:200,
+                align:'left',
+                formatter: function(value,row,index){
+                 	return '<a href=\'' + row.url+ '\'" >' + value+ '</a>'	
+                }
+            },
+            {
+                field:'modelName',
+                title:'模块',
+                width:280,
+                align:'left'
+            },
+            {
+                field:'status',
+                title:'状态',
+                width:220,
+                align:'left',
+                formatter: function(value,row,index){
+                	if(row.modelName == "项目管理"){
+                		if(value==0){
+                    		return "待审批";
+                    	}else if(value==1){
+                    		return "审批通过";
+                    	}else if(value==2){
+                    		return "审批不通过";
+                    	}else if(value==3){
+                    		return "立项终止";
+                    	}else if(value==4){
+                    		return "撤回";
+                    	}
+                	}else if(row.modelName == "合同管理"){
+                		if(value==1){
+                    		return "未提交";
+                    	}else if(value==2){
+                    		return "待审核";
+                    	}else if(value==3){
+                    		return "待审核";
+                    	}else if(value==4){
+                    		return "待审核";
+                    	}else if(value==5){
+                    		return "审核通过";
+                    	}else if(value==6){
+                    		return "审核不通过";
+                    	}else if(value==7){
+                    		return "已完成";
+                    	}
+                	}else if(row.modelName == "执行管理"){
+                		if(value==1){
+                    		return "置换场地";
+                    	}else if(value==2){
+                    		return "扣款";
+                    	}else if(value==3){
+                    		return "继续";
+                    	}else if(value==4){
+                    		return "暂停";
+                    	}else if(value==5){
+                    		return "恢复";
+                    	}else if(value==6){
+                    		return "终止";
+                    	}else if(value==7){
+                    		return "待确认";
+                    	}else if(value==8){
+                    		return "策划中";
+                    	}else if(value==9){
+                    		return "未执行";
+                    	}else if(value==10){
+                    		return "执行中";
+                    	}else if(value==11){
+                    		return "已完成";
+                    	}else if(value==12){
+                    		return "正常";
+                    	}else if(value==13){
+                    		return "执行异常";
+                    	}else if(value==14){
+                    		return "付款异常";
+                    	}
+                	}else if(row.modelName == "收款管理"){
+                		if(value==0){
+                    		return "待审核";
+                    	}else if(value==1){
+                    		return "已审核";
+                    	}else if(value==2){
+                    		return "审核不通过";
+                    	}else if(value==3){
+                    		return "登记中-代收款";
+                    	}else if(value==4){
+                    		return "登记中-异常";
+                    	}else if(value==5){
+                    		return "登记中-已付款";
+                    	}else if(value==6){
+                    		return "扣款";
+                    	}else if(value==7){
+                    		return "待新建收款计划";
+                    	}else if(value==9){
+                    		return "待结案";
+                    	}
+                	}else if(row.modelName == "结案管理"){
+                		if(value==1){
+                    		return "待提交";
+                    	}else if(value==2){
+                    		return "待提交";
+                    	}else if(value==3){
+                    		return "待提交";
+                    	}else if(value==4){
+                    		return "待提交";
+                    	}else if(value==5){
+                    		return "已提交";
+                    	}else if(value==6){
+                    		return "待处理";
+                    	}else if(value==7){
+                    		return "待结案";
+                    	}else if(value==8){
+                    		return "已结案";
+                    	}
+                	}
+                	
+                }
+            },
+            {
+                field:'creatorName',
+                title:'业务员',
+                width:190,
+                align:'left'
+            },
+            {
+                field:'createTime',
+                title:'发起时间',
+                width:190,
+                align:'left',
+                formatter: formatDatebox
+
+            }
+        ]]
+    });
+}
+
+function paginationpage(total,data2){
+//  分页
+    $('#pp').pagination({
+        total:total,
+        layout:['list','first','prev','links','next','last','manual'],
+        emptyMsg: '<span>无记录</span>',
+        showRefresh:true,
+        displayMsg:' ',
+        pageList:[10,20,30],
+        onSelectPage:function (pageNo, pageSize) {
+        	pageNoAll=pageNo;
+        	pageSizeAll=pageSize;
+        	search('','')
+        }
+    });
+    $(".pagination-page-list").parent().append("条");
+    $(".pagination-page-list").parent().prepend("共计"+total+"条,每页显示： ");
+
+}
+
+
+Date.prototype.format = function (format) {
+    var o = {
+        "M+": this.getMonth() + 1, // month
+        "d+": this.getDate(), // day
+        "h+": this.getHours(), // hour
+        "m+": this.getMinutes(), // minute
+        "s+": this.getSeconds(), // second
+        "q+": Math.floor((this.getMonth() + 3) / 3), // quarter
+        "S": this.getMilliseconds()
+        // millisecond
+    }
+    if (/(y+)/.test(format))
+        format = format.replace(RegExp.$1, (this.getFullYear() + "")
+            .substr(4 - RegExp.$1.length));
+    for (var k in o)
+        if (new RegExp("(" + k + ")").test(format))
+            format = format.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k] : ("00" + o[k]).substr(("" + o[k]).length));
+    return format;
+}
+function formatDatebox(value) {
+    if (value == null || value == '') {
+        return '';
+    }
+    var dt;
+    if (value instanceof Date) {
+        dt = value;
+    } else {
+        dt = new Date(value);
+    }
+ 
+    return dt.format("yyyy-MM-dd hh:mm:ss"); //扩展的Date的format方法(上述插件实现)
+}

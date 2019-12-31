@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hori.grms.dao.ProjectProductMapper" >
+    <resultMap id="BaseResultMap" type="com.hori.grms.model.ProjectProduct" >
+        <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="project_code" property="projectCode" jdbcType="VARCHAR" />
+        <result column="business_type" property="businessType" jdbcType="VARCHAR" />
+        <result column="begin_time" property="beginTime" jdbcType="TIMESTAMP" />
+        <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+        <result column="area_name" property="areaName" jdbcType="VARCHAR" />
+        <result column="organization_seq" property="organizationSeq" jdbcType="VARCHAR" />
+        <result column="province" property="province" jdbcType="VARCHAR" />
+        <result column="province_name" property="provinceName" jdbcType="VARCHAR" />
+        <result column="city" property="city" jdbcType="VARCHAR" />
+        <result column="city_name" property="cityName" jdbcType="VARCHAR" />
+        <result column="country" property="country" jdbcType="VARCHAR" />
+        <result column="country_name" property="countryName" jdbcType="VARCHAR" />
+        <result column="area_address" property="areaAddress" jdbcType="VARCHAR" />
+        <result column="field_name" property="fieldName" jdbcType="VARCHAR" />
+        <result column="is_distribution_field" property="isDistributionField" jdbcType="INTEGER" />
+        <result column="is_distribution_time" property="isDistributionTime" jdbcType="INTEGER" />
+        <result column="field_exchange_time" property="fieldExchangeTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+    
+	<!--通过项目编码查询资料清单VO start  -->
+	<resultMap id="ProjectMenuVoResultMap" type="com.hori.grms.vo.project.ProjectMenuVo" >
+        <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="business_type" property="businessType" jdbcType="VARCHAR" />
+        <result column="area_name" property="areaName" jdbcType="VARCHAR" />
+        <result column="organization_seq" property="organizationSeq" jdbcType="VARCHAR" />
+        <result column="field_name" property="fieldName" jdbcType="VARCHAR" />
+        <result column="begin_time" property="beginTime" jdbcType="TIMESTAMP" />
+        <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+        
+    </resultMap>
+	
+	<select id="findVoByProjectCode" resultMap="ProjectMenuVoResultMap" parameterType="java.lang.String" >
+        select id ,business_type,area_name,organization_seq,  field_name,begin_time,end_time from project_product
+        where project_code = #{projectCode,jdbcType=VARCHAR}
+    </select>
+	<!--通过项目编码查询资料清单VO end  -->
+	
+	<!-- 通过项目编号删除 -->
+	<delete id="deleteByProjectCode">
+	   delete from project_product where project_code=#{productCode}
+	</delete>
+	
+    <sql id="Example_Where_Clause" >
+        <where >
+            <foreach collection="oredCriteria" item="criteria" separator="or" >
+                <if test="criteria.valid" >
+                    <trim prefix="(" suffix=")" prefixOverrides="and" >
+                        <foreach collection="criteria.criteria" item="criterion" >
+                            <choose >
+                                <when test="criterion.noValue" >
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue" >
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue" >
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue" >
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+
+    <sql id="Update_By_Example_Where_Clause" >
+        <where >
+            <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+                <if test="criteria.valid" >
+                    <trim prefix="(" suffix=")" prefixOverrides="and" >
+                        <foreach collection="criteria.criteria" item="criterion" >
+                            <choose >
+                                <when test="criterion.noValue" >
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue" >
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue" >
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue" >
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+
+    <sql id="Base_Column_List" >
+        id, project_code, business_type, begin_time, end_time, area_name, organization_seq, 
+        province, province_name, city, city_name, country, country_name, area_address, field_name, 
+        is_distribution_field, is_distribution_time, field_exchange_time
+    </sql>
+
+    <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.hori.grms.model.ProjectProductExample" >
+        select
+        <if test="distinct" >
+            distinct
+        </if>
+        'true' as QUERYID,
+        <include refid="Base_Column_List" />
+        from project_product
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+        <if test="orderByClause != null" >
+            order by ${orderByClause}
+        </if>
+    </select>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+        select 
+        <include refid="Base_Column_List" />
+        from project_product
+        where id = #{id,jdbcType=VARCHAR}
+    </select>
+
+    <insert id="insert" parameterType="com.hori.grms.model.ProjectProduct" >
+        insert into project_product (id, project_code, business_type, 
+            begin_time, end_time, area_name, 
+            organization_seq, province, province_name, 
+            city, city_name, country, 
+            country_name, area_address, field_name, 
+            is_distribution_field, is_distribution_time, 
+            field_exchange_time)
+        values (#{id,jdbcType=VARCHAR}, #{projectCode,jdbcType=VARCHAR}, #{businessType,jdbcType=VARCHAR}, 
+            #{beginTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, #{areaName,jdbcType=VARCHAR}, 
+            #{organizationSeq,jdbcType=VARCHAR}, #{province,jdbcType=VARCHAR}, #{provinceName,jdbcType=VARCHAR}, 
+            #{city,jdbcType=VARCHAR}, #{cityName,jdbcType=VARCHAR}, #{country,jdbcType=VARCHAR}, 
+            #{countryName,jdbcType=VARCHAR}, #{areaAddress,jdbcType=VARCHAR}, #{fieldName,jdbcType=VARCHAR}, 
+            #{isDistributionField,jdbcType=INTEGER}, #{isDistributionTime,jdbcType=INTEGER}, 
+            #{fieldExchangeTime,jdbcType=TIMESTAMP})
+    </insert>
+
+    <select id="countByExample" parameterType="com.hori.grms.model.ProjectProductExample" resultType="java.lang.Integer" >
+        select count(*) from project_product
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+    </select>
+
+    <update id="updateByExampleSelective" parameterType="map" >
+        update project_product
+        <set >
+            <if test="record.id != null" >
+                id = #{record.id,jdbcType=VARCHAR},
+            </if>
+            <if test="record.projectCode != null" >
+                project_code = #{record.projectCode,jdbcType=VARCHAR},
+            </if>
+            <if test="record.businessType != null" >
+                business_type = #{record.businessType,jdbcType=VARCHAR},
+            </if>
+            <if test="record.beginTime != null" >
+                begin_time = #{record.beginTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.endTime != null" >
+                end_time = #{record.endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.areaName != null" >
+                area_name = #{record.areaName,jdbcType=VARCHAR},
+            </if>
+            <if test="record.organizationSeq != null" >
+                organization_seq = #{record.organizationSeq,jdbcType=VARCHAR},
+            </if>
+            <if test="record.province != null" >
+                province = #{record.province,jdbcType=VARCHAR},
+            </if>
+            <if test="record.provinceName != null" >
+                province_name = #{record.provinceName,jdbcType=VARCHAR},
+            </if>
+            <if test="record.city != null" >
+                city = #{record.city,jdbcType=VARCHAR},
+            </if>
+            <if test="record.cityName != null" >
+                city_name = #{record.cityName,jdbcType=VARCHAR},
+            </if>
+            <if test="record.country != null" >
+                country = #{record.country,jdbcType=VARCHAR},
+            </if>
+            <if test="record.countryName != null" >
+                country_name = #{record.countryName,jdbcType=VARCHAR},
+            </if>
+            <if test="record.areaAddress != null" >
+                area_address = #{record.areaAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="record.fieldName != null" >
+                field_name = #{record.fieldName,jdbcType=VARCHAR},
+            </if>
+            <if test="record.isDistributionField != null" >
+                is_distribution_field = #{record.isDistributionField,jdbcType=INTEGER},
+            </if>
+            <if test="record.isDistributionTime != null" >
+                is_distribution_time = #{record.isDistributionTime,jdbcType=INTEGER},
+            </if>
+            <if test="record.fieldExchangeTime != null" >
+                field_exchange_time = #{record.fieldExchangeTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        <if test="_parameter != null" >
+            <include refid="Update_By_Example_Where_Clause" />
+        </if>
+    </update>
+
+    <update id="updateByExample" parameterType="map" >
+        update project_product
+        set id = #{record.id,jdbcType=VARCHAR},
+            project_code = #{record.projectCode,jdbcType=VARCHAR},
+            business_type = #{record.businessType,jdbcType=VARCHAR},
+            begin_time = #{record.beginTime,jdbcType=TIMESTAMP},
+            end_time = #{record.endTime,jdbcType=TIMESTAMP},
+            area_name = #{record.areaName,jdbcType=VARCHAR},
+            organization_seq = #{record.organizationSeq,jdbcType=VARCHAR},
+            province = #{record.province,jdbcType=VARCHAR},
+            province_name = #{record.provinceName,jdbcType=VARCHAR},
+            city = #{record.city,jdbcType=VARCHAR},
+            city_name = #{record.cityName,jdbcType=VARCHAR},
+            country = #{record.country,jdbcType=VARCHAR},
+            country_name = #{record.countryName,jdbcType=VARCHAR},
+            area_address = #{record.areaAddress,jdbcType=VARCHAR},
+            field_name = #{record.fieldName,jdbcType=VARCHAR},
+            is_distribution_field = #{record.isDistributionField,jdbcType=INTEGER},
+            is_distribution_time = #{record.isDistributionTime,jdbcType=INTEGER},
+            field_exchange_time = #{record.fieldExchangeTime,jdbcType=TIMESTAMP}
+        <if test="_parameter != null" >
+            <include refid="Update_By_Example_Where_Clause" />
+        </if>
+    </update>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.hori.grms.model.ProjectProduct" >
+        update project_product
+        <set >
+            <if test="projectCode != null" >
+                project_code = #{projectCode,jdbcType=VARCHAR},
+            </if>
+            <if test="businessType != null" >
+                business_type = #{businessType,jdbcType=VARCHAR},
+            </if>
+            <if test="beginTime != null" >
+                begin_time = #{beginTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="endTime != null" >
+                end_time = #{endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="areaName != null" >
+                area_name = #{areaName,jdbcType=VARCHAR},
+            </if>
+            <if test="organizationSeq != null" >
+                organization_seq = #{organizationSeq,jdbcType=VARCHAR},
+            </if>
+            <if test="province != null" >
+                province = #{province,jdbcType=VARCHAR},
+            </if>
+            <if test="provinceName != null" >
+                province_name = #{provinceName,jdbcType=VARCHAR},
+            </if>
+            <if test="city != null" >
+                city = #{city,jdbcType=VARCHAR},
+            </if>
+            <if test="cityName != null" >
+                city_name = #{cityName,jdbcType=VARCHAR},
+            </if>
+            <if test="country != null" >
+                country = #{country,jdbcType=VARCHAR},
+            </if>
+            <if test="countryName != null" >
+                country_name = #{countryName,jdbcType=VARCHAR},
+            </if>
+            <if test="areaAddress != null" >
+                area_address = #{areaAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="fieldName != null" >
+                field_name = #{fieldName,jdbcType=VARCHAR},
+            </if>
+            <if test="isDistributionField != null" >
+                is_distribution_field = #{isDistributionField,jdbcType=INTEGER},
+            </if>
+            <if test="isDistributionTime != null" >
+                is_distribution_time = #{isDistributionTime,jdbcType=INTEGER},
+            </if>
+            <if test="fieldExchangeTime != null" >
+                field_exchange_time = #{fieldExchangeTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+        delete from project_product
+        where id = #{id,jdbcType=VARCHAR}
+    </delete>
+
+    <delete id="deleteByExample" parameterType="com.hori.grms.model.ProjectProductExample" >
+        delete from project_product
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+    </delete>
+    
+    <!-- 通过项目编号 查看 id列表 -->
+    <select id="findByProjectCode" resultType="string" >
+        select id from project_product_menu where id=#{productCode}
+    </select>
+    
+    <!-- 根据项目编号查找关联的项目清单 -->
+    <select id="selectByProjectCode" resultMap="BaseResultMap" parameterType="java.lang.String" >
+        select 
+        <include refid="Base_Column_List" />
+        from project_product
+        where project_code = #{projectCode,jdbcType=VARCHAR}
+        order by begin_time desc
+    </select>
+
+</mapper>

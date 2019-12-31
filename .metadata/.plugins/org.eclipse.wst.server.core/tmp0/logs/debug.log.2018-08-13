@@ -1,0 +1,186 @@
+2018-08-13 08:59:52,108 INFO[com.alibaba.druid.pool.DruidDataSource:785] 
+ {dataSource-1} inited
+2018-08-13 08:59:56,227 INFO[org.hibernate.validator.internal.util.Version:30] 
+ HV000001: Hibernate Validator 5.2.4.Final
+2018-08-13 09:07:10,124 INFO[com.alibaba.druid.pool.DruidDataSource:785] 
+ {dataSource-1} inited
+2018-08-13 09:07:13,022 INFO[org.hibernate.validator.internal.util.Version:30] 
+ HV000001: Hibernate Validator 5.2.4.Final
+2018-08-13 09:07:45,083 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://localhost:8090/grms/
+2018-08-13 09:07:58,906 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/
+2018-08-13 09:07:59,377 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/homepage/
+2018-08-13 09:08:04,139 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/project/customer.json
+2018-08-13 09:09:22,798 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/
+2018-08-13 09:09:23,077 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/homepage/
+2018-08-13 09:09:27,202 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/project/customer.json
+2018-08-13 09:13:05,953 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/
+2018-08-13 09:13:13,671 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/
+2018-08-13 09:13:13,789 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/homepage/
+2018-08-13 09:13:17,415 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/project/customer.json
+2018-08-13 09:21:06,869 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/
+2018-08-13 09:21:15,054 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/
+2018-08-13 09:21:15,158 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/homepage/
+2018-08-13 09:21:18,997 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/project/customer.json
+2018-08-13 09:28:47,609 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/
+2018-08-13 09:28:54,509 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/
+2018-08-13 09:28:54,707 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/homepage/
+2018-08-13 09:28:57,849 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/project/customer.json
+2018-08-13 10:09:02,290 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/
+2018-08-13 10:09:10,499 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/
+2018-08-13 10:09:10,643 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/homepage/
+2018-08-13 10:09:14,496 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/project/customer.json
+2018-08-13 10:11:51,115 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/
+2018-08-13 10:11:57,797 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/
+2018-08-13 10:11:58,010 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/homepage/
+2018-08-13 10:12:02,309 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/project/customer.json
+2018-08-13 10:23:29,468 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/
+2018-08-13 10:23:40,364 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/
+2018-08-13 10:23:40,653 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/homepage/
+2018-08-13 10:23:44,562 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/project/customer.json
+2018-08-13 11:43:05,764 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/nologin
+2018-08-13 11:43:13,697 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/
+2018-08-13 11:43:13,880 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/homepage/
+2018-08-13 11:43:17,505 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/project/customer.json
+2018-08-13 11:51:52,357 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/
+2018-08-13 11:51:59,534 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/
+2018-08-13 11:51:59,632 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/homepage/
+2018-08-13 11:52:02,955 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/project/customer.json
+2018-08-13 12:43:38,864 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/
+2018-08-13 12:50:19,551 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/
+2018-08-13 12:50:26,486 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/
+2018-08-13 12:50:26,821 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/homepage/
+2018-08-13 12:50:45,416 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/project/customer.json
+2018-08-13 13:55:57,092 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/
+2018-08-13 13:56:05,291 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/
+2018-08-13 13:56:06,377 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/homepage/
+2018-08-13 13:56:08,871 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/project/customer.json
+2018-08-13 13:58:14,726 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/
+2018-08-13 13:58:14,938 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/homepage/
+2018-08-13 13:58:26,538 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/project/customer.json
+2018-08-13 14:04:31,304 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/
+2018-08-13 14:04:36,900 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/
+2018-08-13 14:04:37,058 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/homepage/
+2018-08-13 14:04:40,943 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/project/customer.json
+2018-08-13 14:04:50,577 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/
+2018-08-13 14:04:50,693 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/homepage/
+2018-08-13 14:04:55,015 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/project/customer.json
+2018-08-13 14:17:01,775 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/
+2018-08-13 14:17:09,611 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/
+2018-08-13 14:17:09,715 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/homepage/
+2018-08-13 14:17:14,463 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/project/customer.json
+2018-08-13 15:01:40,735 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/
+2018-08-13 15:02:05,970 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/
+2018-08-13 15:02:06,433 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/homepage/
+2018-08-13 15:02:10,647 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/project/customer.json
+2018-08-13 15:38:04,513 INFO[com.alibaba.druid.pool.DruidDataSource:785] 
+ {dataSource-1} inited
+2018-08-13 15:38:07,661 INFO[org.hibernate.validator.internal.util.Version:30] 
+ HV000001: Hibernate Validator 5.2.4.Final
+2018-08-13 15:39:33,546 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/
+2018-08-13 15:39:49,409 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/
+2018-08-13 15:39:49,655 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/homepage/
+2018-08-13 15:39:57,724 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/project/customer.json
+2018-08-13 15:40:17,382 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/project/customer.json
+2018-08-13 15:40:29,652 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/project/customer.json
+2018-08-13 15:51:13,609 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/project/customer.json
+2018-08-13 16:06:26,366 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/
+2018-08-13 16:06:26,443 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/homepage/
+2018-08-13 16:16:41,399 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/project/customer.json
+2018-08-13 17:15:50,806 INFO[com.alibaba.druid.pool.DruidDataSource:785] 
+ {dataSource-1} inited
+2018-08-13 17:15:53,865 INFO[org.hibernate.validator.internal.util.Version:30] 
+ HV000001: Hibernate Validator 5.2.4.Final
+2018-08-13 17:17:37,419 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://localhost:8090/grms/
+2018-08-13 17:17:44,128 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/
+2018-08-13 17:17:44,265 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/homepage/
+2018-08-13 17:18:10,150 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/project/customer.json
+2018-08-13 17:27:24,913 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/
+2018-08-13 17:27:45,756 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/
+2018-08-13 17:27:45,942 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/homepage/
+2018-08-13 17:27:49,279 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/project/customer.json
+2018-08-13 17:27:52,431 INFO[com.hori.grms.interceptor.BackendSessionInterceptor:48] 
+ 拦截器拦截url:http://127.0.0.1:8090/grms/project/customer.json

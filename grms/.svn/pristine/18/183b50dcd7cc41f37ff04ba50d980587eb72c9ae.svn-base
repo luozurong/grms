@@ -1,0 +1,49 @@
+package com.hori.grms.dao;
+
+import java.util.Date;
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Param;
+import com.hori.grms.model.Contract;
+import com.hori.grms.queryBean.ContractProjectQueryBean;
+import com.hori.grms.queryBean.ContractQueryBean;
+import com.hori.grms.vo.ContractProjectVo;
+import com.hori.grms.vo.ContractVo;
+
+public interface ContractMapper {
+    int deleteByPrimaryKey(String id);
+
+    int insert(Contract record);
+
+    int insertSelective(Contract record);
+
+    ContractVo selectByPrimaryKey(String id);
+
+    int updateByPrimaryKeySelective(Contract record);
+
+    int updateByPrimaryKeyWithBLOBs(Contract record);
+
+    int updateByPrimaryKey(Contract record);
+    
+    List<ContractVo> selectByContract(@Param("queryBean") ContractQueryBean queryBean);
+    
+    List<ContractProjectVo> selectProject(@Param("queryBean") ContractProjectQueryBean queryBean);
+    
+    ContractProjectVo selectProjectStatus(@Param("projectCode") String projectCode);
+
+
+    int updateCommitContract(@Param("id") String id,@Param("status")  String status,@Param("date") Date date );
+    
+    List<ContractVo> selectByContractOther(@Param("id") String id);
+    /**
+     * 根据项目编号获取【执行合同】
+     * @param projectCode
+     * @return
+     */
+    ContractVo selectExecuteContractByProjectCode(@Param("projectCode") String projectCode);
+	
+	void updateContractUrl(@Param("id") String id,@Param("url") String url);
+	//回写合同编号
+	void updateCodeForProject(@Param("projectCode") String projectCode,@Param("contractCode") String contractCode);
+}

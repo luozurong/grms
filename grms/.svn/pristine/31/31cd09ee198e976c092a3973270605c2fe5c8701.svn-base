@@ -1,0 +1,142 @@
+html,body {
+    background-color: #f8f8f8;
+}
+
+
+/*路径导航样式*/
+.topTitle {
+    height: 50px;
+    background-color: #f8f8f8;
+}
+
+.path1,.path2 {
+    padding-left: 28px;
+    min-width: 60px;
+    height: 50px;
+    line-height: 50px;
+    font-size: 14px;
+    color:#666;
+}
+.path1 {
+    margin-left: 24px;
+    background: url("../images/ic_location.png") no-repeat left 15px;
+}
+.path2 {
+    margin-left: 15px;
+    background: url("../images/arrow.png") no-repeat left 20px;
+}
+.statCss{
+	margin-top: 5px;
+    margin-left: 20px;
+}
+.account {
+	margin-top: 20px;
+    margin-left: 16px;
+    /*width: 60px;*/
+}
+.account1 {
+    margin-top: 15px;
+    width: 116px;
+    height: 34px;
+}
+.account1>input {
+    width: 114px;
+    height: 32px;
+    border: 1px solid #c2c2c2;
+}
+.probtn{
+	margin-top: 10px;
+    margin-left: 20px;
+}
+.create, .search,.delete {
+    margin-top: 9px;
+    width: 88px;
+    height:30px;
+    margin-left: 60px;
+    line-height: 25px;
+    font-size: 14px;
+    color:#97e4d3;
+    text-align: center;
+    border: 1px solid #97e4d3;
+    background-color: #FFFFFF;
+    border-radius: 3px;
+    cursor: pointer;
+}
+.stopProject{
+    margin-top: 15px;
+    width: 88px;
+    height:30px;
+    line-height: 25px;
+    font-size: 14px;
+    color:#000000;
+    text-align: center;
+    border: 1px solid #000000;
+    background-color: #c0c0c0;
+    border-radius: 3px;
+    cursor: pointer;
+}
+.pagination table{
+	float: right;
+}
+/*自定义*/
+.conditions-select{
+	width: 100%;
+    box-sizing: border-box;
+    padding:0 20px;
+}
+.projectStautsBox{
+	background: #fff;
+	margin-top:0;
+}
+.workorder-tabs{
+    overflow: hidden;
+    border: 1px solid #ccc;
+	border-bottom:none;
+   /*  border-bottom: 1px solid #ccc; */
+    line-height:45px;
+}
+.workorder-select{
+    border-bottom:3px solid #51d2b6;
+    color:#51d2b6;
+}
+.workorder-tabs>div{
+    float:left;
+    padding-left:23px;
+    padding-right:23px;
+    position: relative;
+}
+.accountBox{
+	background: #fff;
+	border: 1px solid #ccc;
+	
+	padding-bottom:20px;
+	padding-right:20px;
+	width: 100%;
+    box-sizing: border-box;
+}
+.accountBox2{
+	display: inline-block;
+}
+.account span{
+	width: 75px;
+    height: 34px;
+    line-height: 34px;
+    display: inline-block;
+    vertical-align: top;
+}
+.account input{
+	width: 114px;
+    height: 32px;
+    border: 1px solid #c2c2c2;
+}
+.searchBox{
+	border: 1px solid #ccc;
+	border-top:none;
+}
+.searchBox .l-btn-text{
+	line-height:28px;
+}
+.content-wrap{
+	box-sizing: border-box;
+    padding:20px 20px 0;
+}

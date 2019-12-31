@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html style="height: 100%;">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>清单列表</title>
+		<meta http-equiv="X-UA-Compatible" content="edge" />
+		<link rel="stylesheet" type="text/css" href="../common/css/reset.css" />
+		<link rel="stylesheet" type="text/css" href="../common/easyui/themes/default/easyui.css" />
+		<link rel="stylesheet" type="text/css" href="../common/css/common.css">
+		<link rel="stylesheet" type="text/css" href="../common/css/reset.css">
+		<link rel="stylesheet" type="text/css" href="../common/css/default.css">
+		<link rel="stylesheet" type="text/css" href="css/inventoryList.css" />
+		<style type="text/css">
+			.checkbox-icon {
+				position: relative;
+				z-index: 1;
+				background: url(../common/images/ic_choice-grey_nor.png) no-repeat 0 1px;
+			}
+			
+			.checkbox-bg {
+				position: relative;
+				background: url(../common/images/ic_choice_green.png) no-repeat 0 1px;
+				z-index: 1;
+			}
+			
+			.radio-icon {
+				position: relative;
+				z-index: 1;
+				background: url(../common/images/ic_choice-grey_nor2.png) no-repeat 0 1px;
+			}
+			
+			.radio-bg {
+				position: relative;
+				background: url(../common/images/ic_choice_green2.png) no-repeat 0 1px;
+				z-index: 1;
+			}
+			
+			label input[type="radio"],
+			label input[type="checkbox"] {
+				opacity: 0;
+				margin-right: 10px;
+			}
+			
+			.dataCheck {
+				background: url(../common/images/ic_choice-grey_nor.png) no-repeat center 1px;
+			}
+			
+			.dataChecked {
+				background: url(../common/images/ic_choice_green.png) no-repeat center 1px;
+			}
+			
+			.dialog-button {
+				height: 80px;
+				box-sizing: border-box;
+				text-align: center;
+				border-color: #fff !important;
+				background-color: #fff;
+				border-top: 1px solid #eee !important;
+			}
+			
+			.dialog-button a {
+				margin: 0;
+				padding: 0;
+				display: inline-block;
+				_display: inline;
+				*display: inline;
+				width: 122px;
+				height: 42px;
+				line-height: 41px;
+				margin: 12px 20px;
+				vertical-align: middle;
+			}
+			
+			.dialog-button a:active {
+				border: none;
+			}
+			
+			.window .window-header .panel-tool {
+				display: none;
+			}
+			
+			.dialog-button a:first-child {
+				background: #fff !important;
+				color: #333;
+			}
+			
+			.dialog-button a:last-child {
+				background: #51d2b6 !important;
+				color: #fff;
+				border: 1px solid #51d2b6;
+			}
+			
+			.l-btn-text {
+				display: inline-block;
+				line-height: 42px !important;
+			}
+		</style>
+	</head>
+	<style type="text/css">
+		.dszyList {
+			width: 1000px;
+		}
+		
+		.dszyList tr * {
+			font-size: 12px;
+			line-height: 24px;
+		}
+		
+		.dszyList table,
+		.dszyList tr {
+			width: 100%;
+		}
+		
+		table .dsListTitle {
+			width: 100%;
+			color: #fff;
+			background-color: #666;
+			height: 36px;
+		}
+		
+		.datagrid-row-checked {
+			background-color: #fff!important;
+		}
+		
+		.checkbox-icon {
+			display: inline-block!important;
+		}
+		
+		.checkbox-icon input {
+			display: inline-block!important;
+		}
+		
+		input[type="number"]::-webkit-outer-spin-button,
+		input[type="number"]::-webkit-inner-spin-button {
+			-webkit-appearance: none;
+		}
+		
+		input[type="number"] {
+			-moz-appearance: textfield;
+			max-width: 100%;
+		}
+		
+		.datagrid-cell {
+			text-overflow: ellipsis;
+		}
+	</style>
+
+	<body style="margin-left: 25px;">
+		<div class="dddd">
+			<!--<div id="dg" class="cpTablleList" style="width: 1000px;">
+
+			</div>-->
+			<div id="dg32" class="cpTablleList" style="width: 1000px;">
+
+			</div>
+		</div>
+
+		<script type="text/javascript" src="../common/easyui/jquery.min.js"></script>
+		<script type="text/javascript" src="../common/easyui/jquery.easyui.min.js"></script>
+		<script type="text/javascript" src="../common/easyui/locale/easyui-lang-zh_CN.js"></script>
+		<script type="text/javascript" src="../common/plugin/common.js"></script>
+		<script type="text/javascript" src="js/inventoryList.js"></script>
+	</body>
+
+</html>

@@ -1,0 +1,203 @@
+package com.hori.grms.service;
+
+import java.util.List;
+
+import com.hori.grms.model.PendingEvent;
+import com.hori.grms.queryBean.PendingEventQueryBean;
+
+/**
+ * 待办事项service
+ * @author FWQ
+ *
+ */
+public interface PendingEventService {
+   
+	/**
+	 * 待办事件列表查询
+	 * @param pendingEventQueryBean
+	 * @return
+	 */
+	public List<PendingEvent> list(PendingEventQueryBean pendingEventQueryBean);
+	
+	/**
+	 * 新添项目模块的待办事件
+	 * @param projectName	项目名称
+	 * @param projectCode	项目编号
+	 * @param userAccount	业务员账号
+	 * @param userName		业务员名称
+	 */
+	public int createProjectPendingEvent(String projectName,String projectCode,
+			String userAccount,String userName);
+	
+	/**
+	 * 修改“项目管理”待办事件状态
+	 * @param projectCode 项目编号
+	 * @param status      项目管理 0待审核 1审核通过 2审核不通过 3立项终止 4撤回
+	 * @return
+	 */
+	public void updateProjectPendingEvent(String projectCode,int status);
+	
+	/**
+	 * 新添合同模块的待办事件
+	 * @param projectName	项目名称
+	 * @param projectCode	项目编号
+	 * @param contractCode  合同编号
+	 * @param userAccount	业务员账号
+	 * @param userName		业务员名称
+	 */
+	public int createContractPendingEvent(String projectName,String projectCode,String contractCode,
+			String userAccount,String userName);
+	
+	/**
+	 * 修改“合同管理”待办事件状态
+	 * @param projectName 项目名称
+	 * @param projectCode 合同编号
+	 * @param status      合同管理（1：未提交 2：待审批-业务管理 3:待审批-合同管理 4:待审批-财务管理 
+	 * 						5:审批通过 6:审批不通过 7:已完成 8：撤回-业务员 9：撤回-业务管理 10:撤回-合同管理 
+	 * 						11:撤回-财务管理 12:删除-业务员）
+	 * @return
+	 */
+	public void updateContractPendingEvent(String projectCode,String contractCode,int status);
+	
+	/**
+	 * 新添项目执行模块的待办事件
+	 * @param projectName	项目名称
+	 * @param projectCode	项目编号
+	 * @param projectActionCode  执行编号
+	 * @param roleType	      执行角色 1为业务管理员，4为社区运营执行管理员，5为电商运营管理员，6为用户运营执行管理员，7为媒管执行管理员
+	 */
+	public int createProjectActionPendingEvent(String projectName,String projectCode,
+			String projectActionCode,int roleType);
+	
+	/**
+	 * 新添项目执行异常模块的待办事件
+	 * @param projectName	项目名称
+	 * @param projectCode	项目编号
+	 * @param projectActionCode  执行编号
+	 * @param exceptionId  项目执行异常ID
+	 */
+	public int createProjectActionExceptionPendingEvent(String projectName,String projectCode,
+			String projectActionCode,String exceptionId);
+	
+	/**
+	 * 修改“执行管理”待办事件状态
+	 * @param projectCode 项目编号
+	 * @param projectActionCode	 执行编号
+	 * @param exceptionId  项目执行异常ID (项目执行异常 才传，否则为空)
+	 * @param status      执行管理 1:置换场地 2:扣款 3:继续 4:暂停 5:恢复 6终止 7执行状态-待确认 8执行状态-策划中 
+	 * 						9执行状态-未执行 10执行状态-执行中 11执行状态-已完成 12项目异常-正常 13项目异常-异常
+	 *  					以下状态为执行部门的确认 14:置换场地确认 15:扣款确认 16:继续确认 17:暂停确认 18:恢复确认 19终止确认
+	 */
+	public void updateProjectActionPendingEvent(String projectCode,String projectActionCode,
+			String exceptionId,int status);
+	
+	/**
+	 * 新添收款模块的待办事件-审核逻辑
+	 * @param projectName	项目名称
+	 * @param projectCode	项目编号
+	 * @param backMoneyCode  收款编号
+	 * @param userAccount	业务员账号
+	 * @param userName		业务员名称
+	 */
+	public int createBackMoneyPendingEventByShenHe(String projectName,String projectCode,String backMoneyCode,
+			String userAccount,String userName);
+	
+	/**
+	 * 修改“收款管理”待办事件状态-审核逻辑
+	 * @param projectName 项目名称
+	 * @param backMoneyCode 收款编号
+	 * @param status      收款管理（0待审核 1已审核 2审核不通过  3登记中-待审核 4登记中-异常 5登记中-已付款 6已撤回）
+	 * @return
+	 */
+	public void updateBackMoneyPendingEventByShenHe(String projectCode,String backMoneyCode,int status);
+	
+	/**
+	 * 新添收款模块的待办事件-定时提醒
+	 * @param projectName	项目名称
+	 * @param projectCode	项目编号
+	 * @param backMoneyPlanCode  收款计划编号
+	 */
+	public int createBackMoneyPendingEventByTask(String projectName,String projectCode
+			,String backMoneyPlanCode);
+	
+	/**
+	 * 修改“收款管理”待办事件状态-定时提醒
+	 * @param projectName 项目名称
+	 * @param backMoneyPlanCode 收款计划编号
+	 * @param status      收款管理（0 已收款）
+	 * @return
+	 */
+	public void updateBackMoneyPendingEventByTask(String projectCode,String backMoneyPlanCode,int status);
+	
+	/**
+	 * 新添收款模块的待办事件-财务异常
+	 * @param projectName	项目名称
+	 * @param projectCode	项目编号
+	 * @param backMoneyPlanCode  收款计划编号
+	 */
+	public int createBackMoneyPendingEventByMoneyException(String projectName,String projectCode
+			,String backMoneyPlanCode);
+	
+	/**
+	 * 修改“收款管理”待办事件状态-财务异常
+	 * @param projectName 项目名称
+	 * @param backMoneyPlanCode 收款计划编号
+	 * @param status      业务员操作状态  3:继续 4:暂停  6终止 16:继续确认 17:暂停确认 19终止确认
+	 * @param roleType	      执行角色 1为业务管理员，4为社区运营执行管理员，5为电商运营管理员，6为用户运营执行管理员，7为媒管执行管理员
+	 * @return
+	 */
+	public void updateBackMoneyPendingEventByMoneyException(String projectCode,String backMoneyPlanCode,int status,int roleType);
+	
+	/**
+	 * 新添收款模块的待办事件-执行异常－扣款
+	 * @param projectName	项目名称
+	 * @param projectCode	项目编号
+	 * @param backMoneyPlanCode  收款计划编号
+	 */
+	public int createBackMoneyPendingEventByActionException(String projectName,String projectCode
+			,String backMoneyPlanCode);
+	
+	/**
+	 * 修改“收款管理”待办事件状态-执行异常－扣款
+	 * @param projectName 项目名称
+	 * @param backMoneyPlanCode 收款计划编号
+	 * @return
+	 */
+	public void updateBackMoneyPendingEventByActionException(String projectCode,String backMoneyPlanCode);
+	
+	/**
+	 * 新添结案模块的待办事件
+	 * @param projectName	项目名称
+	 * @param projectCode	项目编号
+	 * @param closeCaseCode 结案编号
+	 * @param roleType	            结案角色  4为社区运营执行管理员，5为电商运营管理员，6为用户运营执行管理员，7为媒管执行管理员
+	 */
+	public int createCloseCasePendingEvent(String projectName,String projectCode,
+			String closeCaseCode,int roleType);
+	
+	/**
+	 * 修改“结案管理”待办事件状态
+	 * @param projectCode 	项目编号
+	 * @param closeCaseCode 结案编号
+	 * @param status        结案管理（1：待提交社区运营 2：待提交用户运营 3：待提交电商运营 4：待提交媒管 5：已提交 
+	 * 							6：待处理 7：待结案 8：已结案  9：撤回-业务员 10：撤回-社区运营 11:撤回-用户运营 
+	 * 						12:撤回-电商运营 13:撤回-媒管）
+	 * @param roleType      0为业务员，1为业务管理员，3为财务管理员，4为社区运营执行管理员，5为电商运营管理员，6为用户运营执行管理员，7为媒管执行管理员
+	 * @return
+	 */
+	public void updateCloseCasePendingEvent(String projectCode,String closeCaseCode,int status,int roleType);
+	
+	/**
+	 * 新添收款模块的待办事件-合同结束后待新建收款计划
+	 * @param projectName	项目名称
+	 * @param projectCode	项目编号
+	 */
+	public int createBackMoneyPendingEventByContractEnd(String projectName,String projectCode);
+	
+	/**
+	 * 修改“收款管理”待办事件状态-合同结束后待新建收款计划
+	 * @param projectName 项目名称
+	 * @return
+	 */
+	public void updateBackMoneyPendingEventByContractEnd(String projectCode);
+}

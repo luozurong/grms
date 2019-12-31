@@ -1,0 +1,66 @@
+/**
+ * 
+ */
+package com.hori.grms.service;
+
+import java.util.List;
+
+import com.hori.grms.model.Project;
+import com.hori.grms.queryBean.ProjectQueryBean;
+import com.hori.grms.vo.ProjectDetailsVo;
+import com.hori.grms.vo.project.ProjectVo;
+
+
+/** 
+ * @ClassName: ProjectService 
+ * @Description: 项目
+ * @author zhuqiang
+ * @date 2018年8月8日 下午6:48:40 
+ */
+public interface ProjectService {
+	/**
+	 * 查询项目列表
+	 * @param projectQueryBean
+	 * @return
+	 */
+	List<Project> list(ProjectQueryBean projectQueryBean);
+	/**
+	 * 通过ID查询项目详情Vo
+	 * @param projectId
+	 * @return
+	 */
+	ProjectDetailsVo findProjectDetailsVoByID(String projectId);	
+	
+	/**
+	 * 查询项目列表总数
+	 * @param projectQueryBean
+	 * @return
+	 */
+	int total(ProjectQueryBean projectQueryBean);
+
+	/**
+	 * 查找指定项目香关信息并封装
+	 * @param productCode
+	 * @return
+	 */
+	ProjectVo findProjectModel(String productCode);	
+	
+	/**
+	 * 撤回项目
+	 * @param id 项目id
+	 * @throws Exception 
+	 */
+	void revoke(String id) throws Exception;
+	
+	/**
+	 * 删除项目
+	 * @param id
+	 */
+	void delet(String id) throws Exception;
+	
+	/**
+	 * 立项(项目)终止
+	 * @param id
+	 */
+	void stopProject(String id)throws Exception;	
+}

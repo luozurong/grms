@@ -1,0 +1,1300 @@
+package com.hori.grms.controller;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.alibaba.fastjson.JSON;
+import com.github.pagehelper.PageInfo;
+import com.hori.grms.model.BackMoneyPlan;
+import com.hori.grms.model.Project;
+import com.hori.grms.model.ProjectAction;
+import com.hori.grms.model.ProjectActionException;
+import com.hori.grms.model.ProjectProduct;
+import com.hori.grms.queryBean.PAExceptionQueryBean;
+import com.hori.grms.queryBean.ProjectActionQueryBean;
+import com.hori.grms.service.AreaDataService;
+import com.hori.grms.service.BackMoneyPlanService;
+import com.hori.grms.service.CloseCaseService;
+import com.hori.grms.service.ContractService;
+import com.hori.grms.service.PendingEventService;
+import com.hori.grms.service.ProjectActionExceptionService;
+import com.hori.grms.service.ProjectActionService;
+import com.hori.grms.service.ProjectProductMenuAreaService;
+import com.hori.grms.service.ProjectProductService;
+import com.hori.grms.service.ProjectService;
+import com.hori.grms.util.ExportExcelUtil;
+import com.hori.grms.util.ExportExcelUtil.PoiCell;
+import com.hori.grms.util.UUIDGeneratorUtil;
+import com.hori.grms.vo.AreaDataReqVo;
+import com.hori.grms.vo.AreaDataRspVo;
+import com.hori.grms.vo.CommunityProjectActionVo;
+import com.hori.grms.vo.ContractVo;
+import com.hori.grms.vo.ExportMGVo;
+import com.hori.grms.vo.ProjectActionExceptionVo;
+import com.hori.vo.UserDetailLoginVo;
+
+/**
+ * 执行管理Controller
+ * 
+ * @author hehj
+ * @datetime 2018年8月9日 上午11:44:46
+ */
+@Controller
+@RequestMapping("/projectAction")
+public class ProjectActionController extends BaseController {
+	private final Logger logger = LoggerFactory.getLogger(ProjectActionController.class);
+
+	@Autowired
+	private ProjectActionService projectActionService;
+	@Autowired
+	private ProjectActionExceptionService projectActionExceptionService;
+	@Autowired
+	private ProjectProductService projectProductService;
+	@Autowired
+	private AreaDataService areaDataService;
+	@Autowired
+	private ProjectProductMenuAreaService projectProductMenuAreaService;
+	@Autowired
+	private BackMoneyPlanService backMoneyPlanService;
+	@Autowired
+	private ContractService contractService;
+	@Autowired
+	private CloseCaseService closeCaseService;
+	@Autowired
+	private ProjectService projectService;
+	@Autowired
+	private PendingEventService pendingEventService;
+
+	/**
+	 * 跳转至社区运营执行清单列表
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping("/communityActionList")
+	public String goCommunityPAList(HttpServletRequest request, HttpServletResponse response) {
+		String jumpStr = request.getParameter("jumpStr");
+
+		request.setAttribute("jumpStr", jumpStr);
+
+		// 待办事件跳转
+		String projectActionCodeForPending = request.getParameter("projectActionCodeForPending");
+		String pendingParamType = request.getParameter("pendingParamType");
+		if ("1".equals(pendingParamType)) {
+			request.getSession().setAttribute("projectActionCodeForPending", projectActionCodeForPending);
+			request.getSession().setAttribute("pendingParamType", pendingParamType);
+		}
+
+		return "/projectAction/community/actionList.jsp";
+	}
+
+	/**
+	 * 社区运营执行清单列表数据
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/getCommunityPAListData", produces = "text/html;charset=UTF-8;")
+	@ResponseBody
+	public String communityPAListData(HttpServletRequest request, HttpServletResponse response) {
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+
+		try {
+			String parameter = request.getParameter("projectActionQueryBean");
+
+			ProjectActionQueryBean queryBean = JSON.parseObject(parameter, ProjectActionQueryBean.class);
+			if (queryBean == null) {
+				queryBean = new ProjectActionQueryBean();
+			}
+			logger.info("*********" + queryBean.toString());
+
+			byte dataArea = (byte) request.getSession().getAttribute("dataArea");
+			queryBean.setDataArea(dataArea);
+			if (dataArea == 0) {// 数据域不是全局，0为个人数据，1为部门数据，2为全局数据
+				List<String> userList = (List<String>) request.getSession().getAttribute("userList");
+				queryBean.setUserList(userList);
+				UserDetailLoginVo userDetailVo = (UserDetailLoginVo) request.getSession().getAttribute("userDetailVo");
+				queryBean.setDepartmentId(userDetailVo.getDepartId());
+				queryBean.setDepartmentName(userDetailVo.getDepartName());
+			} else if (dataArea == 1) {
+				List<String> departList = (List<String>) request.getSession().getAttribute("departList");
+				queryBean.setDepartList(departList);
+			}
+
+			// 待办事件跳转
+			String pendingParamType = (String) request.getSession().getAttribute("pendingParamType");
+			if ("1".equals(pendingParamType) && pendingParamType != null) {
+				String projectActionCodeForPending = (String) request.getSession()
+						.getAttribute("projectActionCodeForPending");
+				queryBean.setPageNumber(1);
+				queryBean.setPageSize(10);
+				queryBean.setActionCode(projectActionCodeForPending);
+
+			}
+
+			PageInfo<CommunityProjectActionVo> pageInfo = projectActionService.listCommunityAction(queryBean);
+			if (pageInfo == null) {
+				resultMap.put("success", false);
+			} else {
+				resultMap.put("success", true);
+				resultMap.put("rows", pageInfo.getList());
+				resultMap.put("total", pageInfo.getTotal());
+			}
+		} catch (Exception e) {
+			logger.info("异常信息：" + e.getMessage());
+			resultMap.put("success", false);
+		} finally {
+			// 待办事件跳转
+			request.getSession().removeAttribute("pendingParamType");
+			request.getSession().removeAttribute("projectActionCodeForPending");
+		}
+		return JSON.toJSONString(resultMap);
+	}
+
+	/**
+	 * 修改执行清单状态
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "/changeStatus", produces = "text/html;charset=UTF-8;")
+	@ResponseBody
+	public String changeActionStatus(HttpServletRequest request, HttpServletResponse response) {
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+
+		try {
+			String projectActionId = request.getParameter("projectActionId");
+			if (StringUtils.isBlank(projectActionId)) {
+				throw new Exception("执行清单主键id为空！！！");
+			}
+			String actionStatus = request.getParameter("actionStatus");
+			String userAccount = (String) request.getSession().getAttribute("userAccount");
+			String userName = (String) request.getSession().getAttribute("userName");
+			int roleType = (byte) request.getSession().getAttribute("roleType");
+
+			ProjectAction action = projectActionService.getById(projectActionId);
+
+			if (5 == Integer.valueOf(actionStatus)) {// 点击已完成
+				// 获取审核通过的执行合同
+				ContractVo contract = contractService.getExecuteContractByStatus(action.getProjectCode(), 7);
+				if (contract == null) {
+					resultMap.put("success", false);
+					resultMap.put("hasNoContract", true);
+					return JSON.toJSONString(resultMap);
+				}
+				BackMoneyPlan backMoneyPlan = backMoneyPlanService.getBackMoneyPlanByContractCodeAndStatus(contract.getContractCode(), 1);
+				if (backMoneyPlan == null) {// 没有审核通过的收款计划
+					resultMap.put("success", false);
+					resultMap.put("hasNobackMoneyPlan", true);
+					return JSON.toJSONString(resultMap);
+				}
+			}
+			action.setActionStatus(Integer.valueOf(actionStatus));
+			action.setReceiveAccount(userAccount);
+			action.setReceiveName(userName);
+			action.setRecevieTime(new Date());
+			projectActionService.update(action);
+
+			if (5 == Integer.valueOf(actionStatus)) {
+				Project project = projectService.getByCode(action.getProjectCode());
+				long num = closeCaseService.countByProjectCode(project.getProductCode());
+				if (num == 0L) {// 没有生成过结案记录
+					if (project.getActionStatus() == 2) {// 项目完成
+						closeCaseService.createCloseCaseInfo(project);
+					}
+				}
+			}
+
+			// 调待办接口，更新执行部门的关联执行清单状态的待办
+			int status = -1;
+			if (2 == Integer.valueOf(actionStatus)) {// 确认领取
+				status = 8;
+			} else if (3 == Integer.valueOf(actionStatus)) {// 完成策划
+				status = 9;
+			} else if (4 == Integer.valueOf(actionStatus)) {// 进入执行
+				status = 10;
+			} else if (5 == Integer.valueOf(actionStatus)) {// 执行完成
+				status = 11;
+			}
+			pendingEventService.updateProjectActionPendingEvent(action.getProjectCode(), action.getActionCode(), null, status, roleType);
+
+			resultMap.put("success", true);
+		} catch (Exception e) {
+			logger.info(e.getMessage());
+			resultMap.put("success", false);
+		}
+		return JSON.toJSONString(resultMap);
+	}
+
+	/**
+	 * 跳转异常上报记录列表页面
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping("/exceptionList")
+	public String goExceptionList(HttpServletRequest request, HttpServletResponse response) {
+		String jumpStr = request.getParameter("jumpStr");
+
+		request.setAttribute("jumpStr", jumpStr);
+		return "/projectAction/exceptionList.jsp";
+	}
+
+	/**
+	 * 执行部门查看异常列表
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/getExceptionListData", produces = "text/html;charset=UTF-8;")
+	@ResponseBody
+	public String exceptionList(HttpServletRequest request, HttpServletResponse response) {
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+
+		try {
+			String parameter = request.getParameter("paExceptionQueryBean");
+
+			PAExceptionQueryBean queryBean = JSON.parseObject(parameter, PAExceptionQueryBean.class);
+			if (queryBean == null) {
+				queryBean = new PAExceptionQueryBean();
+			}
+			logger.info("*********" + queryBean.toString());
+
+			byte dataArea = (byte) request.getSession().getAttribute("dataArea");
+			queryBean.setDataArea(dataArea);
+			if (dataArea != 2) {// 数据域不是全局，0为个人数据，1为部门数据，2为全局数据
+				List<String> userList = (List<String>) request.getSession().getAttribute("userList");
+				queryBean.setUserList(userList);
+				List<String> departList = (List<String>) request.getSession().getAttribute("departList");
+				queryBean.setDepartList(departList);
+			}
+
+			PageInfo<ProjectActionExceptionVo> pageInfo = projectActionExceptionService.listException(queryBean);
+			if (pageInfo == null) {
+				resultMap.put("success", false);
+			} else {
+				resultMap.put("success", true);
+				resultMap.put("rows", pageInfo.getList());
+				resultMap.put("total", pageInfo.getTotal());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultMap.put("success", false);
+		}
+		return JSON.toJSONString(resultMap);
+	}
+
+	/**
+	 * 修改异常的执行部门确认状态
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "/changeConfirmStatus", produces = "text/html;charset=UTF-8;")
+	@ResponseBody
+	public String changeConfirmStatus(HttpServletRequest request, HttpServletResponse response) {
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+
+		try {
+			String confirmStatus = request.getParameter("confirmStatus");
+			String exceptionRecordId = request.getParameter("id");
+			String result = request.getParameter("result");
+			String projectActionCode = request.getParameter("projectActionCode");
+
+			int roleType = (byte) request.getSession().getAttribute("roleType");
+			projectActionExceptionService.changeConfirmStatus(exceptionRecordId, Short.valueOf(confirmStatus), roleType);
+			
+			// 生成结案
+			if (6 == Short.valueOf(result)) {// 确认终止
+				ProjectAction projectAction = projectActionService.getByCode(projectActionCode);
+				List<ProjectAction> listByProjectCode = projectActionService.listByProjectCode(projectAction.getProjectCode());
+				boolean isOtherCompleted = true;
+				for (ProjectAction action : listByProjectCode) {
+					if (!projectAction.getId().equals(action.getId()) && action.getActionStatus() != 5) {
+						// 有执行清单未完成
+						isOtherCompleted = false;
+						break;
+					}
+				}
+				if (isOtherCompleted) {
+					Project project = projectService.getByCode(projectAction.getProjectCode());
+					long num = closeCaseService.countByProjectCode(project.getProductCode());
+					if (num == 0L) {// 没有生成过结案记录
+						if (project.getActionStatus() == 2) {// 项目完成
+							closeCaseService.createCloseCaseInfo(project);
+						}
+					} else {
+						closeCaseService.changeStatusByProjectCode(project.getProductCode(), 1);
+					}
+					
+					// 关闭项目的所有待办
+					
+				}
+			}
+			
+			resultMap.put("success", true);
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.info(e.getMessage());
+			resultMap.put("success", false);
+		}
+
+		return JSON.toJSONString(resultMap);
+	}
+
+	@RequestMapping("/projectActionList")
+	public String getProjectActionList(HttpServletRequest request, HttpServletResponse response) {
+
+		// 待办事件跳转
+		String projectActionCodeForPending = request.getParameter("projectActionCodeForPending");
+		String pendingParamType = request.getParameter("pendingParamType");
+		if ("1".equals(pendingParamType)) {
+			request.getSession().setAttribute("projectActionCodeForPending", projectActionCodeForPending);
+			request.getSession().setAttribute("pendingParamType", pendingParamType);
+		}
+
+		HttpSession session = getSession();
+		session.removeAttribute("projectActionSearchJsonVos");
+
+		return "/projectAction/projectActionList.jsp";
+	}
+
+	/**
+	 * 获取项目执行清单列表数据
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "/getlistData", produces = "text/html;charset=UTF-8;")
+	@ResponseBody
+	public String getProjectListData(HttpServletRequest request, HttpServletResponse response) {
+
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+
+		try {
+			String parameter = request.getParameter("projectQueryBean");
+
+			ProjectActionQueryBean queryBean = JSON.parseObject(parameter, ProjectActionQueryBean.class);
+
+			if (null == queryBean) {
+				queryBean = new ProjectActionQueryBean();
+			}
+
+			// 待办事件跳转
+			String pendingParamType = (String) request.getSession().getAttribute("pendingParamType");
+			if ("1".equals(pendingParamType) && pendingParamType != null) {
+				String projectActionCodeForPending = (String) request.getSession()
+						.getAttribute("projectActionCodeForPending");
+				queryBean.setPageNumber(1);
+				queryBean.setPageSize(10);
+				queryBean.setProjectCode(projectActionCodeForPending);
+
+			}
+			
+			HttpSession session = getSession();
+			
+			String userAccount = (String) session.getAttribute("userAccount");
+			Byte roleType = (Byte) session.getAttribute("roleType");
+			Byte dataArea = (Byte) session.getAttribute("dataArea");
+			
+			if (null!=dataArea&&null!=roleType&&dataArea == 0 && roleType == 0) {
+
+				queryBean.setAccount(userAccount);
+
+			}
+			
+			// 保存数据,用于回显
+			session.setAttribute("projectActionSearchJsonVos", parameter);
+			
+			if(null!=dataArea&&null!=roleType&&dataArea!=2&&roleType!=0&&roleType!=1){
+				
+				resultMap.put("success", true);
+				resultMap.put("rows", new ArrayList<>());
+				resultMap.put("total", 0);
+				
+			}else{
+				
+				PageInfo<Map<String, Object>> listProject = projectActionService.listProject(queryBean);
+				
+				resultMap.put("success", true);
+				resultMap.put("rows", listProject.getList());
+				resultMap.put("total", listProject.getTotal());
+			}
+			
+
+		} catch (Exception e) {
+
+			logger.info("错误原因：" + e.getMessage());
+			resultMap.put("success", false);
+
+		} finally {
+			// 待办事件跳转
+			request.getSession().removeAttribute("pendingParamType");
+			request.getSession().removeAttribute("projectActionCodeForPending");
+		}
+
+		return JSON.toJSONStringWithDateFormat(resultMap, "yyyy-MM-dd");
+	}
+
+	/**
+	 * 返回项目列表
+	 * 
+	 * @return
+	 */
+	@RequestMapping("/gobackProject")
+	public String goback(HttpServletRequest request, HttpServletResponse response) {
+		HttpSession session = getSession();
+		String searchJsonVo = (String) session.getAttribute("projectActionSearchJsonVos");
+
+		ProjectActionQueryBean querryBean = JSON.parseObject(searchJsonVo, ProjectActionQueryBean.class);
+		
+		Byte roleType = (Byte) session.getAttribute("roleType");
+
+		request.setAttribute("roleType", roleType);
+
+		request.setAttribute("querryBean", querryBean);
+
+		return "/projectAction/projectActionList.jsp";
+	}
+	
+	/**
+	 * 返回异常明细列表
+	 * 
+	 * @return
+	 */
+	@RequestMapping("/gobackPEList")
+	public String gobackPEList(HttpServletRequest request, HttpServletResponse response) {
+		HttpSession session = getSession();
+		String searchJsonVo = (String) session.getAttribute("pAExceptionSearchJsonVos");
+
+		PAExceptionQueryBean querryBean = JSON.parseObject(searchJsonVo, PAExceptionQueryBean.class);
+		
+		request.setAttribute("productCode", querryBean.getProductCode());
+
+		request.setAttribute("querryBean", querryBean);
+
+		return "/projectAction/projectActionExceptionList.jsp";
+	}
+
+	/**
+	 * 业务主管部门查看执行异常页面
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping("/getAllPAExceptionList")
+	public String getAllPAExceptionList(HttpServletRequest request, HttpServletResponse response) {
+
+		String productCode = request.getParameter("productCode");
+
+		request.setAttribute("productCode", productCode);
+		
+		HttpSession session = getSession();
+		session.removeAttribute("pAExceptionSearchJsonVos");
+		
+		return "/projectAction/projectActionExceptionList.jsp";
+
+	}
+
+	/**
+	 * 场地置换页面
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping("/substitutionArea")
+	public String substitutionArea(HttpServletRequest request, HttpServletResponse response) {
+		
+		String actionCode = request.getParameter("actionCode");
+
+		String exceptionId = request.getParameter("exceptionId");
+
+		request.setAttribute("actionCode", actionCode);
+
+		request.setAttribute("exceptionId", exceptionId);
+
+		return "/projectAction/substitutionArea.jsp";
+
+	}
+
+	/**
+	 * 获取项目执行清单异常列表数据
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "/getPAExceptionlistData", produces = "text/html;charset=UTF-8;")
+	@ResponseBody
+	public String getPAExceptionlistData(HttpServletRequest request, HttpServletResponse response) {
+
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+
+		try {
+
+			
+			String parameter = request.getParameter("queryBean");
+
+			PAExceptionQueryBean queryBean = JSON.parseObject(parameter, PAExceptionQueryBean.class);
+
+			if (null == queryBean) {
+				queryBean = new PAExceptionQueryBean();
+			}
+			
+			HttpSession session = getSession();
+			// 保存数据,用于回显
+			session.setAttribute("pAExceptionSearchJsonVos", parameter);
+			
+			PageInfo<Map<String, Object>> listProjectAction = projectActionExceptionService
+					.listProjectActionExceptions(queryBean);
+
+			resultMap.put("success", true);
+			resultMap.put("rows", listProjectAction.getList());
+			resultMap.put("total", listProjectAction.getTotal());
+
+		} catch (Exception e) {
+
+			logger.info("错误原因：" + e.getMessage());
+			resultMap.put("success", false);
+
+		}
+
+		return JSON.toJSONStringWithDateFormat(resultMap, "yyyy-MM-dd HH:mm:ss");
+	}
+	/**
+	 * 获取项目执行清单对应小区信息
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "/getAreaInfo", produces = "text/html;charset=UTF-8;")
+	@ResponseBody
+	public String getAreaInfo(HttpServletRequest request, HttpServletResponse response) {
+		
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		
+		try {
+			
+			
+			String parameter = request.getParameter("actionCode");
+			
+			ProjectAction projectAction = projectActionService.getByCode(parameter);
+			
+			if(null!=projectAction){
+				ProjectProduct projectProduct = projectProductService.getById(projectAction.getProjectProductId());
+				
+				if(null!=projectProduct){
+					
+					resultMap.put("success", true);
+					resultMap.put("obeject", projectProduct);
+
+				}else{
+					resultMap.put("success", false);
+				}
+					
+			}else{
+				resultMap.put("success", false);
+			}
+			
+			
+		} catch (Exception e) {
+			
+			logger.info("错误原因：" + e.getMessage());
+			resultMap.put("success", false);
+			
+		}
+		
+		return JSON.toJSONStringWithDateFormat(resultMap, "yyyy-MM-dd HH:mm:ss");
+	}
+
+	/**
+	 * 获取可置换场地数据
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "/getSubstitutionAreaDate", produces = "text/html;charset=UTF-8;")
+	@ResponseBody
+	public String getSubstitutionAreaDate(HttpServletRequest request, HttpServletResponse response) {
+
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+
+		try {
+			String parameter = request.getParameter("areaDataReqVo");
+
+			String actionCode = request.getParameter("actionCode");
+
+			AreaDataReqVo areaDataReqVo = JSON.parseObject(parameter, AreaDataReqVo.class);
+
+			if (null == areaDataReqVo) {
+				areaDataReqVo = new AreaDataReqVo();
+			}
+
+			// 获取执行清单资源占用的小区编号
+			String organizationSeq = projectActionService.getOrganizationSeqByActionCode(actionCode);
+
+			if (StringUtils.isNotBlank(organizationSeq)) {
+				List<String> filterList = areaDataReqVo.getFilterList();
+				filterList.add(organizationSeq);
+			}
+
+			logger.info("获取可置换小区数据查询，查询请求数据为：" + areaDataReqVo.toString());
+			// 调用小区数据查询接口
+			AreaDataRspVo areaDataRspVo = areaDataService.searchAreaDataList(areaDataReqVo);
+
+			String result = areaDataRspVo.getResult();
+
+			if (result.equals("0")) {
+				resultMap.put("success", true);
+				resultMap.put("rows", areaDataRspVo.getList());
+				resultMap.put("total", areaDataRspVo.getTotalCount());
+				logger.info("获取可置换小区数据成功！！");
+			} else {
+				String reason = areaDataRspVo.getReason();
+				logger.info("获取可置换小区数据失败！！失败原因：" + reason);
+				resultMap.put("success", false);
+				resultMap.put("msg", reason);
+			}
+
+		} catch (Exception e) {
+
+			logger.info("错误原因：" + e.getMessage());
+			resultMap.put("success", false);
+			resultMap.put("msg", e.getMessage());
+
+		}
+
+		return JSON.toJSONStringWithDateFormat(resultMap, "yyyy-MM-dd HH:mm:ss");
+	}
+
+	/**
+	 * 置换场地操作
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "/substitution", produces = "text/html;charset=UTF-8;")
+	@ResponseBody
+	public String substitution(HttpServletRequest request, HttpServletResponse response) {
+
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+
+		try {
+
+			HttpSession session = request.getSession();
+			
+			Byte roleType = (Byte) session.getAttribute("roleType");
+
+			String userType=(String) session.getAttribute("userType");
+			
+			if((!"0".equals(userType))&&roleType!=null&&roleType!=1){
+				
+				logger.info("该用户无权限进行操作！！");
+				resultMap.put("success", false);
+				resultMap.put("msg", "该用户无权限进行操作！！");
+			
+			}else{
+				
+				String userAccount = (String) session.getAttribute("userAccount");
+				String userName = (String) session.getAttribute("userName");
+				
+				String actionCode = request.getParameter("actionCode");
+				String exceptionId = request.getParameter("exceptionId");
+				String areaName = request.getParameter("areaName");
+				String organizationSeq = request.getParameter("organizationSeq");
+				String province = request.getParameter("province");
+				String provinceName = request.getParameter("provinceName");
+				String city = request.getParameter("city");
+				String cityName = request.getParameter("cityName");
+				String countryName = request.getParameter("countryName");
+				String areaAddress = request.getParameter("areaAddress");
+				
+				ProjectAction projectAction = projectActionService.getByCode(actionCode);
+				
+				String projectProductId = projectAction.getProjectProductId();
+				
+				ProjectProduct projectProduct = projectProductService.getById(projectProductId);
+				
+				projectProduct.setAreaName(areaName);
+				
+				projectProduct.setOrganizationSeq(organizationSeq);
+				
+				projectProduct.setProvince(province);
+				
+				projectProduct.setProvinceName(provinceName);
+				
+				projectProduct.setCity(city);
+				
+				projectProduct.setCityName(cityName);
+				
+				projectProduct.setCountryName(countryName);
+				
+				projectProduct.setAreaAddress(areaAddress);
+				
+				projectProduct.setFieldExchangeTime(new Date());
+				
+				//置换不同城市，要更换执行部门，这期不做，代码保留
+				/*// 查找城市所属的执行部门
+				List<DepartmentBusinessType> departmentBusinessTypeList=departmentBusinessService.findByBusinessAreaCity(city,"1");
+				if (departmentBusinessTypeList.size() < 1) {// 城市没有对应的执行部门，查找省的执行部门
+					DepartmentBusinessType provinceDBT = this.departmentBusinessService.findByBusinessAreaProvince("1");
+					if (provinceDBT != null) {
+						departmentBusinessTypeList.add(provinceDBT);
+					} else {// 查找全国的执行部门
+						DepartmentBusinessType stateDBT = this.departmentBusinessService.findByBusinessAreaState("1");
+						if (stateDBT != null) {
+							departmentBusinessTypeList.add(stateDBT);
+						}
+					}
+				}
+				
+				if(null!=departmentBusinessTypeList && departmentBusinessTypeList.size()>0){
+					projectAction.setDepartmentId(departmentBusinessTypeList.get(0).getDepartmentId());
+					projectAction.setDepartmentName(departmentBusinessTypeList.get(0).getDepartmentName());
+				}*/
+				
+				projectActionExceptionService.substitution(exceptionId, projectProduct, userName, userAccount,projectAction);
+				
+				resultMap.put("success", true);
+			}
+			
+
+		} catch (Exception e) {
+
+			logger.info("错误原因：" + e.getMessage());
+			resultMap.put("success", false);
+			resultMap.put("msg", e.getMessage());
+
+		}
+
+		return JSON.toJSONStringWithDateFormat(resultMap, "yyyy-MM-dd HH:mm:ss");
+	}
+
+	/**
+	 * 终止执行清单
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "/stopProjectAction", produces = "text/html;charset=UTF-8;")
+	@ResponseBody
+	public String stopProjectAction(HttpServletRequest request, HttpServletResponse response) {
+
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+
+		try {
+
+			HttpSession session = request.getSession();
+			
+			Byte roleType = (Byte) session.getAttribute("roleType");
+
+			String userType=(String) session.getAttribute("userType");
+			
+			if((!"0".equals(userType))&&roleType!=null&&roleType!=1){
+				
+				logger.info("该用户无权限进行操作！！");
+				resultMap.put("success", false);
+				resultMap.put("msg", "该用户无权限进行操作！！");
+			
+			}else{
+				
+				String userAccount = (String) session.getAttribute("userAccount");
+				String userName = (String) session.getAttribute("userName");
+				
+				String exceptionId = request.getParameter("exceptionId");
+				
+				String money = request.getParameter("money");
+				
+				String resultRemark = request.getParameter("resultRemark");
+				
+				projectActionExceptionService.stopProjectAction(exceptionId, resultRemark, userName, userAccount,money);
+				
+				logger.info("异常ID:" + exceptionId + "的异常处理成功！！！处理操作为：终止执行");
+				
+				resultMap.put("success", true);
+				
+			}
+			
+			
+
+		} catch (Exception e) {
+
+			logger.info("错误原因：" + e.getMessage());
+			resultMap.put("success", false);
+			resultMap.put("msg", e.getMessage());
+		}
+
+		return JSON.toJSONStringWithDateFormat(resultMap, "yyyy-MM-dd HH:mm:ss");
+	}
+
+	/**
+	 * 继续执行清单
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "/goOnProjectAction", produces = "text/html;charset=UTF-8;")
+	@ResponseBody
+	public String goOnProjectAction(HttpServletRequest request, HttpServletResponse response) {
+
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+
+		try {
+
+			HttpSession session = request.getSession();
+			
+			Byte roleType = (Byte) session.getAttribute("roleType");
+
+			String userType=(String) session.getAttribute("userType");
+			
+			if((!"0".equals(userType))&&roleType!=null&&roleType!=1){
+				
+				logger.info("该用户无权限进行操作！！");
+				resultMap.put("success", false);
+				resultMap.put("msg", "该用户无权限进行操作！！");
+			
+			}else{
+				
+				String userAccount = (String) session.getAttribute("userAccount");
+				String userName = (String) session.getAttribute("userName");
+				
+				String exceptionId = request.getParameter("exceptionId");
+				
+				String resultRemark = request.getParameter("resultRemark");
+				
+				projectActionExceptionService.goOnProjectAction(exceptionId, resultRemark, userName, userAccount);
+				
+				logger.info("异常ID:" + exceptionId + "的异常处理成功！！！处理操作为：继续执行");
+				
+				resultMap.put("success", true);
+			}
+			
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.info("错误原因：" + e.getMessage());
+			resultMap.put("success", false);
+			resultMap.put("msg", e.getMessage());
+
+		}
+
+		return JSON.toJSONStringWithDateFormat(resultMap, "yyyy-MM-dd HH:mm:ss");
+	}
+
+	/**
+	 * 暂停执行清单
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "/pauseProjectAction", produces = "text/html;charset=UTF-8;")
+	@ResponseBody
+	public String pauseProjectAction(HttpServletRequest request, HttpServletResponse response) {
+
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+
+		try {
+
+			HttpSession session = request.getSession();
+			
+			Byte roleType = (Byte) session.getAttribute("roleType");
+
+			String userType=(String) session.getAttribute("userType");
+			
+			if((!"0".equals(userType))&&roleType!=null&&roleType!=1){
+				
+				logger.info("该用户无权限进行项目操作！！");
+				resultMap.put("success", false);
+				resultMap.put("msg", "该用户无权限进行项目操作！！");
+			
+			}else{
+				
+				String userAccount = (String) session.getAttribute("userAccount");
+				String userName = (String) session.getAttribute("userName");
+				
+				String exceptionId = request.getParameter("exceptionId");
+				
+				String resultRemark = request.getParameter("resultRemark");
+				
+				projectActionExceptionService.pauseProjectAction(exceptionId, resultRemark, userName, userAccount);
+				
+				logger.info("异常ID:" + exceptionId + "的异常处理成功！！！处理操作为：暂停执行");
+				
+				resultMap.put("success", true);
+			}
+			
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.info("错误原因：" + e.getMessage());
+			resultMap.put("success", false);
+			resultMap.put("msg", e.getMessage());
+
+		}
+
+		return JSON.toJSONStringWithDateFormat(resultMap, "yyyy-MM-dd HH:mm:ss");
+	}
+
+	/**
+	 * 执行清单扣款操作
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "/deduction", produces = "text/html;charset=UTF-8;")
+	@ResponseBody
+	public String deduction(HttpServletRequest request, HttpServletResponse response) {
+
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+
+		try {
+
+			HttpSession session = request.getSession();
+			
+			Byte roleType = (Byte) session.getAttribute("roleType");
+
+			String userType=(String) session.getAttribute("userType");
+			
+			if((!"0".equals(userType))&&roleType!=null&&roleType!=1){
+				
+				logger.info("该用户无权限进行操作！！");
+				resultMap.put("success", false);
+				resultMap.put("msg", "该用户无权限进行操作！！");
+			
+			}else{
+				
+				String userAccount = (String) session.getAttribute("userAccount");
+				String userName = (String) session.getAttribute("userName");
+				
+				String exceptionId = request.getParameter("exceptionId");
+				
+				String resultRemark = request.getParameter("resultRemark");
+				
+				String money = request.getParameter("money");
+				
+				projectActionExceptionService.deduction(exceptionId, resultRemark, money, userName, userAccount);
+				
+				logger.info("异常ID:" + exceptionId + "的异常处理成功！！！处理操作为：扣款操作");
+				
+				resultMap.put("success", true);
+			
+			}
+			
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.info("错误原因：" + e.getMessage());
+			resultMap.put("success", false);
+
+		}
+
+		return JSON.toJSONStringWithDateFormat(resultMap, "yyyy-MM-dd HH:mm:ss");
+	}
+
+	/**
+	 * 上报异常
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "/reportException", produces = "text/html;charset=UTF-8;")
+	@ResponseBody
+	public String reportException(HttpServletRequest request, HttpServletResponse response) {
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+
+		try {
+			logger.info("---上---报---异---常---");
+			String projectActionId = request.getParameter("projectActionId");
+			if (StringUtils.isBlank(projectActionId)) {
+				throw new Exception("执行清单主键id为空！！！");
+			}
+			
+			ProjectAction pa = projectActionService.getById(projectActionId);
+			
+			// 获取审核通过的执行合同
+			ContractVo contract = contractService.getExecuteContractByStatus(pa.getProjectCode(), 7);
+			if (contract == null) {
+				resultMap.put("success", false);
+				resultMap.put("hasNoContract", true);
+				return JSON.toJSONString(resultMap);
+			}
+			BackMoneyPlan backMoneyPlan = backMoneyPlanService.getBackMoneyPlanByContractCodeAndStatus(contract.getContractCode(), 1);
+			if (backMoneyPlan == null) {// 没有审核通过的收款计划
+				resultMap.put("success", false);
+				resultMap.put("hasNobackMoneyPlan", true);
+				return JSON.toJSONString(resultMap);
+			}
+			resultMap.put("success", true);
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultMap.put("success", false);
+		}
+		return JSON.toJSONString(resultMap);
+	}
+	
+	@RequestMapping(value = "/saveException", produces = "text/html;charset=UTF-8;")
+	@ResponseBody
+	public String saveException(HttpServletRequest request, HttpServletResponse response) {
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+
+		try {
+			logger.info("保存异常信息！！！");
+			String projectActionId = request.getParameter("projectActionId");
+			String exRemark = request.getParameter("exRemark");
+			ProjectAction pa = projectActionService.getById(projectActionId);
+			
+			ProjectActionException pae = new ProjectActionException();
+			String exceptionId = UUIDGeneratorUtil.generateUUID();
+			pae.setId(exceptionId);
+			pae.setProjectCode(pa.getProjectCode());
+			pae.setType((short) 1);
+			pae.setProjectActionCode(pa.getActionCode());
+			pae.setExceptionRemark(exRemark);
+			pae.setCreateTime(new Date());
+			
+			UserDetailLoginVo userDetailVo = (UserDetailLoginVo) request.getSession().getAttribute("userDetailVo");
+			pae.setDepartmentId(userDetailVo.getDepartId());
+			pae.setDepartmentName(userDetailVo.getDepartName());
+	
+			ProjectProduct pp = projectProductService.getById(pa.getProjectProductId());
+			pae.setBusinessType(pp.getBusinessType());
+			pae.setStatus((short) 0);
+	
+			String userAccount = (String) request.getSession().getAttribute("userAccount");
+			String userName = (String) request.getSession().getAttribute("userName");
+			pae.setCreaterAccount(userAccount);
+			pae.setCreaterName(userName);
+			projectActionExceptionService.insertExcuteException(pae);
+	
+			// 调待办接口，生成业务管理员的待办
+			String departId = null;
+			if ("1".equals(pp.getBusinessType())) {
+				departId = userDetailVo.getDepartId();
+			}
+			pendingEventService.createProjectActionExceptionPendingEvent(pa.getProjectName(), pa.getProjectCode(), pa.getActionCode(), exceptionId, 13, 1, departId);
+	
+			resultMap.put("success", true);
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultMap.put("success", false);
+		}
+		return JSON.toJSONString(resultMap);
+	}
+
+	/**
+	 * 跳转至用户运营/媒管/电商执行清单列表
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping("/ymdActionList")
+	public String goYMDPAList(HttpServletRequest request, HttpServletResponse response) {
+		String projectActionCode = request.getParameter("projectActionCode");
+		String jumpStr = request.getParameter("jumpStr");
+		request.setAttribute("projectActionCode", projectActionCode);
+		request.setAttribute("jumpStr", jumpStr);
+
+		// 待办事件跳转
+		String projectActionCodeForPending = request.getParameter("projectActionCodeForPending");
+		String pendingParamType = request.getParameter("pendingParamType");
+		if ("1".equals(pendingParamType)) {
+			request.getSession().setAttribute("projectActionCodeForPending", projectActionCodeForPending);
+			request.getSession().setAttribute("pendingParamType", pendingParamType);
+		}
+
+		return "/projectAction/ymd/actionList.jsp";
+	}
+
+	/**
+	 * 用户运营/媒管/电商执行清单列表数据
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/getYMDPAListData", produces = "text/html;charset=UTF-8;")
+	@ResponseBody
+	public String ymdPAListData(HttpServletRequest request, HttpServletResponse response) {
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+
+		try {
+			String parameter = request.getParameter("projectActionQueryBean");
+
+			ProjectActionQueryBean queryBean = JSON.parseObject(parameter, ProjectActionQueryBean.class);
+			if (queryBean == null) {
+				queryBean = new ProjectActionQueryBean();
+			}
+			logger.info("*********" + queryBean.toString());
+			
+			byte dataArea = (byte) request.getSession().getAttribute("dataArea");
+			queryBean.setDataArea(dataArea);
+			if (dataArea == 0) {// 数据域不是全局，0为个人数据，1为部门数据，2为全局数据
+				List<String> userList = (List<String>) request.getSession().getAttribute("userList");
+				queryBean.setUserList(userList);
+				UserDetailLoginVo userDetailVo = (UserDetailLoginVo) request.getSession().getAttribute("userDetailVo");
+				queryBean.setDepartmentId(userDetailVo.getDepartId());
+				queryBean.setDepartmentName(userDetailVo.getDepartName());
+			} else if (dataArea == 1) {
+				List<String> departList = (List<String>) request.getSession().getAttribute("departList");
+				queryBean.setDepartList(departList);
+			}
+
+			// 待办事件跳转
+			String pendingParamType = (String) request.getSession().getAttribute("pendingParamType");
+			if ("1".equals(pendingParamType) && pendingParamType != null) {
+				String projectActionCodeForPending = (String) request.getSession()
+						.getAttribute("projectActionCodeForPending");
+				queryBean.setPageNumber(1);
+				queryBean.setPageSize(10);
+				queryBean.setActionCode(projectActionCodeForPending);
+
+			}
+
+			PageInfo<Map<String, Object>> pageInfo = projectActionService.listYMDAction(queryBean);
+			if (pageInfo == null) {
+				resultMap.put("success", false);
+			} else {
+				resultMap.put("success", true);
+				resultMap.put("rows", pageInfo.getList());
+				resultMap.put("total", pageInfo.getTotal());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.info("异常信息：" + e.getMessage());
+			resultMap.put("success", false);
+		} finally {
+			// 待办事件跳转
+			request.getSession().removeAttribute("pendingParamType");
+			request.getSession().removeAttribute("projectActionCodeForPending");
+		}
+		return JSON.toJSONString(resultMap);
+	}
+
+	/**
+	 * 导出媒管数据
+	 * 
+	 * @param request
+	 * @param response
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/exportMGData", produces = "text/html;charset=UTF-8;")
+	public void export(HttpServletRequest request, HttpServletResponse response) {
+		String parameter = request.getParameter("projectActionQueryBean");
+		ProjectActionQueryBean queryBean = JSON.parseObject(parameter, ProjectActionQueryBean.class);
+		if (queryBean == null) {
+			queryBean = new ProjectActionQueryBean();
+		}
+		byte dataArea = (byte) request.getSession().getAttribute("dataArea");
+		queryBean.setDataArea(dataArea);
+		if (dataArea == 0) {// 数据域不是全局，0为个人数据，1为部门数据，2为全局数据
+			List<String> userList = (List<String>) request.getSession().getAttribute("userList");
+			queryBean.setUserList(userList);
+			UserDetailLoginVo userDetailVo = (UserDetailLoginVo) request.getSession().getAttribute("userDetailVo");
+			queryBean.setDepartmentId(userDetailVo.getDepartId());
+			queryBean.setDepartmentName(userDetailVo.getDepartName());
+		} else if (dataArea == 1) {
+			List<String> departList = (List<String>) request.getSession().getAttribute("departList");
+			queryBean.setDepartList(departList);
+		}
+
+		List<ExportMGVo> mgVos = projectProductMenuAreaService.listMGData(queryBean);
+		if (mgVos != null && mgVos.size() > 0) {
+			// 获取屏体数量
+			Set<String> organizationSeqs = new HashSet<String>();
+			for (ExportMGVo exportMGVo : mgVos) {
+				organizationSeqs.add(exportMGVo.getOrganizationSeq());
+			}
+			// Map<String, AreaData> areaData =
+			// areaDataService.getAreaDataByOrganizationSeqs(organizationSeqs);
+
+			// 生成表格
+			String title = "媒管部门执行清单数据";
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			String fileName = "媒管部门执行清单数据." + sdf.format(new Date()) + ".xls";
+			String[] headers = { "小区名称", "机构编码", "投放开始日期", "投放结束日期", "屏体总数量", "产品类型", "产品清单", "产品规格" };
+			ExportExcelUtil.experotExcelFor2003(title, headers, mgVos, fileName, new PoiCell() {
+				@Override
+				public void setCellData(Object obj, HSSFRow row, HSSFCellStyle style) {
+					ExportMGVo exportMGVo = (ExportMGVo) obj;
+
+					int i = 0;
+					// 小区名称
+					HSSFCell cell = row.createCell(i++);
+					cell.setCellStyle(style);
+					cell.setCellValue(exportMGVo.getAreaName());
+					// 机构编码
+					cell = row.createCell(i++);
+					cell.setCellStyle(style);
+					cell.setCellValue(exportMGVo.getOrganizationSeq());
+					// 投放开始日期
+					cell = row.createCell(i++);
+					cell.setCellStyle(style);
+					cell.setCellValue(sdf.format(exportMGVo.getBeginTime()));
+					// 投放结束日期
+					cell = row.createCell(i++);
+					cell.setCellStyle(style);
+					cell.setCellValue(sdf.format(exportMGVo.getEndTime()));
+					// 屏体总数量
+					cell = row.createCell(i++);
+					cell.setCellStyle(style);
+					// cell.setCellValue(areaData.get(exportMGVo.getOrganizationSeq()).getAdvertisingTerminalNum());
+					cell.setCellValue(10);
+					// 产品类型
+					cell = row.createCell(i++);
+					cell.setCellStyle(style);
+					cell.setCellValue(exportMGVo.getProductType());
+					// 产品清单
+					cell = row.createCell(i++);
+					cell.setCellStyle(style);
+					cell.setCellValue(exportMGVo.getProductMenu());
+					// 产品规格
+					cell = row.createCell(i++);
+					cell.setCellStyle(style);
+					cell.setCellValue(exportMGVo.getProductSpec());
+				}
+			}, request, response);
+		}
+	}
+}

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html style="height: 100%;">
+<head>
+<meta charset="UTF-8">
+<title>合立运维管理系统</title>
+<meta http-equiv="X-UA-Compatible" content="edge" />
+<link rel="stylesheet" type="text/css" href="../common/css/reset.css" />
+<link rel="stylesheet" type="text/css" href="../common/easyui/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="../common/css/common.css">
+<link rel="stylesheet" type="text/css" href="../common/css/reset.css">
+<link rel="stylesheet" type="text/css" href="../common/css/default.css">
+<link rel="stylesheet" type="text/css" href="css/backlog.css">
+
+
+</head>
+	<body>
+		<div class='backlog'>
+			<div>
+				<input class="startTime"  type="text" >
+				<input class="endTime"  type="text" >
+				<input class="backlog-input" type="text" name="" placeholder="待办事项名称/模块">
+				<span class="backlog-search">搜索</span>
+			</div>
+			<div class="dataTable">
+				<div id="dg"></div>
+				<div id="pp" style=""></div> 
+			</div>
+		</div>
+		<script type="text/javascript"	src="../common/easyui/jquery.min.js"></script>
+		<script type="text/javascript"	src="../common/easyui/jquery.easyui.min.js"></script>
+		<script type="text/javascript"  src="../common/easyui/locale/easyui-lang-zh_CN.js" ></script>
+		<script type="text/javascript"	src="../common/plugin/common.js"></script>
+		<script type="text/javascript" src="js/backlog.js"></script>
+	</body>
+</html>

@@ -1,0 +1,69 @@
+/*
+ * ProjectMapper.java
+ * Copyright(C) 20xx-2015 xxxxxx公司
+ * All rights reserved.
+ * -----------------------------------------------
+ * 2018-08-10 Created
+ */
+package com.hori.grms.dao;
+
+import com.hori.grms.model.Project;
+import com.hori.grms.model.ProjectExample;
+import com.hori.grms.queryBean.ProjectQueryBean;
+import com.hori.grms.vo.ProjectDetailsVo;
+
+import java.util.List;
+import org.apache.ibatis.annotations.Param;
+
+public interface ProjectMapper {
+    int countByExample(ProjectExample example);
+
+    int deleteByExample(ProjectExample example);
+
+    int deleteByPrimaryKey(String id);
+
+    int insert(Project record);
+
+    int insertSelective(Project record);
+
+    List<Project> selectByExample(ProjectExample example);
+
+    Project selectByPrimaryKey(String id);
+
+    int updateByExampleSelective(@Param("record") Project record, @Param("example") ProjectExample example);
+
+    int updateByExample(@Param("record") Project record, @Param("example") ProjectExample example);
+
+    int updateByPrimaryKeySelective(Project record);
+
+    int updateByPrimaryKey(Project record);
+    /**
+     * 查询项目列表
+     * @param projectQueryBean
+     * @return
+     */
+	List<Project> list(ProjectQueryBean projectQueryBean);
+	/**
+	 * 通过ID查询项目详情Vo
+	 * @param projectId
+	 * @return
+	 */
+	ProjectDetailsVo findProjectDetailsVoByID(String projectId);
+	/**
+	 * 撤回项目
+	 * @param id
+	 */
+	void revoke(String id);
+	
+	/**
+	 * 删除项目
+	 * @param id
+	 */
+	void delet(String id);
+	/**
+	 * 查询项目列表总数
+	 * @param projectQueryBean
+	 * @return
+	 */
+	int total(ProjectQueryBean projectQueryBean);
+}

@@ -1,0 +1,34 @@
+package com.hori.grms.service;
+
+import java.util.List;
+
+import com.hori.grms.model.BackMoneyPlan;
+import com.hori.grms.model.BackMoneyPlanPeriods;
+import com.hori.grms.vo.BackMoneyPlanVo;
+import com.hori.grms.vo.ContractVo;
+
+
+public interface BackMoneyPlanService {
+	List<BackMoneyPlanVo> getBackMoneyPlanListByCondition(String selectCondition, String condition, String backMoneyStatus, String startTime, String endTime);
+	
+	void insertSelective(BackMoneyPlan backMoneyPlan);
+	
+	List<ContractVo> getContractList(String condition);
+	
+	ContractVo getContractDetail(String contractCode);
+	
+	BackMoneyPlan getBackMoneyPlanByCode(String backMoneyPlanCode);
+	
+	void updateByPrimaryKeySelective(BackMoneyPlan backMoneyPlan);
+
+	BackMoneyPlan getBackMoneyPlanByContractCode(String contractCode);
+	
+	List<BackMoneyPlanVo> getBackMoneyPlanList();
+
+	/**
+	 * 通过projectCode来获取计划回款信息
+	 * @param projectCode
+	 * @return
+	 */
+	List<BackMoneyPlanVo> getBackMoneyPlanListByProjectCode(String projectCode);
+}

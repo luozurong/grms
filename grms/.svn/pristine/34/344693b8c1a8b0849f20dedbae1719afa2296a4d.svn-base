@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html >
+<head>
+    <meta charset="utf-8">
+    <title>地域分布</title>
+	<link href="../easyui/themes/default/easyui.css" rel="stylesheet" type="text/css" />
+	<link href="../easyui/themes/icon.css" rel="stylesheet" type="text/css" />
+	<link href="../css/reset.css" rel="stylesheet" type="text/css" />
+	<link rel="stylesheet" type="text/css" href="../css/component.css"/>
+	<link rel="stylesheet" type="text/css" href="../dialog/css/addArea.css"/>
+</head>
+
+<body style="min-width:1000px;height: 100%;background-color: #F8F8F8;padding: 14px 24px;">
+	<div class="tipsBox">
+		<div class="tipsP clearfix">
+            <span class="fl">统计字段说明</span>
+            <span class="fl illPic"></span>
+        </div>
+		<div class="tips">
+		    <h2>地域分布</h2>
+			1.用户数量：用户启动App所在城市的用户数量<br/>
+			2.首次显示一个地图，地图上有省用户数据，旁边列表为存在用户市的数据，点击省板块的时候会列出对应市的用户数
+		</div>
+	</div>
+
+    <div class="myPanel clearfix" style="background-color: #FFFFFF;">
+        <div style="display:inline;float:left;width:70%">
+			<!-- 统计图 -->  
+		    <div id="graphic" class="col-md-8">
+				<div id="main" class="main" style="height: 450px"></div>             
+		    </div>
+        </div>
+        <div style="display:inline;float:right;width:30%" >
+                   <!-- 数据表 -->
+			<div class="dataTable" style="height:435px;margin-top: 30px;">
+			    <table class="easyui-datagrid" id="region" data-options="fit:true,fitColumns:true,scrollbarSize:0,singleSelect:true" style="width: 100%; height:auto">
+					<thead>
+						<tr>
+							<th data-options="field:'name',width:500,sortable:true,align:'center'">城市</th>
+				      		<th data-options="field:'value',width:500,sortable:true,align:'center'">用户数量（人）</th>
+						</tr>
+					</thead>
+			    </table>
+            </div>
+        </div>
+    </div>       
+     
+
+    
+
+　　　　<!-- 弹出窗 -->
+<!-- 　　　　<div id="w" class="easyui-window" title="请选择地域" closed="true"  style="width:350px;height:200px;padding:10px;">
+	<div class="quick-box-bd" id="seat-list">
+		<ul style="float:left; width:330px;">
+		<li class="color333" id="areaLi"><input id="checkbox_oXyS6IiYk1" class="check" value="SWZ" name="商务座" type="checkbox"><label style="cursor: pointer;" for="checkbox_oXyS6IiYk1">广州</label></li>
+	　　　　　　<li class="color333" id="areaLi"><input id="checkbox_OJvXi1Fg5l" class="check" value="TZ" name="特等座" type="checkbox"><label style="cursor: pointer;" for="checkbox_OJvXi1Fg5l">佛山</label></li>
+
+	　　</ul>
+	</div>
+　　　　</div>
+　　　　
+　　　　弹出窗
+　　　　<div id="w1" class="easyui-window" title="请选择小区" closed="true"  style="width:350px;height:200px;padding:10px;">
+	<div class="quick-box-bd" id="seat-list">
+		<ul style="float:left; width:330px;">
+		<li class="color333" id="villageLi"><input id="checkbox_oXyS6IiYk11" class="check" value="SWZ" name="商务座" type="checkbox"><label style="cursor: pointer;" for="checkbox_oXyS6IiYk11">海富花园</label></li>
+	　　　　　　<li class="color333" id="villageLi"><input id="checkbox_OJvXi1Fg5l1" class="check" value="TZ" name="特等座" type="checkbox"><label style="cursor: pointer;" for="checkbox_OJvXi1Fg5l1">绿岛明珠</label></li>
+　　　　　　　　　　</ul>
+	</div>
+　　　　</div> -->
+
+	<!--选择区域、小区弹窗-->
+	<div id="areaWindow"></div>
+	<div id="communityWindow"></div>
+
+    <script src="../js/jquery.min.js" type="text/javascript"></script>
+	<script src="../easyui/jquery.easyui.min.js" type="text/javascript"></script>
+	<script src="../easyui/locale/easyui-lang-zh_CN.js"
+		type="text/javascript"></script>
+	<script src="../echarts/echarts.js"></script>
+	<script src="../easyui/easyloader.js" type="text/javascript"></script>
+	<script src="../common/common.js" type="text/javascript"></script>
+	<!-- <script src="../json/region_data.js" type="text/javascript" ></script> -->
+    <script src="js/region.js" type="text/javascript" ></script>
+   
+</body>
+</html>

@@ -1,0 +1,30 @@
+package com.hori.grms.queryBean;
+
+/**
+ * 执行清单异常查询Bean
+ * @author hehj
+ * @datetime 2018年8月14日 上午10:31:33
+ */
+public class PAExceptionQueryBean extends BaseQueryBean {
+	// 执行清单ID
+	private String projectActionCode;
+	// 处理状态，0未处理 1处理中 2已处理
+	private Short status;
+	
+	public String getProjectActionCode() {
+		return projectActionCode;
+	}
+	public void setProjectActionCode(String projectActionCode) {
+		this.projectActionCode = projectActionCode;
+	}
+	public Short getStatus() {
+		return status;
+	}
+	public void setStatus(Short status) {
+		this.status = status;
+	}
+	@Override
+	public String toString() {
+		return "PAExceptionQueryBean [projectActionCode=" + projectActionCode + ", status=" + status + "]";
+	}
+}

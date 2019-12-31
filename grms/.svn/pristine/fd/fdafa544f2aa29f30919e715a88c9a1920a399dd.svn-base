@@ -1,0 +1,15 @@
+/**
+ * 
+ */
+package com.hori.grms.service;
+
+/** 
+ * @ClassName: ProjectPeopleService 
+ * @Description: 项目人员
+ * @author zhuqiang
+ * @date 2018年8月8日 下午7:00:21 
+ */
+
+public interface ProjectPeopleService {
+
+}

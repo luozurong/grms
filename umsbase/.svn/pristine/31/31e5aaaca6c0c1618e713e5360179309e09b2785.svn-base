@@ -1,0 +1,199 @@
+package com.hori.jobtask;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.hori.dao.queryBean.TerminalQueryBean;
+import com.hori.model.SynchronizationLog;
+import com.hori.model.Terminal;
+import com.hori.service.SynchronizationLogService;
+import com.hori.service.TerminalService;
+import com.hori.utils.DateUtil;
+
+/**
+ * 同步终端数据的定时任务
+ */
+@Component("synchronizTerminalTask")
+public class SynchronizTerminalTask {
+	Logger log = Logger.getLogger(SynchronizTerminalTask.class);
+
+	@Autowired
+	private TerminalService terminalService;
+
+	@Autowired
+	private SynchronizationLogService synchronizationLogService;
+
+	/**
+	 * 同步终端信息
+	 */
+	public void synchronizedTerminal() {
+		log.info(DateUtil.getDateStr(new Date()) + "开始同步终端信息........");
+		TerminalQueryBean queryBean = new TerminalQueryBean();
+		List<Terminal> vdcsTerminals = this.terminalService.getAddTerminalByTime(queryBean); // 从对讲获取需要同步新增的终端信息
+		List<Terminal> uomsTerminals = new ArrayList<Terminal>();
+		List<Terminal> addTerminals = new ArrayList<Terminal>();
+		List<Terminal> deleteTerminals = new ArrayList<Terminal>();
+		List<Terminal> finalUpdate = new ArrayList<Terminal>();
+		Map<String, Terminal> teMap = new HashMap<String, Terminal>();
+		Map<String, Terminal> vdcsMap = new HashMap<String, Terminal>();
+		boolean updateTerminalCountKey = false;
+		SynchronizationLog logs = null;
+		if (vdcsTerminals != null && vdcsTerminals.size() > 0) {
+//			queryBean.setTerminalType(1);
+			uomsTerminals = this.terminalService.getByQueryBean(queryBean);
+			if (uomsTerminals != null && uomsTerminals.size() > 0) {
+
+				for (Terminal box : uomsTerminals) {
+					teMap.put(box.getTerminalSerial(), box);
+				}
+
+				for (Terminal vdcsTerminal : vdcsTerminals) {
+					vdcsMap.put(vdcsTerminal.getTerminalSerial(), vdcsTerminal);
+				}
+
+				for (Terminal vdcsTerminal : vdcsTerminals) {
+					boolean flag = false;
+					if (teMap.get(vdcsTerminal.getTerminalSerial()) != null) {
+						Terminal uomsTerminal = teMap.get(vdcsTerminal.getTerminalSerial());
+						if (!uomsTerminal.getSerial().equals(vdcsTerminal.getSerial())
+								|| !vdcsTerminal.getOrganizationSeq().equals(uomsTerminal.getOrganizationSeq())) {
+							uomsTerminal.setTerminalSerial(vdcsTerminal.getTerminalSerial());
+							uomsTerminal.setRegisterAccount(vdcsTerminal.getRegisterAccount());
+							uomsTerminal.setTerminalName(vdcsTerminal.getTerminalName());
+							uomsTerminal.setCode(vdcsTerminal.getCode());
+							uomsTerminal.setCommunitySerial(vdcsTerminal.getCommunitySerial());
+							uomsTerminal.setCreateTime(vdcsTerminal.getCreateTime());
+							uomsTerminal.setGroupState(vdcsTerminal.getGroupState());
+							uomsTerminal.setHouseholdSerial(vdcsTerminal.getHouseholdSerial());
+							uomsTerminal.setLocationName(vdcsTerminal.getLocationName());
+							uomsTerminal.setOrganizationSeq(vdcsTerminal.getOrganizationSeq());
+							uomsTerminal.setSerial(vdcsTerminal.getSerial());
+							uomsTerminal.setUpdateTime(vdcsTerminal.getUpdateTime());
+							uomsTerminal.setTerminalAliasName(vdcsTerminal.getTerminalAliasName());
+							finalUpdate.add(uomsTerminal);
+						}
+						flag = true;
+					} else {
+						flag = false;
+					}
+					if (!flag) {
+						addTerminals.add(vdcsTerminal);
+					}
+				}
+
+				for (Terminal uomsTerminal : uomsTerminals) {
+					if (vdcsMap.get(uomsTerminal.getTerminalSerial()) == null) { // 表示对讲系统当中不存在该设备
+						if(uomsTerminal.getTerminalType()==1){  //表示是对讲的终端
+							deleteTerminals.add(uomsTerminal);
+						}
+						
+					}
+				}
+
+			} else {
+				addTerminals.addAll(vdcsTerminals);
+			}
+
+			try {
+				if (deleteTerminals != null && deleteTerminals.size() > 0) {
+					String[] idArray = new String[deleteTerminals.size()];
+					String content = "删除的终端序列号：";
+					for (int key = 0; key < deleteTerminals.size(); key++) {
+						idArray[key] = deleteTerminals.get(key).getTerminalSerial();
+						content = content + deleteTerminals.get(key).getTerminalSerial() + ",";
+					}
+					this.terminalService.bachRemove(deleteTerminals);
+					updateTerminalCountKey = true;
+					log.info(DateUtil.getDateStr(new Date()) + ":同步删除终端信息完毕........");
+					logs = new SynchronizationLog();
+					content = content.substring(0, content.length() - 1);
+					logs.setLogsContent(content);
+					logs.setCreateTime(new Date());
+					logs.setType(3);
+					logs.setStatus(1);
+					synchronizationLogService.add(logs);// 向日志表插入数据
+				}
+			} catch (Exception e) {
+				logs = new SynchronizationLog();
+				String content = "同步删除终端失败";
+				logs.setLogsContent(content);
+				logs.setCreateTime(new Date());
+				logs.setType(4);
+				logs.setStatus(2);
+				synchronizationLogService.add(logs);// 向日志表插入数据
+				e.printStackTrace();
+			}
+
+			try {
+				if (addTerminals != null && addTerminals.size() > 0) {
+					this.terminalService.bachSave(addTerminals);
+					updateTerminalCountKey = true;
+					log.info(DateUtil.getDateStr(new Date()) + ":同步新增终端信息完毕........");
+					logs = new SynchronizationLog();
+					String content = "新增的终端序列号：";
+					for (Terminal terminal : addTerminals) {
+						content = content + terminal.getTerminalSerial() + ",";
+					}
+					content = content.substring(0, content.length() - 1);
+					logs.setLogsContent(content);
+					logs.setCreateTime(new Date());
+					logs.setType(1);
+					logs.setStatus(1);
+					synchronizationLogService.add(logs);// 向日志表插入数据
+				}
+			} catch (Exception e) {
+				logs = new SynchronizationLog();
+				String content = "同步新增终端失败";
+				logs.setLogsContent(content);
+				logs.setCreateTime(new Date());
+				logs.setType(1);
+				logs.setStatus(2);
+				synchronizationLogService.add(logs);// 向日志表插入数据
+				e.printStackTrace();
+			}
+
+			try {
+				if (finalUpdate != null && finalUpdate.size() > 0) {
+					this.terminalService.updateTerminals(finalUpdate);
+					updateTerminalCountKey = true;
+					log.info(DateUtil.getDateStr(new Date()) + ":同步更新终端信息完毕........");
+					logs = new SynchronizationLog();
+					String content = "更新的终端序列号：";
+					for (Terminal terminal : finalUpdate) {
+						content = content + terminal.getTerminalSerial() + ",";
+					}
+					content = content.substring(0, content.length() - 1);
+					logs.setLogsContent(content);
+					logs.setCreateTime(new Date());
+					logs.setType(2);
+					logs.setStatus(1);
+					synchronizationLogService.add(logs); // 向日志表插入数据
+				}
+			} catch (Exception e) {
+				logs = new SynchronizationLog();
+				String content = "同步更新的终端失败";
+				logs.setLogsContent(content);
+				logs.setCreateTime(new Date());
+				logs.setType(2);
+				logs.setStatus(2);
+				synchronizationLogService.add(logs);// 向日志表插入数据
+				e.printStackTrace();
+			}
+			if (updateTerminalCountKey) {
+				this.terminalService.updateTerminalCount(); // 更新小区终端数量
+			}
+
+		} else {
+			log.info(DateUtil.getDateStr(new Date()) + ":无终端信息同步........");
+		}
+
+	}
+
+}

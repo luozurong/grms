@@ -1,0 +1,83 @@
+/**
+ * 
+ */
+package com.hori.grms.service.impl;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.hori.grms.dao.ProductMenuMapper;
+import com.hori.grms.model.ProductMenu;
+import com.hori.grms.service.ProductMenuService;
+
+/**
+ * @ClassName: ProductMenuServiceImpl
+ * @Description: 产品清单服务层
+ * @author zhuqiang
+ * @date 2018年8月8日 下午6:44:45
+ */
+@Service("productMenuService")
+public class ProductMenuServiceImpl implements ProductMenuService {
+	@Autowired
+	private ProductMenuMapper productMenuMapper;
+
+	@Override
+	public ProductMenu findProductMenuById(String id) {
+		return productMenuMapper.selectByPrimaryKey(id);
+	}
+
+	@Override
+	public List<Map<String, Object>> screen2Prodect(String organizationSeqs, String beginTime, String endTime) {
+		List<Map<String, Object>> listR = new ArrayList<>();
+		List<ProductMenu> list = productMenuMapper.findProductMenuList((short) 1, "2");
+		
+
+		if (StringUtils.isBlank(organizationSeqs)) {
+			Map<String, Object> map = null;
+			if (list != null && list.size() > 0) {
+				for (ProductMenu productMenu : list) {
+					map = new HashMap<>();
+					map.put("meanId", productMenu.getId());
+					map.put("result", true);
+					listR.add(map);
+				}
+			}			
+
+			return listR;
+		}
+		String[] oStrings = organizationSeqs.split(",");
+
+		List<Map<String, Object>> results = productMenuMapper.filterMeauByorganizationSeqs(oStrings, beginTime,
+				endTime);
+
+		Map<String, Object> map = null;
+		boolean falg = true;
+		if (list != null && list.size() > 0) {
+			for (ProductMenu pm : list) {
+
+				map = new HashMap<>();
+				for (int i = 0; i < results.size(); i++) {
+					if (((String) results.get(i).get("menuId")).equals(pm.getId())) {
+						if (((Integer) results.get(i).get("count")) >= pm.getNumLimit()) {
+							falg = false;
+						}
+						results.remove(i);
+						break;
+					}
+				}
+				map.put("meanId", pm.getId());
+				map.put("result", falg);
+				listR.add(map);
+				falg = true;
+			}
+		}		
+		return listR;
+	}
+
+}

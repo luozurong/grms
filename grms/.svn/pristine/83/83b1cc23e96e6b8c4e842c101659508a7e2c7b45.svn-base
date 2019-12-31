@@ -1,0 +1,532 @@
+$(function(){
+	ajax();
+	/*************消息弹窗*************/
+	$.ajax({
+		   url : "/uoms/workOrderManageAction!getWorkOrderNumAndUrge.html",
+		   type : "post", 
+	       dataType : "json",
+	       async : true, 
+		   success : function(data){ // 请求成功
+			   var applyChangeNum = $("#applyChangeNum").val();
+			   var applyDelayNum = $("#applyDelayNum").val();
+			   var overTimeDealNum = $("#overTimeDealNum").val();
+			   var overTimeComplete = $("#overTimeComplete").val();
+			   var waitEndNum = $("#waitEndNum").val();
+			   var overTimeAllotNum = $("#overTimeAllotNum").val();
+			   var waitAllotNum = $("#waitAllotNum").val();
+			   var applyAccreditNum = $("#applyAccreditNum").val();
+			   var urgeNum = $("#urgeNum").val();
+			   //超时未分配
+			   if($("#overTimeAllotVo").val()==1){
+				   if(data.numVo.overTimeAllotNum > 0 && data.numVo.overTimeAllotNum>overTimeAllotNum){
+					   allMsg("发现"+data.numVo.overTimeAllotNum+"条超时未分配工单，请及时前往进行处理。",'6','1');
+					   $("#overTimeAllotNum").val(data.numVo.overTimeAllotNum);
+				   }else{
+					   $("#overTimeAllotNum").val(data.numVo.overTimeAllotNum);
+				   }
+			   }
+			   //变更申请
+			   if($("#applyChangeVo").val()==1){
+				   if(data.numVo.applyChangeNum > 0 && data.numVo.applyChangeNum > applyChangeNum){
+					   allMsg("发现"+data.numVo.applyChangeNum+"条变更工单申请，请及时前往进行处理",'3','2');
+					   $("#applyChangeNum").val(data.numVo.applyChangeNum);
+				   }else{
+					   $("#applyChangeNum").val(data.numVo.applyChangeNum);
+				   }
+			   }
+			   
+			   //延时申请
+			   if($("#applyDelayVo").val()==1){
+				   if(data.numVo.applyDelayNum > 0 && data.numVo.applyDelayNum>applyDelayNum){
+					   allMsg("发现"+data.numVo.applyDelayNum+"条延时工单申请，请及时前往进行处理",'4','3');
+					   $("#applyDelayNum").val(data.numVo.applyDelayNum);
+				   }else{
+					   $("#applyDelayNum").val(data.numVo.applyDelayNum);
+				   }
+			   }
+			   
+			   //超时未处理
+			   if($("#overTimeDealVo").val()==1){
+				   if(data.numVo.overTimeDealNum > 0 && data.numVo.overTimeDealNum>overTimeDealNum){
+					   allMsg("发现"+data.numVo.overTimeDealNum+"条超时未处理工单，请及时前往进行处理",'7','4');
+					   $("#overTimeDealNum").val(data.numVo.overTimeDealNum);
+				   }else{
+					   $("#overTimeDealNum").val(data.numVo.overTimeDealNum);
+				   }
+			   }
+			   
+			   //超时未完成
+			   if($("#overTimeCompleteVo").val()==1){
+				   if(data.numVo.overTimeComplete > 0 && data.numVo.overTimeComplete>overTimeComplete){
+					   allMsg("发现"+data.numVo.overTimeComplete+"条超时未完成工单，请及时前往进行处理",'8','5');
+					   $("#overTimeComplete").val(data.numVo.overTimeComplete);
+				   }else{
+					   $("#overTimeComplete").val(data.numVo.overTimeComplete);
+				   }
+			   }
+			   
+			   //待归结
+			   if($("#waitEndVo").val()==1){
+				   if(data.numVo.waitEndNum > 0 && data.numVo.waitEndNum>waitEndNum){
+					   allMsg("您有"+data.numVo.waitEndNum+"条新的待归结工单，请及时前往进行归结。",'9','6');
+					   $("#waitEndNum").val(data.numVo.waitEndNum);
+				   }else{
+					   $("#waitEndNum").val(data.numVo.waitEndNum);
+				   }
+			   }
+			   
+			   //设备故障告警提醒弹窗模块
+			   if($("#waitAllotVo").val()==1){
+				   if(data.numVo.waitAllotNum > 0 && data.numVo.waitAllotNum>waitAllotNum){
+					   allMsg("设备发生故障并生成工单，请及时前往进行分配工单",'0','7');
+					   $("#waitAllotNum").val(data.numVo.waitAllotNum);
+				   }else{
+					   $("#waitAllotNum").val(data.numVo.waitAllotNum);
+				   }
+			   }
+			   //申请设备管理权限弹窗模块
+			   if($("#applyAccreditVo").val()==1){
+				   if(data.numVo.applyAccreditNum > 0 && data.numVo.applyAccreditNum>applyAccreditNum){
+					   allMsg("运维人员申请设备管理权限，请及时前往处理。",'5','8');
+					   $("#applyAccreditNum").val(data.numVo.applyAccreditNum);
+				   }else{
+					   $("#applyAccreditNum").val(data.numVo.applyAccreditNum);
+				   }
+			   }
+			   
+			 //催办
+			   if($("#urgeVo").val()==1){
+				   if(data.urges.length > 0 && data.urges.length>urgeNum){
+					   allMsg("您有一条催办的工单，请及时前往进行处理",data.urges[0].workOrderStatus,'9');
+					   $("#urgeNum").val(data.urges.length);
+				   }else{
+					   $("#urgeNum").val(data.urges.length);
+				   }
+			   }
+		   },
+		   error : function(){ // 请求失败
+			   //infoMask('数据获取失败！');
+		   }
+		});
+});
+
+/*************30秒扫面一次消息*************/
+setInterval(function message(){
+	
+	$.ajax({
+		   url : "/uoms/workOrderManageAction!getWorkOrderNumAndUrge.html",
+		   type : "post", 
+	       dataType : "json",
+	       async : true, 
+		   success : function(data){ // 请求成功
+			   var applyChangeNum = $("#applyChangeNum").val();
+			   var applyDelayNum = $("#applyDelayNum").val();
+			   var overTimeDealNum = $("#overTimeDealNum").val();
+			   var overTimeComplete = $("#overTimeComplete").val();
+			   var waitEndNum = $("#waitEndNum").val();
+			   var overTimeAllotNum = $("#overTimeAllotNum").val();
+			   var waitAllotNum = $("#waitAllotNum").val();
+			   var urgeNum = $("#urgeNum").val();
+			 //超时未分配
+			   if($("#overTimeAllotVo").val()==1){
+				   if(data.numVo.overTimeAllotNum > 0 && data.numVo.overTimeAllotNum>overTimeAllotNum){
+					   allMsg("发现"+data.numVo.overTimeAllotNum+"条超时未分配工单，请及时前往进行处理。",'6','1');
+					   $("#overTimeAllotNum").val(data.numVo.overTimeAllotNum);
+				   }else{
+					   $("#overTimeAllotNum").val(data.numVo.overTimeAllotNum);
+				   }
+			   }
+			   //变更申请
+			   if($("#applyChangeVo").val()==1){
+				   if(data.numVo.applyChangeNum > 0 && data.numVo.applyChangeNum > applyChangeNum){
+					   allMsg("发现"+data.numVo.applyChangeNum+"条变更工单申请，请及时前往进行处理",'3','2');
+					   $("#applyChangeNum").val(data.numVo.applyChangeNum);
+				   }else{
+					   $("#applyChangeNum").val(data.numVo.applyChangeNum);
+				   }
+			   }
+			   
+			   //延时申请
+			   if($("#applyDelayVo").val()==1){
+				   if(data.numVo.applyDelayNum > 0 && data.numVo.applyDelayNum>applyDelayNum){
+					   allMsg("发现"+data.numVo.applyDelayNum+"条延时工单申请，请及时前往进行处理",'4','3');
+					   $("#applyDelayNum").val(data.numVo.applyDelayNum);
+				   }else{
+					   $("#applyDelayNum").val(data.numVo.applyDelayNum);
+				   }
+			   }
+			   
+			   //超时未处理
+			   if($("#overTimeDealVo").val()==1){
+				   if(data.numVo.overTimeDealNum > 0 && data.numVo.overTimeDealNum>overTimeDealNum){
+					   allMsg("发现"+data.numVo.overTimeDealNum+"条超时未处理工单，请及时前往进行处理",'7','4');
+					   $("#overTimeDealNum").val(data.numVo.overTimeDealNum);
+				   }else{
+					   $("#overTimeDealNum").val(data.numVo.overTimeDealNum);
+				   }
+			   }
+			   
+			   //超时未完成
+			   if($("#overTimeCompleteVo").val()==1){
+				   if(data.numVo.overTimeComplete > 0 && data.numVo.overTimeComplete>overTimeComplete){
+					   allMsg("发现"+data.numVo.overTimeComplete+"条超时未完成工单，请及时前往进行处理",'8','5');
+					   $("#overTimeComplete").val(data.numVo.overTimeComplete);
+				   }else{
+					   $("#overTimeComplete").val(data.numVo.overTimeComplete);
+				   }
+			   }
+			   
+			   //待归结
+			   if($("#waitEndVo").val()==1){
+				   if(data.numVo.waitEndNum > 0 && data.numVo.waitEndNum>waitEndNum){
+					   allMsg("您有"+data.numVo.waitEndNum+"条新的待归结工单，请及时前往进行归结。",'9','6');
+					   $("#waitEndNum").val(data.numVo.waitEndNum);
+				   }else{
+					   $("#waitEndNum").val(data.numVo.waitEndNum);
+				   }
+			   }
+			   
+			   //设备故障告警提醒弹窗模块
+			   if($("#waitAllotVo").val()==1){
+				   if(data.numVo.waitAllotNum > 0 && data.numVo.waitAllotNum>waitAllotNum){
+					   allMsg("设备发生故障并生成工单，请及时前往进行分配工单",'0','7');
+					   $("#waitAllotNum").val(data.numVo.waitAllotNum);
+				   }else{
+					   $("#waitAllotNum").val(data.numVo.waitAllotNum);
+				   }
+			   }
+			   
+			   //申请设备管理权限弹窗模块
+			   if($("#applyAccreditVo").val()==1){
+				   if(data.numVo.applyAccreditNum > 0 && data.numVo.applyAccreditNum>applyAccreditNum){
+					   allMsg("运维人员申请设备管理权限，请及时前往处理。",'5','8');
+					   $("#applyAccreditNum").val(data.numVo.applyAccreditNum);
+				   }else{
+					   $("#applyAccreditNum").val(data.numVo.applyAccreditNum);
+				   }
+			   }
+			   
+			   //催办
+			   if($("#urgeVo").val()==1){
+				   if(data.urges.length > 0 && data.urges.length>urgeNum){
+					   allMsg("您有一条催办的工单，请及时前往进行处理",data.urges[0].workOrderStatus,'9');
+					   $("#urgeNum").val(data.urges.length);
+				   }else{
+					   $("#urgeNum").val(data.urges.length);
+				   }
+			   }
+		   },
+		   error : function(){ // 请求失败
+			   //infoMask('数据获取失败！');
+		   }
+		});
+},30000);
+
+function allMsg(msg,status,index){
+	$("#msg"+index).hide();
+	$("#main"+index).text(msg);
+	
+	$("#msg"+index).show();
+	$("#goto"+index).click(function(){
+		goToOrder(status);
+		$("#msg"+index).hide();
+	});
+	
+	//$("#mainFrame").attr("src","");
+}
+
+function ajax(){
+	/*************消息是否弹出*************/
+	$.ajax({
+		   url : "/uoms/basicSetAction!getAll.html",
+		   type : "post", 
+	       dataType : "json",
+	       async : true, 
+		   success : function(data){ // 请求成功
+			  $("#applyChangeVo").val(data.orderCapply);
+			  $("#applyDelayVo").val(data.orderDelayApply);
+			  $("#overTimeDealVo").val(data.orderTimeoutWithoutDeal);
+			  $("#overTimeCompleteVo").val(data.orderTimeoutWithoutAccomplish);
+			  $("#waitEndVo").val(data.orderWfSummary);
+			  $("#overTimeAllotVo").val(data.orderTimeoutWithoutAllocation);
+			  $("#waitAllotVo").val(data.stoppageAlarm);
+			  $("#applyAccreditVo").val(data.deviceManageLimit);
+			  $("#urgeVo").val(data.orderUrge);
+		   },
+		   error : function(){ // 请求失败
+			   //infoMask('数据获取失败！');
+		   }
+		});
+	
+	
+	/*************工单数量*************/
+    $.ajax({
+		   url : "/uoms/workOrderManageAction!getWorkOrderNum.html",
+		   type : "post", 
+	       dataType : "json",
+	       async : true, 
+		   success : function(data){ // 请求成功
+			   console.log(data);
+			   //待分配工单
+			   if(data.waitAllotNum == 0){
+				   $("#orderWfallocationVo").text("0");
+			   }else if(data.waitAllotNum > 99){
+				   $("#orderWfallocationVo").text("99+");
+			   }else{
+				   $("#orderWfallocationVo").text(data.waitAllotNum);
+			   }
+			   
+			   //待处理
+			   if(data.waitDealNum == 0){
+				   $("#orderWfdealVo").text("0");
+			   }else if(data.waitDealNum > 99){
+				   $("#orderWfdealVo").text("99+");
+			   }else{
+				   $("#orderWfdealVo").text(data.waitDealNum);
+			   }
+			   
+			   //变更申请
+			   if(data.applyChangeNum == 0){
+				   $("#orderCapplyVo").text("0");
+			   }else if(data.applyChangeNum > 99){
+				   $("#orderCapplyVo").text("99+");
+			   }else{
+				   $("#orderCapplyVo").text(data.applyChangeNum);
+			   }
+			   
+			   //延时申请
+			   if(data.applyDelayNum == 0){
+				   $("#orderDelayVo").text("0");
+			   }else if(data.applyDelayNum > 99){
+				   $("#orderDelayVo").text("99+");
+			   }else{
+				   $("#orderDelayVo").text(data.applyDelayNum);
+			   }
+			   //超时未处理
+			   if(data.overTimeDealNum == 0){
+				   $("#orderTimeoutwithoutdealVo").text("0");
+			   }else if(data.overTimeDealNum > 99){
+				   $("#orderTimeoutwithoutdealVo").text("99+");
+			   }else{
+				   $("#orderTimeoutwithoutdealVo").text(data.overTimeDealNum);
+			   }
+			   //超时未完成
+			   if(data.overTimeComplete == 0){
+				   $("#orderTimeoutwithoutaccomplishVo").text("0");
+			   }else if(data.overTimeComplete > 99){
+				   $("#orderTimeoutwithoutaccomplishVo").text("99+");
+			   }else{
+				   $("#orderTimeoutwithoutaccomplishVo").text(data.overTimeComplete);
+			   }
+			   //待归结
+			   if(data.waitEndNum == 0){
+				   $("#orderWfsummaryVo").text("0");
+			   }else if(data.waitEndNum > 99){
+				   $("#orderWfsummaryVo").text("99+");
+			   }else{
+				   $("#orderWfsummaryVo").text(data.waitEndNum);
+			   }
+			   //超时未分配
+			   if(data.overTimeAllotNum == 0){
+				   $("#orderTimeoutwithoutallocationVo").text("0");
+			   }else if(data.overTimeAllotNum > 99){
+				   $("#orderTimeoutwithoutallocationVo").text("99+");
+			   }else{
+				   $("#orderTimeoutwithoutallocationVo").text(data.overTimeAllotNum);
+			   }
+			   //处理中
+			   if(data.dealingNum == 0){
+				   $("#dealingVo").text("0");
+			   }else if(data.dealingNum > 99){
+				   $("#dealingVo").text("99+");
+			   }else{
+				   $("#dealingVo").text(data.dealingNum);
+			   }
+			   //权限申请
+			   if(data.applyAccreditNum == 0){
+				   $("#applyAccreditVo").text("0");
+			   }else if(data.applyAccreditNum > 99){
+				   $("#applyAccreditVo").text("99+");
+			   }else{
+				   $("#applyAccreditVo").text(data.applyAccreditNum);
+			   }
+			   
+			   //消息总数
+			   var count = data.waitAllotNum + data.waitDealNum + data.applyChangeNum + data.applyDelayNum + data.overTimeDealNum + data.overTimeComplete + data.waitEndNum + data.overTimeAllotNum+data.applyAccreditNum+data.dealingNum;
+			   if(count == 0){
+				   $("#allNum").text("0");
+				   $("#allNum").hide();
+			   }else if(count > 99){
+				   $("#allNum").text("99+");
+			   }else{
+				   $("#allNum").text(count);
+			   }
+			   $(".mesNum-pop div span i").each(function(){
+					if($(this).text() == 0){
+						$(this).parent().hide();
+					}
+			   });
+		   },
+		   error : function(){ // 请求失败
+			   //infoMask('数据获取失败！');
+		   }
+		});
+}
+
+
+/***********跳转至工单*************/
+function goToOrder(status){
+	
+	$("#mainFrame").attr("src","/uoms/workOrderManageAction!allWorkOrder.html?status="+status);
+}
+
+/***********跳转至消息设置*************/
+function goToBasic(){
+	$("#mainFrame").attr("src","/uoms/basicSetAction!basicSetList.html");
+}
+
+/***********退出*************/
+function logout(){
+	window.location.href="/grms/nologin";
+}
+
+
+hightPic();
+$(".menuUl li").click(function(){
+	$(this).find(".menuItem").addClass("open");
+	$(this).siblings().find(".menuItem").removeClass("open");
+	hightPic();
+});
+
+//工单提醒信息跳转链接
+$(".allMsg-botton a").click(function(){
+	menuItemEach("工单管理");
+});
+
+//个人信息跳转
+function setPerson(){
+	$("#mainFrame").attr("src","/ums/personalAction!goPersonal.html");
+}
+//点击账号名称，跳转到个人设置
+$(".admin").click(function(){
+    menuItemEach("系统设置");
+    $(".menuItem").each(function(){
+        if($(this).text() == "系统设置"){
+            $(this).next().find(".submenuItem").each(function(){
+                if($(this).text() == "个人设置"){
+                    $(this).addClass("submenuItemActive").siblings().removeClass("submenuItemActive");
+                }
+            });
+        }
+    });
+});
+//工单信息下拉
+$(".mesNum-pop div").click(function(){
+	if($(this).is(".workOrderMsg")){
+		menuItemEach("工单管理");
+	}
+	if($(this).is(".set")){
+		menuItemEach("系统设置");
+		$(".menuItem").each(function(){
+			if($(this).text() == "系统设置"){
+				$(this).next().find(".submenuItem").each(function(){
+					if($(this).text() == "基础设置"){
+						$(this).addClass("submenuItemActive").siblings().removeClass("submenuItemActive");
+					}
+				});
+			}
+		});
+	}
+});
+
+
+function menuItemEach(msg){
+	$(".menuItem").each(function(){
+		$(this).removeClass("open");
+		hightPic();
+		if($(this).text() == msg){
+			$(this).addClass("open");
+			hightPic();
+		}
+	});
+}
+	
+//二级菜单显示
+$('.submenuItem').click(function(){
+	$('.submenuItem').removeClass('submenuItemActive');
+	$(this).addClass('submenuItemActive');
+});
+
+//一级菜单显示高亮图标，菜单下拉，上拉
+function hightPic(){
+	//隐藏下拉图标
+	$(".menuItem").each(function(){
+		if($(this).siblings('.submenu').length == 0){
+			$(this).siblings('.icon').hide();
+		}
+		if($(this).hasClass("open")){
+			$(this).next().slideDown(120);//菜单显示
+			$(this).siblings(".logo-img-black").hide();//高亮图片
+			$(this).siblings(".logo-img-white").show();
+			$(this).prev().addClass("left-border-check");//选择竖条
+			$(this).siblings(".icon").css('background-image','url(common/images/nav_ic_down1.png)');//下拉上来icon
+		}else{
+			$(this).next().slideUp(20);//菜单收起
+			$(this).siblings(".logo-img-black").show();
+			$(this).siblings(".logo-img-white").hide();
+			$(this).prev().removeClass("left-border-check");
+			$(this).siblings(".icon").css('background-image','url(common/images/nav_ic_more1.png)');
+		}
+	});
+}
+
+//工单消息的显示
+$(".mesIcon,.mesNum-pop").hover(function(){
+	$(".mesNum-pop").show();
+},function(){
+	$(".mesNum-pop").hide();
+});
+
+/*********提示框***********/
+$("#img1").click(function(){
+	$("#msg1").hide();
+});
+$("#img2").click(function(){
+	$("#msg2").hide();
+});
+$("#img3").click(function(){
+	$("#msg3").hide();
+});
+$("#img4").click(function(){
+	$("#msg4").hide();
+});
+$("#img5").click(function(){
+	$("#msg5").hide();
+});
+$("#img6").click(function(){
+	$("#msg6").hide();
+});
+$("#img7").click(function(){
+	$("#msg7").hide();
+});
+$("#img8").click(function(){
+	$("#msg8").hide();
+});
+$("#img9").click(function(){
+	$("#msg9").hide();
+});
+
+function leftshoworhide(e){
+	var id = e.attr('id');
+	if(id=='zhankai'){
+		e.attr('id','bihe');
+		$('#cc').css('padding-left','0px');
+		$('#mask-left').css('margin-left','-200px');
+	}else{
+		e.attr('id','zhankai');
+		$('#cc').css('padding-left','200px');
+		$('#mask-left').css('margin-left','0px');
+	}
+}
+
+

@@ -1,0 +1,55 @@
+/*
+ * ProjectProductMenuAreaMapper.java
+ * Copyright(C) 20xx-2015 xxxxxx公司
+ * All rights reserved.
+ * -----------------------------------------------
+ * 2018-08-10 Created
+ */
+package com.hori.grms.dao;
+
+import com.hori.grms.model.ProjectProductMenuArea;
+import com.hori.grms.model.ProjectProductMenuAreaExample;
+import com.hori.grms.queryBean.ProjectActionQueryBean;
+import com.hori.grms.vo.ExportMGVo;
+
+import java.util.List;
+import org.apache.ibatis.annotations.Param;
+
+public interface ProjectProductMenuAreaMapper {
+    int countByExample(ProjectProductMenuAreaExample example);
+
+    int deleteByExample(ProjectProductMenuAreaExample example);
+
+    int deleteByPrimaryKey(String id);
+
+    int insert(ProjectProductMenuArea record);
+
+    int insertSelective(ProjectProductMenuArea record);
+
+    List<ProjectProductMenuArea> selectByExample(ProjectProductMenuAreaExample example);
+
+    ProjectProductMenuArea selectByPrimaryKey(String id);
+
+    int updateByExampleSelective(@Param("record") ProjectProductMenuArea record, @Param("example") ProjectProductMenuAreaExample example);
+
+    int updateByExample(@Param("record") ProjectProductMenuArea record, @Param("example") ProjectProductMenuAreaExample example);
+
+    int updateByPrimaryKeySelective(ProjectProductMenuArea record);
+
+    int updateByPrimaryKey(ProjectProductMenuArea record);
+
+	/**
+	 * 通过project_product_menu_id列表 删除 
+	 * @param project_product_menuIds
+	 */
+	void deleteByProjectProductMenuIds(@Param("project_product_menuIds") List<String> project_product_menuIds);
+
+
+    /**
+     * 查找媒管部门需要导出的数据
+     * @param queryBean
+     * @return
+     */
+	List<ExportMGVo> listMGData(@Param("queryBean") ProjectActionQueryBean queryBean);
+
+}

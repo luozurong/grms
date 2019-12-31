@@ -1,0 +1,18 @@
+<decorators defaultdir="/decorators">
+	<excludes>
+		<pattern>/40*.jsp</pattern>
+		<pattern>/resources/*</pattern>
+		<pattern>/blank.jsp*</pattern>
+		<pattern>/frame.jsp*</pattern>
+		<pattern>/default.html*</pattern>
+		<pattern>/WEB-INF/pages/mainMenu.jsp*</pattern>
+		<pattern>/mainMenu.html*</pattern>
+		<pattern>/main.jsp</pattern>
+		<pattern>/left.jsp</pattern>
+		<pattern>/index.jsp</pattern>
+		<pattern>/error.jsp</pattern>
+	</excludes>
+	<decorator name="default" page="default.jsp">
+		<pattern>/*</pattern>
+	</decorator>
+</decorators>

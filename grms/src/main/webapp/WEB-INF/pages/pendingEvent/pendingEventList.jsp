@@ -1,0 +1,57 @@
+<%
+	String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath();
+%>
+<%@ page language="java" pageEncoding="UTF-8"%>
+<%@ page language="java" import="java.util.*" %>
+<%@ page language="java" import="com.hori.vo.*" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<!DOCTYPE html>
+<html style="height: 100%;">
+	<head>
+	<meta charset="UTF-8">
+	<title>项目管理</title>
+	<meta http-equiv="X-UA-Compatible" content="edge" />
+    <link rel="stylesheet" type="text/css" href="<%=basePath%>/common/easyui/themes/default/easyui.css" />
+    <link rel="stylesheet" type="text/css" href="<%=basePath%>/common/css/reset.css" />
+    <link rel="stylesheet" type="text/css" href="<%=basePath%>/common/css/common.css" />
+    <link rel="stylesheet" type="text/css" href="<%=basePath%>/project/css/project.css" />
+    <link rel="shortcut icon" href="<%=basePath%>/homepage/images/ywhlzt.ico" type="image/x-icon">
+	<link rel="stylesheet" type="text/css" href="<%=basePath%>/homepage/css/index.css"/>
+	<link rel="stylesheet" type="text/css" href="<%=basePath%>/pendingEvent/css/pendingEvent.css"/>
+	</head>
+	<body >
+		<div class="topTitle clearfix">
+			<div class="path1 fl" style="margin-left:31px;">待办事项 </div>
+		</div>
+		<div class="wrap" style="margin-top: 0;">
+			
+			<div class="conditions-select">
+				<div class="time fl">时间：</div>
+	            <div class="time-star fl">
+	                <div class="datebox-1" style="height: 34px;"></div>
+	            </div>
+	            <div class="to-line fl"> &nbsp;-- &nbsp;</div>
+	            <div class="time-end fl">
+	                <div class="datebox-2" style="height: 34px;"></div>
+	            </div>
+			
+				<div style="height: 60px;">
+					<div class="account fl">待办事项名称/模块：</div>
+					<div class="account1 fl"><input id="key"></div>
+					<div  id="select"><a id="searchBtn" onClick="selectAll()" class="search" href="#">查询</a></div>
+				</div>
+			</div>
+			<div class="content-wrap">
+				<table id="dg"></table>
+				<div id="pp" style="position: relative;"></div>
+			</div>
+		</div>
+		    
+        <script type="text/javascript"	src="<%=basePath%>/common/easyui/jquery.min.js"></script>
+        <script type="text/javascript"	src="<%=basePath%>/common/easyui/jquery.easyui.min.js"></script>
+        <script type="text/javascript" src="<%=basePath%>/common/easyui/locale/easyui-lang-zh_CN.js" ></script>
+        <script type="text/javascript"	src="<%=basePath%>/common/plugin/common.js"></script>
+        <script type="text/javascript"	src="<%=basePath%>/pendingEvent/js/pendingEvent.js"></script>
+        <script src="<%=basePath%>/homepage/js/index.js" type="text/javascript" charset="utf-8"></script>
+	</body>
+</html>

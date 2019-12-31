@@ -1,0 +1,95 @@
+package com.hori.grms.controller;
+
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.github.pagehelper.PageInfo;
+import com.hori.grms.model.ContractTemplate;
+import com.hori.grms.pageModel.Json;
+import com.hori.grms.queryBean.ContractTemplateQueryBean;
+import com.hori.grms.service.ContractService;
+import com.hori.grms.util.UUIDGenerator;
+
+/**
+ * 合同管理
+ * @author hhb
+ *
+ */
+@Controller
+@RequestMapping("contract")
+public class ContractController {
+	@Autowired
+	private ContractService contractService;
+	@Autowired
+	private HttpServletRequest request;
+	
+	@Autowired
+	private HttpServletResponse response;
+	/**
+	 * 分页获取合同模版列表数据
+	 * @param ContractTemplateQueryBean
+	 * @return
+	 */
+	@RequestMapping(value ={ "/getContractTemplateListData"}, method = { RequestMethod.POST})
+	@ResponseBody
+	public Json getContractTemplate(@RequestBody ContractTemplateQueryBean queryBean){
+		PageInfo<ContractTemplate> contractTemplateList=contractService.getContractTemplate(queryBean);
+		Json json=new Json();
+		json.setSuccess(true);
+		json.setObj(contractTemplateList);
+		return json;
+	}
+	/**
+	 * 保存合同模版列表数据
+	 * @param ContractTemplateQueryBean
+	 * @return
+	 */
+	@RequestMapping(value ={ "/saveContractTemplate"}, method = { RequestMethod.POST})
+	@ResponseBody
+	public Json saveContractTemplate(@RequestBody ContractTemplate contractTemplate){
+		Json json=new Json();
+		String userAccount=(String) request.getSession().getAttribute("userAccount");
+		try{
+			contractTemplate.setId(UUIDGenerator.generate());
+			contractTemplate.setCreaterAccount(userAccount);
+			contractTemplate.setCreateTime(new Date());
+			contractService.saveContractTemplate(contractTemplate);
+			json.setSuccess(true);
+		}catch(Exception e){
+			e.printStackTrace();
+			json.setSuccess(false);
+
+		}
+		return json;
+	}
+	/**
+	 * 删除合同模版列表数据
+	 * @param ContractTemplateQueryBean
+	 * @return
+	 */
+	@RequestMapping(value ={ "/delContractTemplate"}, method = { RequestMethod.GET})
+	@ResponseBody
+	public Json delContractTemplate(String id){
+		Json json=new Json();
+		try{
+			contractService.delContractTemplate(id);
+			json.setSuccess(true);
+		}catch(Exception e){
+			e.printStackTrace();
+			json.setSuccess(false);
+
+		}
+		return json;
+	}
+
+}

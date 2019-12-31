@@ -1,0 +1,302 @@
+.roleWin-wrap {
+    position: relative;
+    height: 438px;
+    overflow: hidden;
+}
+
+.detail-wrap {
+    height: 489px;
+    overflow: auto;
+}
+
+.roleWin-wrapadjust {
+    height: 480px;
+}
+.cl1-1{
+    display: inline-block;
+    height: 26px;
+    line-height: 26px;
+    font-size: 14px;
+    width: 10px;
+    color: #eb6663;
+    text-align: center;
+}
+.cl1 {
+    min-width:80px;
+    height: 34px;
+    line-height: 34px;
+    font-size: 14px;
+    color: #222222;
+    text-align: left;
+}
+.the-bottom {
+    text-align: center;
+}
+.comfirm{
+	display: inline-block;
+	/*margin-left: 0;*/
+}
+/*角色名称*/
+.role-name {
+    margin-top: 20px;
+    margin-left: 30px;
+}
+
+.role-name .cl2>input {
+    padding-left: 2px;
+    width: 416px;
+    height: 32px;
+    line-height: 32px;
+    border: 1px solid #c9c9c9;
+    border-radius: 4px;
+    text-align: left;
+
+}
+/*角色描述*/
+.role-detail {
+    margin-left: 30px;
+    margin-top: 10px;
+}
+
+.textarea-1 {
+    padding-left: 2px;
+    width: 416px;
+    height: 78px;
+    max-height: 78px;
+    border: 1px solid #c9c9c9;
+    border-radius: 4px;
+    resize: none;
+}
+/*运维*/
+.yunwei {
+    margin-left: 30px;
+    margin-top: 6px;
+}
+.choice {
+    margin-left: 20px;
+    width:40px;
+    height: 34px;
+    line-height: 34px;
+    font-size: 14px;
+    color: #222222;
+    text-align: right;
+    background: url("../images/circle.png") 2px 10px no-repeat;
+}
+.choiceActive {
+    background: url("../images/ic-choice.png") 2px 10px no-repeat;
+}
+
+/*树*/
+.tree-wrap {
+    margin-left: 202px;
+    margin-top: 6px;
+}
+.navigation{
+	margin: 28px 30px;
+}
+.navigation a{
+	height: 20px;
+	line-height: 20px;
+	font-size: 16px;
+	display: inline-block;
+	width: 70px;
+	color: #666;
+	margin-right: 20px;
+	text-align: center;
+}
+
+ .navigation .nav-active{
+	border-bottom:3px solid #51d2b6 ;
+	color: #51d2b6;
+}
+ .content-box {
+     height: 330px;
+     overflow: auto;
+     padding: 18px 30px 10px 16px;
+ }
+.content-box ul{
+    padding: 0 20px 30px 0;
+}
+.content-box li{
+	text-align: right;
+	/*height: 32px;*/
+	line-height: 32px;
+	margin-top: 12px;
+	
+}
+.content-box input,.content-box select{
+	width: 388px;
+	padding: 0 5px;
+	height: 32px;
+	line-height: 32px;
+	    margin-left: 10px;
+	   border: 1px solid #999;
+	   border-radius: 2px;
+}
+.content-box select{
+	width: 400px;
+	padding: 0;
+}
+.content-box label{
+	display: inline-block;
+	vertical-align: top;
+}
+.content-box textarea{
+	width: 388px;
+    height: 40px;
+	padding: 5px 5px;
+	 margin-left: 10px;
+	   border: 1px solid #999;
+	   border-radius: 2px;
+}
+#content_box_2 li:nth-child(-n+5):before{
+	content: "*";
+	color: red;
+	line-height: 150%;
+}
+#content_box_1 li:nth-child(-n+3):before{
+	content: "*";
+	color: red;
+	line-height: 150%;
+}
+.special:before{
+	content: "*";
+    color: red;
+    line-height: 222%;
+    vertical-align: top;
+}
+.confirmBox{
+    width: 500px;
+    margin: 70px 40px 0;
+    text-align: center;
+    height: 86px;
+    border-bottom:1px dashed #CCCCCC ;
+}
+.confirmBox .comfirm{
+	margin-left: 0;
+	display: inline-block;
+}
+.content-small-wrap{
+	margin: 24px 40px 0 40px;
+    background-color: #FFFFFF;
+}
+.content-small-wrap .datagrid-btable{
+	border-bottom: none;
+}
+.add-list{
+	margin: -19px 40px;
+	height: 50px;
+	line-height: 50px;
+	background: #f8f8f8;
+	border-left: 1px solid #e4e4ee !important;
+    border-bottom: 1px solid #e4e4ee;
+}
+.status{
+	height: 34px;
+    margin-top: 27px;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+.back{
+    margin-left: 24px;
+    height: 50px;
+    line-height: 50px;
+    font-size: 14px;
+    width: 80px;
+    text-align: center;
+    color: #51d2b6;
+    background: url("../images/ic_back1.png")  left center no-repeat;
+}
+.back>a {
+    display: block;
+    height: 50px;
+    line-height: 50px;
+    font-size: 14px;
+    width: 80px;
+    text-align: center;
+    color: #51d2b6;
+    cursor: pointer;
+}
+
+.create1 {
+    margin-left: 0;
+}
+.border {
+    margin-top: 16px;
+    width: 1px;
+    height: 18px;
+    background-color: #cccccc;
+}
+ li .textbox {
+     margin-left: 10px;
+ }
+ .personal,.tel,.password{
+    margin: 0 20px 24px;
+    background: #fff;
+    box-shadow: 0 2px 2px #eee;
+    border: 1px solid #d7d7d7;
+}
+.personal{
+	min-height: 406px;
+}
+
+.title1 {
+    padding-left: 24px;
+    height: 50px;
+    line-height: 50px;
+    font-size: 14px;
+    color: #ffffff;
+    background-color: #4d525a;
+}
+
+ul{
+	margin-top: 30px;
+}
+li{
+	margin-top: 15px;
+	margin-left: 30px;
+	
+}
+li label{
+	display: inline-block;
+	height: 30px;
+	line-height: 30px;
+	vertical-align: middle;
+	color: #222;
+}
+li input{
+	border: 1px solid #999;
+	height: 28px;
+	line-height: 28px;
+	width: 280px;
+	padding: 0 10px;
+}
+.submitButton{
+	width: 120px;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    background-color: #51d2b6;
+    color: #FFFFFF;
+    border: 1px solid #51d2b6;
+    border-radius: 4px;
+}
+
+.projectPeople {
+	width: 380px;
+	height: 260px;
+	border: 1px solid green;
+}
+.projectPeople1{
+	width: 380px;
+	height: 30px;
+	border: 1px solid red;
+}
+.projectPeople2{
+	width: 380px;
+	height: 220px;
+	border: 1px solid blue;
+}
+
+
+

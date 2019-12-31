@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hori.grms.dao.CustomerTurnLogMapper" >
+  <resultMap id="BaseResultMap" type="com.hori.grms.model.CustomerTurnLog" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="customer_id" property="customerId" jdbcType="VARCHAR" />
+    <result column="accepter_name" property="accepterName" jdbcType="VARCHAR" />
+    <result column="accepter_account" property="accepterAccount" jdbcType="VARCHAR" />
+    <result column="former_name" property="formerName" jdbcType="VARCHAR" />
+    <result column="former_account" property="formerAccount" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="creater_name" property="createrName" jdbcType="VARCHAR" />
+    <result column="creater_account" property="createrAccount" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, customer_id, accepter_name, accepter_account, former_name, former_account, create_time, 
+    creater_name, creater_account
+  </sql>
+  <insert id="insert" parameterType="com.hori.grms.model.CustomerTurnLog" >
+    insert into customer_turn_log (id, customer_id, accepter_name, 
+      accepter_account, former_name, former_account, 
+      create_time, creater_name, creater_account
+      )
+    values (#{id,jdbcType=VARCHAR}, #{customerId,jdbcType=VARCHAR}, #{accepterName,jdbcType=VARCHAR}, 
+      #{accepterAccount,jdbcType=VARCHAR}, #{formerName,jdbcType=VARCHAR}, #{formerAccount,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{createrName,jdbcType=VARCHAR}, #{createrAccount,jdbcType=VARCHAR}
+      )
+  </insert>
+
+</mapper>

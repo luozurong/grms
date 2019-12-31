@@ -1,0 +1,21 @@
+<!--该文件为添加小区弹窗模板，可通过easyui的window弹窗href引入调用-->
+<div class="add_Area clearfix">
+	<div class="add_left fl">
+		<div class="search">
+			<input id="searchInput" class="easyui-searchbox" data-options="prompt:'请输入关键词',searcher:searchArea,height:34,width:180">
+		</div>
+		<div class="dataTree">
+			<ul id="tree" class="easyui-tree">
+			</ul>
+		</div>
+	</div>
+	<div class="add_right fr">
+		<div class="add_top">
+		
+		</div>
+		<div class="add_bottom">
+			<a id="btn" class="easyui-linkbutton" data-options="width:120,height:40,plain:true" onclick="areaSure()">确定</a> 
+		</div>
+	</div>
+</div>
+<script src="../dialog/js/addArea.js" type="text/javascript" charset="utf-8"></script>

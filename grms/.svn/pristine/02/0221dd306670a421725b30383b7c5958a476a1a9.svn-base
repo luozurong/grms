@@ -1,0 +1,146 @@
+
+//自定义操作列
+function formatOper(value,row,index) {
+	console.log('进入。。。。。。');
+    var str = "";
+    str += '<a href="javascript:;" style="color: blue;" onclick="doEdit(\'' + value + '\')">查看详情</a>';
+    str += '   ';
+    str += '<a href="javascript:;" style="color: blue;" onclick="doDelete(\'' + value + '\')">上传资料</a>';
+    return str;
+}
+//编辑
+function doEdit(id) {
+    alert(id);
+}
+//删除
+function doDelete(id) {
+    alert(id);
+}
+function oganiOper(value,row,index){
+	if (value == 1) {
+		return "社区运营";
+	} else if (value == 2) {
+		return "媒管";
+	} else if (value == 3) {
+		return "用户运营";
+	} else if (value == 4) {
+		return "电商运营";
+	}
+}
+function actionOper(value,row,index){
+	if (value == 1) {
+		return "待确认";
+	} else if (value == 2) {
+		return "策划中";
+	} else if (value == 3) {
+		return "待执行";
+	} else if (value == 4) {
+		return "执行中";
+	} else if (value == 5) {
+		return "已完成";
+	}
+}
+$(function(){
+	/*
+	 * 抽取所有需要用得元素.
+	 */
+	var zhCommunityDatagrid,zhCommunityDialog,zhCommunityForm;
+	zhCommunityDatagrid = $("#zhCommunity_datagrid");
+	/*
+	 * 初始化数据表格 
+	 */
+	zhCommunityDatagrid.datagrid({
+		url:"/grms/zhongheDepart/sqList.do",
+		fit:true,
+		rownumbers:true,
+		singleSelect:true,
+		striped:true,
+		pagination:true,
+		fitColumns:true,
+		toolbar:'#zhCommunity_datagrid_tb'
+	});
+
+	
+});
+function keyWordSearch(){
+	var zhCommunityDatagrid = $("#zhCommunity_datagrid");
+	var province = $("#province").val();
+	var city = $("#city").val();
+	var country = $("#country").val();
+	var areaName = $("#areaName").val();
+	var startTime = $("#startTime").val();
+	var actionStatus = $("#actionStatus").val();
+	zhCommunityDatagrid.datagrid('load', {
+		province : province,
+		city : city,
+		country : country,
+		areaName : areaName,
+		startTime : startTime,
+		actionStatus : actionStatus
+	});
+}
+
+function openSelectedAddress(){ //回显地址
+	var provinceCode = $("#provinceCode").val();
+	var cityCode = $("#cityCode").val();
+	var countryCode = $("#countryCode").val();
+	
+    var url = '/ums/communityAction!initProvince.html';
+    $.ajaxSettings.async = false;
+    $.post(url, function(result) {
+        $("#province").combobox({
+            data : result,
+            valueField:'code',
+            textField:'name',
+            cache:false,
+            editable:false, //只读
+            onLoadSuccess: function () { //加载完成后,设置选中的项
+                $(this).combobox("setValue",provinceCode);
+            },
+            onSelect:function(record){
+                var provinceId = record.code;
+                $("#provinceCode").val(provinceId);
+                $("#cityCode").val("");
+                $("#countryCode").val("");
+                var url = '/ums/communityAction!getChildSelectData.html?code='+provinceId;
+                $.post(url, function(result1) { //二级联动
+                    $("#city").combobox({
+                        data : result1,
+                        valueField:'code',
+                        textField:'name',
+                        cache:false,
+                        editable:false,
+                        onLoadSuccess: function (data) { //加载完成后,设置选中的项
+                            $(this).combobox("select",cityCode);
+                        },
+                        onSelect:function(record){
+                            var cityId = record.code;
+                            $("#cityCode").val(cityId);
+                            $("#countryCode").val("");
+                            var url = '/ums/communityAction!getChildSelectData.html?code='+cityId;
+                            $.post(url,function(result2) { //三级联动
+                                $("#country").combobox({
+                                    data : result2,
+                                    valueField:'code',
+                                    textField:'name',
+                                    cache:false,
+                                    editable:false,
+                                    onLoadSuccess: function () { //加载完成后,设置选中的项
+                                    	 $(this).combobox("select",countryCode);
+                                    },
+                                    onSelect:function(record){
+                                    	var countryCode = record.code;
+                                        $("#countryCode").val(countryCode);
+                                    }
+                                });
+                            },'json');
+                        }
+                    });
+                },'json');
+            }
+        });
+    },'json');
+    $.ajaxSettings.async = true;
+}
+
+

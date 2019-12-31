@@ -1,0 +1,231 @@
+package com.hori.grms.service.impl;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.hori.grms.dao.ProjectActionExceptionMapper;
+import com.hori.grms.dao.ProjectProductMenuMapper;
+import com.hori.grms.model.ProjectAction;
+import com.hori.grms.model.ProjectActionException;
+import com.hori.grms.queryBean.PAExceptionQueryBean;
+import com.hori.grms.service.ProjectActionExceptionService;
+import com.hori.grms.service.ProjectActionService;
+import com.hori.grms.vo.ProjectActionExceptionVo;
+
+/**
+ * 执行清单异常Service实现
+ * 
+ * @author hehj
+ * @datetime 2018年8月14日 上午10:54:42
+ */
+@Service("projectActionExceptionService")
+public class ProjectActionExceptionServiceImpl implements ProjectActionExceptionService {
+	private final Logger logger = LoggerFactory.getLogger(ProjectActionExceptionServiceImpl.class);
+	@Autowired
+	private ProjectActionExceptionMapper projectActionExceptionMapper;
+	@Autowired
+	private ProjectActionService projectActionService;
+	@Autowired
+	private ProjectProductMenuMapper projectProductMenuMapper;
+
+	@Override
+	public PageInfo<ProjectActionExceptionVo> listException(PAExceptionQueryBean queryBean) {
+		if (queryBean == null) {
+			return null;
+		}
+		PageHelper.startPage(queryBean.getPageNumber(), queryBean.getPageSize());
+		List<ProjectActionExceptionVo> list = projectActionExceptionMapper.listException(queryBean);
+
+		PageInfo<ProjectActionExceptionVo> pageInfo = new PageInfo<ProjectActionExceptionVo>(list);
+
+		return pageInfo;
+	}
+
+	@Override
+	public int changeConfirmStatus(String exceptionRecordId, Short confirmStatus) {
+		if (exceptionRecordId == null || confirmStatus == null) {
+			return 0;
+		}
+		return projectActionExceptionMapper.changeCSById(exceptionRecordId, confirmStatus);
+	}
+
+	@Override
+	public PageInfo<Map<String, Object>> listProjectActionExceptions(PAExceptionQueryBean queryBean) {
+		if (queryBean == null) {
+			return null;
+		}
+		PageHelper.startPage(queryBean.getPageNumber(), queryBean.getPageSize());
+		List<Map<String, Object>> list = projectActionExceptionMapper.listProjectActionExceptions(queryBean);
+
+		PageInfo<Map<String, Object>> pageInfo = new PageInfo<Map<String, Object>>(list);
+
+		return pageInfo;
+	}
+
+	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
+	@Override
+	public int insert(ProjectActionException pae) {
+
+		int i = projectActionExceptionMapper.insert(pae);
+
+		int ii = 0;
+		if (i == 1) {// 修改执行清单状态
+			ii = projectActionService.changeEStatusByActionCode(pae.getProjectActionCode(), 0);
+		}
+
+		if (i == 1 && ii == 1) {
+			return 1;
+		} else {
+			return 0;
+		}
+
+	}
+
+	public void stopProjectAction(String exceptionId, String resultRemark, String dealName, String dealAccount)
+			throws Exception {
+
+		ProjectActionException exception = projectActionExceptionMapper.selectByPrimaryKey(exceptionId);
+		// 项目执行清单编号（财务异常不与执行编号关联，而是与项目编号关联）
+		String projectActionCode = exception.getProjectActionCode();
+		// 项目编号
+		String code = exception.getProjectCode();
+
+		if (!exception.getStatus().equals(new Short((short) 0))) {
+			throw new Exception("该异常状态无法进行操作");
+		}
+		// type为1是执行异常
+		if (exception.getType().equals(new Short((short) 1))) {
+
+			logger.info("异常类型为执行异常");
+
+			ProjectAction projectAction = projectActionService.getByCode(projectActionCode);
+
+			String projectProductId = projectAction.getProjectProductId();
+
+			logger.info("异常所属项目的项目清单编号为：" + projectProductId);
+
+			// 释放资源
+			projectProductMenuMapper.releaseResources(projectProductId);
+		} else {
+			// type为2是财务异常，释放项目相关资源
+			projectProductMenuMapper.releaseLock(code);
+
+		}
+
+		// 改变项目清单状态
+		exception.setStatus((short) 1);
+
+		exception.setDealAccount(dealAccount);
+
+		exception.setDealName(dealName);
+
+		exception.setResult((short) 6);
+
+		exception.setDealTime(new Date());
+
+		exception.setResultRemark(resultRemark);
+		// 更新异常信息
+		projectActionExceptionMapper.updateByPrimaryKeySelective(exception);
+
+		logger.info("异常处理成功！！！");
+	}
+
+	public void goOnProjectAction(String exceptionId, String resultRemark, String dealName, String dealAccount)
+			throws Exception {
+
+		ProjectActionException exception = projectActionExceptionMapper.selectByPrimaryKey(exceptionId);
+
+		if (!exception.getStatus().equals(new Short((short) 0))) {
+			throw new Exception("该异常状态无法进行操作");
+		}
+
+		// 改变项目清单状态
+		exception.setStatus((short) 1);
+
+		exception.setDealAccount(dealAccount);
+
+		exception.setResult((short) 3);
+
+		exception.setDealName(dealName);
+
+		exception.setDealTime(new Date());
+
+		exception.setResultRemark(resultRemark);
+		// 更新异常信息
+		projectActionExceptionMapper.updateByPrimaryKeySelective(exception);
+
+		logger.info("异常处理成功！！！");
+	}
+
+	public void pauseProjectAction(String exceptionId, String resultRemark, String dealName, String dealAccount)
+			throws Exception {
+		ProjectActionException exception = projectActionExceptionMapper.selectByPrimaryKey(exceptionId);
+
+		if (!exception.getStatus().equals(new Short((short) 0))) {
+			throw new Exception("该异常状态无法进行操作");
+		}
+
+		exception.setDealAccount(dealAccount);
+
+		exception.setResult((short) 4);
+
+		exception.setDealName(dealName);
+
+		exception.setDealTime(new Date());
+
+		exception.setResultRemark(resultRemark);
+		// 更新异常信息
+		projectActionExceptionMapper.updateByPrimaryKeySelective(exception);
+
+		logger.info("异常处理成功！！！");
+	}
+
+	public void deduction(String exceptionId, String resultRemark, String money, String dealName, String dealAccount) {
+
+		ProjectActionException exception = projectActionExceptionMapper.selectByPrimaryKey(exceptionId);
+		// 项目执行清单编号
+		String projectActionCode = exception.getProjectActionCode();
+
+		ProjectAction projectAction = projectActionService.getByCode(projectActionCode);
+
+		String projectProductId = projectAction.getProjectProductId();
+
+		logger.info("异常所属项目的项目清单编号为：" + projectProductId);
+
+		// 改变项目清单状态
+		exception.setStatus((short) 1);
+
+		exception.setDealAccount(dealAccount);
+
+		exception.setResult((short) 2);
+
+		exception.setDealName(dealName);
+
+		exception.setDealTime(new Date());
+
+		exception.setResultRemark(resultRemark);
+
+		// 生成扣款计划
+
+		// 释放资源
+		projectProductMenuMapper.releaseResources(projectProductId);
+
+		// 更新异常信息
+		projectActionExceptionMapper.updateByPrimaryKeySelective(exception);
+
+		logger.info("异常处理成功！！！");
+
+	}
+
+}

@@ -1,0 +1,37 @@
+/*
+ * ProductMenuMapper.java
+ * Copyright(C) 20xx-2015 xxxxxx公司
+ * All rights reserved.
+ * -----------------------------------------------
+ * 2018-08-08 Created
+ */
+package com.hori.grms.dao;
+
+import com.hori.grms.model.ProductMenu;
+import com.hori.grms.model.ProductMenuExample;
+import java.util.List;
+import org.apache.ibatis.annotations.Param;
+
+public interface ProductMenuMapper {
+    int countByExample(ProductMenuExample example);
+
+    int deleteByExample(ProductMenuExample example);
+
+    int deleteByPrimaryKey(String id);
+
+    int insert(ProductMenu record);
+
+    int insertSelective(ProductMenu record);
+
+    List<ProductMenu> selectByExample(ProductMenuExample example);
+
+    ProductMenu selectByPrimaryKey(String id);
+
+    int updateByExampleSelective(@Param("record") ProductMenu record, @Param("example") ProductMenuExample example);
+
+    int updateByExample(@Param("record") ProductMenu record, @Param("example") ProductMenuExample example);
+
+    int updateByPrimaryKeySelective(ProductMenu record);
+
+    int updateByPrimaryKey(ProductMenu record);
+}

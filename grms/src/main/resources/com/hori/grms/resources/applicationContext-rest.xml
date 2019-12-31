@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+			http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<!-- httpClient连接管理器 -->
+	<bean id="pollingConnectionManager"	 class="org.apache.http.impl.conn.PoolingHttpClientConnectionManager">
+		<!-- 最大连接数 -->
+		<property name="maxTotal" value="${rest.maxTotal}" />
+		<!-- 每个主机最大并发数 -->
+		<property name="defaultMaxPerRoute" value="${rest.defaultMaxPerRoute}" />
+	</bean>
+
+	<!-- httpClient构建器 -->
+	<bean id="httpClientBuilder" class="org.apache.http.impl.client.HttpClientBuilder"	factory-method="create">
+		<property name="connectionManager" ref="pollingConnectionManager" />
+	</bean>
+	
+	<!-- httpClient对象,多例 -->
+	<bean id="httpClient" factory-bean="httpClientBuilder" factory-method="build" scope="prototype"/>
+
+	<!-- httpClient对象构造函数 -->
+	<bean id="clientHttpRequestFactory" class="org.springframework.http.client.HttpComponentsClientHttpRequestFactory">
+		<constructor-arg ref="httpClient" />
+		<!-- 连接超时时间 -->
+		<property name="connectTimeout" value="${rest.connectTimeout}" />
+		<!-- 数据传输超时时间 -->
+		<property name="readTimeout" value="${rest.readTimeout}" />
+	</bean>
+	
+	<!-- httpClient操作模板 -->
+  	<bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
+        <constructor-arg ref="clientHttpRequestFactory"/>
+        <!-- 异常处理 -->
+        <property name="errorHandler">
+            <bean class="org.springframework.web.client.DefaultResponseErrorHandler"/>
+        </property>
+        <!-- 解析格式 -->
+        <property name="messageConverters">
+            <list>
+            	<!-- json -->
+                <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+ 					<property name="supportedMediaTypes">
+						<list>
+							<value>application/json;charset=UTF-8</value>
+						</list>
+				</property>
+                </bean>
+                <!-- string -->
+                <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+                	<property name="supportedMediaTypes">
+                		<list>
+                			<value>text/html;charset=UTF-8</value>
+                			<value>text/plain;charset=UTF-8</value>
+                		</list>
+                	</property>
+               	</bean>
+               	<!-- byte -->
+                <bean class="org.springframework.http.converter.ByteArrayHttpMessageConverter">
+                	<property name="supportedMediaTypes">
+                		<list>
+                			<value>text/plain;charset=UTF-8</value>
+                			<value>application/octet-stream;charset=UTF-8</value>
+                			<value>image/png;charset=UTF-8</value>
+                			<value>image/jpeg;charset=UTF-8</value>
+                			<value>application/pdf;charset=UTF-8</value>
+                		</list>
+                	</property>
+               	</bean>
+               	<bean class="org.springframework.http.converter.FormHttpMessageConverter"/>
+            </list>
+        </property> 
+    </bean>
+	
+</beans>

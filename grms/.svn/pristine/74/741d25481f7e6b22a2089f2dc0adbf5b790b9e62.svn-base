@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hori.grms.dao.DepartmentBusinessAreaMapper" >
+  <resultMap id="BaseResultMap" type="com.hori.grms.model.DepartmentBusinessArea" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="business_type_id" property="businessTypeId" jdbcType="VARCHAR" />
+    <result column="department_id" property="departmentId" jdbcType="VARCHAR" />
+    <result column="province" property="province" jdbcType="VARCHAR" />
+    <result column="province_name" property="provinceName" jdbcType="VARCHAR" />
+    <result column="city" property="city" jdbcType="VARCHAR" />
+    <result column="city_name" property="cityName" jdbcType="VARCHAR" />
+    <result column="business_type" property="businessType" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, business_type_id, department_id, province, province_name, city, city_name, business_type
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from department_business_area
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from department_business_area
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.hori.grms.model.DepartmentBusinessArea" >
+    insert into department_business_area (id, business_type_id, department_id, 
+      province, province_name, city, 
+      city_name, business_type)
+    values (#{id,jdbcType=VARCHAR}, #{businessTypeId,jdbcType=VARCHAR}, #{departmentId,jdbcType=VARCHAR}, 
+      #{province,jdbcType=VARCHAR}, #{provinceName,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR}, 
+      #{cityName,jdbcType=VARCHAR}, #{businessType,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.hori.grms.model.DepartmentBusinessArea" >
+    insert into department_business_area
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="businessTypeId != null" >
+        business_type_id,
+      </if>
+      <if test="departmentId != null" >
+        department_id,
+      </if>
+      <if test="province != null" >
+        province,
+      </if>
+      <if test="provinceName != null" >
+        province_name,
+      </if>
+      <if test="city != null" >
+        city,
+      </if>
+      <if test="cityName != null" >
+        city_name,
+      </if>
+      <if test="businessType != null" >
+        business_type,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="businessTypeId != null" >
+        #{businessTypeId,jdbcType=VARCHAR},
+      </if>
+      <if test="departmentId != null" >
+        #{departmentId,jdbcType=VARCHAR},
+      </if>
+      <if test="province != null" >
+        #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="provinceName != null" >
+        #{provinceName,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null" >
+        #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="cityName != null" >
+        #{cityName,jdbcType=VARCHAR},
+      </if>
+      <if test="businessType != null" >
+        #{businessType,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.hori.grms.model.DepartmentBusinessArea" >
+    update department_business_area
+    <set >
+      <if test="businessTypeId != null" >
+        business_type_id = #{businessTypeId,jdbcType=VARCHAR},
+      </if>
+      <if test="departmentId != null" >
+        department_id = #{departmentId,jdbcType=VARCHAR},
+      </if>
+      <if test="province != null" >
+        province = #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="provinceName != null" >
+        province_name = #{provinceName,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null" >
+        city = #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="cityName != null" >
+        city_name = #{cityName,jdbcType=VARCHAR},
+      </if>
+      <if test="businessType != null" >
+        business_type = #{businessType,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.hori.grms.model.DepartmentBusinessArea" >
+    update department_business_area
+    set business_type_id = #{businessTypeId,jdbcType=VARCHAR},
+      department_id = #{departmentId,jdbcType=VARCHAR},
+      province = #{province,jdbcType=VARCHAR},
+      province_name = #{provinceName,jdbcType=VARCHAR},
+      city = #{city,jdbcType=VARCHAR},
+      city_name = #{cityName,jdbcType=VARCHAR},
+      business_type = #{businessType,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

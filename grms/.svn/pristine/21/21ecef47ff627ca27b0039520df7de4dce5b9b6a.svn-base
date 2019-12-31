@@ -1,0 +1,28 @@
+package com.hori.grms.dao;
+
+import org.apache.ibatis.annotations.Param;
+
+import com.hori.grms.model.Contract;
+
+public interface ContractMapper {
+    int deleteByPrimaryKey(String id);
+
+    int insert(Contract record);
+
+    int insertSelective(Contract record);
+
+    Contract selectByPrimaryKey(String id);
+
+    int updateByPrimaryKeySelective(Contract record);
+
+    int updateByPrimaryKeyWithBLOBs(Contract record);
+
+    int updateByPrimaryKey(Contract record);
+    
+    /**
+     * 根据项目编号获取【执行合同】
+     * @param projectCode
+     * @return
+     */
+	Contract selectExecuteContractByProjectCode(@Param("projectCode") String projectCode);
+}

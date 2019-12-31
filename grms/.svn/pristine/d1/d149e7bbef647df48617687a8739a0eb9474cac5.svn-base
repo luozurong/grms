@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context" xsi:schemaLocation="http://www.springframework.org/schema/beans 
+http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+http://www.springframework.org/schema/context 
+http://www.springframework.org/schema/context/spring-context.xsd 
+http://www.springframework.org/schema/mvc 
+http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+	<!-- 自动扫描controller包下的所有类，使其认为spring mvc的控制器 不需要注解驱动了 -->
+	<context:component-scan base-package="com.hori.grms.controller" />
+	<context:component-scan base-package="com.hori.grms.api" />
+
+    <!-- 引入属性文件 -->
+	<context:property-placeholder location="classpath:/com/hori/grms/resources/config.properties"/>
+	
+	
+	<!-- 避免IE执行AJAX时,返回JSON出现下载文件 -->
+	<bean id="mappingJacksonHttpMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+		<property name="supportedMediaTypes">
+			<list>
+				<value>text/html;charset=UTF-8</value>
+			</list>
+		</property>
+	</bean>
+
+	<!-- 启动Spring MVC的注解功能，完成请求和注解POJO的映射 -->
+	<bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+		<property name="messageConverters">
+			<list>
+				<ref bean="mappingJacksonHttpMessageConverter" /><!-- json转换器 -->
+			</list>
+		</property>
+	</bean>
+
+<!-- <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver"  p:order="1" p:prefix="/" p:suffix=".html" />
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver"  p:order="1" p:prefix="/" p:suffix=".js" />
+ -->
+	<!-- 对模型视图名称的解析，即在模型视图名称添加前后缀  prefix /前缀是所有的公共路径  suffix 所有视图的后缀名-->
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" 
+	  p:prefix="/WEB-INF/pages/" >
+	  	<property name="viewClass">
+			<value>org.springframework.web.servlet.view.JstlView</value>
+		</property>
+	</bean>	 
+	  
+	  <!--p:prefix="/WEB-INF/pages/" p:suffix=".jsp"  p:contentType="text/html;charset=UTF-8"-->
+	<!-- <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver"   
+	p:prefix="/WEB-INF/pages/" p:suffix=".jsp" /> -->
+	<!--  <bean id="viewResolver"  
+	    class="org.springframework.web.servlet.view.InternalResourceViewResolver">  
+	    <property name="viewClass"  
+	        value="org.springframework.web.servlet.view.JstlView" />  
+	    <property name="prefix" value="/WEB-INF/pages/" />  
+	    <property name="suffix" value=".html" />  
+	   <property name="order" value="0" />  
+	    
+	</bean>  --> 
+	
+   <mvc:resources mapping="/js/**" location="/js/" />  
+   <mvc:resources mapping="/css/**" location="/css/" />  
+   <mvc:resources mapping="/easyui/**" location="/easyui/" />  
+   <mvc:resources mapping="/echarts/**" location="/echarts/" />  
+   <mvc:resources mapping="/admin/js/**" location="/js/" />  
+   <mvc:resources mapping="/admin/css/**" location="/css/" />  
+   <mvc:resources mapping="/admin/easyui/**" location="/easyui/" />  
+   <mvc:resources mapping="/admin/echarts/**" location="/echarts/" />  
+   <mvc:resources mapping="/images/**" location="/images/" />  
+   <mvc:resources mapping="/admin/images/**" location="/images/" />  
+   <mvc:resources mapping="/json/**" location="/json/" />  
+   <mvc:resources mapping="/admin/json/**" location="/json/" />  
+    
+    <!-- <mvc:resources mapping="/pages/*.html" location="/WEB-INF/pages/" />   -->
+   <mvc:resources mapping="/*.htm" location="/WEB-INF/pages/" /> 
+   <!--<mvc:resources mapping="/admin/*.htm" location="/WEB-INF/pages/admin/" />  -->
+   <mvc:resources mapping="/app/*.htm" location="/app/" /> 
+   <mvc:resources mapping="/globalUserData/*.htm" location="/globalUserData/" />
+   <mvc:resources mapping="/areaUserData/*.htm" location="/areaUserData/" />
+   <mvc:resources mapping="/o2obusiness/*.htm" location="/o2obusiness/" /> 
+   <mvc:resources mapping="/accessControlBusiness/*.htm" location="/accessControlBusiness/" /> 
+   <mvc:resources mapping="/operationSystem/*.htm" location="/operationSystem/" />
+   <mvc:resources mapping="/contentBusiness/*.html" location="/contentBusiness/" />  
+   <mvc:resources mapping="/showRoom/*.htm" location="/showRoom/" /> 
+   <mvc:resources mapping="/userData/*.html" location="/userData/" /> 
+   
+    <!-- 容器默认的DefaultServletHandler处理 所有静态内容与无RequestMapping处理的URL-->	
+	<mvc:default-servlet-handler/>
+    <!-- 开发中通常会使用这个标签  最好和上面的一起使用-->
+    <mvc:annotation-driven></mvc:annotation-driven>
+    <!-- 定义无需Controller的url<->直接映射 -->	
+    <!-- 复杂类型表单的视图解析器 -->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="defaultEncoding">
+			<value>UTF-8</value>
+		</property>
+		<property name="maxUploadSize">
+			<value>32505856</value><!-- 字节为单位 上传文件大小限制为31M，31*1024*1024 -->
+		</property>
+		<property name="maxInMemorySize">
+			<value>4096</value>
+		</property>
+	</bean>
+
+    <mvc:interceptors>
+	    <mvc:interceptor>
+	       <!-- <mvc:mapping path="/admin*" /> 
+	       <mvc:mapping path="/admin/**"/> --><!-- 按这样的粒度Controller类  也可以控制到方法 比如	@RequestMapping("/test/uploadPic.do")  path="/test/**"  这样就可以了 路径问题  path="/**" 全部拦截-->
+	       
+	       <!-- 拦截所有 -->
+	       <mvc:mapping path="/**"/>
+	       
+	       <!-- 不需要拦截的 -->
+	       <!-- <mvc:exclude-mapping path="/**/common/**"/> -->
+	       <mvc:exclude-mapping path="/**/api/**"/>
+	       <mvc:exclude-mapping path="/**/servlet/**"/>
+	       <mvc:exclude-mapping path="/**/bigSource/**"/>
+	       <mvc:exclude-mapping path="/**/*.html"/>
+	       <mvc:exclude-mapping path="/**/*.htm"/>
+	       <mvc:exclude-mapping path="/**/*.js"/>
+	       <mvc:exclude-mapping path="/**/*.css"/>
+	       <mvc:exclude-mapping path="/**/*.png"/>
+	       <mvc:exclude-mapping path="/**/*.jpg"/>
+	       <mvc:exclude-mapping path="/**/*.jpeg"/>
+	       <mvc:exclude-mapping path="/**/*.gif"/>
+	       <mvc:exclude-mapping path="/**/fonts/*"/>
+	       <mvc:exclude-mapping path="/**/images/**"/>
+	       
+	       <bean class="com.hori.grms.interceptor.BackendSessionInterceptor">
+	      	 <property name="ssoLoginUri" value="${sso_login_uri}" />
+	       	 <property name="callbackUri" value="${callback_uri}" />
+	       </bean>
+	    </mvc:interceptor>
+    </mvc:interceptors>
+
+    <!--全局异常捕捉 -->
+	<bean id="exceptionHandler" class="com.hori.grms.exception.SpringMVCExceptionHandler" />
+</beans>

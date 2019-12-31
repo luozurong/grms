@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!--框架必需start-->
+<script type="text/javascript" src="../js/jquery-1.4.js"></script>
+<script type="text/javascript" src="../js/framework.js"></script>
+<link href="../css/import_basic.css" rel="stylesheet" type="text/css"/>
+<link  rel="stylesheet" type="text/css" id="skin"/>
+<!--框架必需end-->
+
+<script type="text/javascript" src="../js/jquery-ui-1.7.2.custom.min.js"></script>
+<script type="text/javascript" src="../js/nav/jquery.layout.js"></script>
+<script type="text/javascript" src="../js/nav/layout.js"></script>
+
+<!--选项卡start-->
+<script type="text/javascript" src="../js/nav/tab.js"></script>
+<script>
+ var tab;
+ var index=1;
+$( function() {
+	 tab= new TabView( {
+		containerId :'tab_menu',
+		pageid :'page',
+		cid :'tab1',
+		position :"top"
+	});
+	tab.add( {
+		id :'index0',
+		title :"新闻管理",
+		url :"example6-1-content1.html",
+		isClosed :true
+	});
+});
+function addTab(id,name,url){
+	tab.add( {
+		id :id,
+		title :name,
+		url :url
+	});
+	index++;
+}
+</script>
+<!--选项卡end-->
+<body rel="layout">
+	 <div class="ui-layout-west">
+        <div class="header">导航菜单</div>
+	    <div class="content">
+			<div class="list_menu1">
+				<a href="javascript:addTab('index0','新闻管理','example6-1-content1.html')"><dt><span>新闻管理</span></dt></a>
+				<a href="javascript:addTab('index1','栏目设置','example6-1-content2.html')"><dt><span>栏目设置</span></dt></a>
+				<a href="javascript:addTab('index2','专题设置','example6-1-content3.html')"><dt><span>专题设置</span></dt></a>
+				<a href="javascript:addTab('index3','语种设置','example6-1-content1.html')"><dt><span>语种设置</span></dt></a>
+				<a href="javascript:addTab('index4','用户管理','example6-1-content2.html')"><dt><span>用户管理</span></dt></a>
+				<a href="javascript:addTab('index5','角色管理','example6-1-content3.html')"><dt><span>角色管理</span></dt></a>
+				<a href="javascript:addTab('index6','系统日志','example6-1-content1.html')"><dt><span>系统日志</span></dt></a>
+			</div>
+        </div>
+    </div>
+
+    <div class="ui-layout-center">
+		 <div class="subhead" style="height:30px;">
+			<div id="tab_menu"></div>
+		</div>
+        <div class="content">
+			<div id="page" style="width:100%;height:100%;"></div>	
+        </div>
+		
+    </div>
+	
+			
+</body>
+</html>

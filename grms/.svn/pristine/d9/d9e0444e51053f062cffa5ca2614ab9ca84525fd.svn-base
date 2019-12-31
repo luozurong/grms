@@ -1,0 +1,172 @@
+/**
+*复选与单选框样式调整
+*/
+$("input[type='checkbox']").click(function(){
+	if($(this).is(':checked')){
+		$(this).parent().addClass("checkbox-bg");
+	}else{
+		$(this).parent().removeClass("checkbox-bg");
+	}
+})
+$("input[type='radio']").click(function(){
+	$("input[name='"+ $(this).attr('name') +"']").parent().removeClass("radio-bg");
+	if($(this).is(':checked')){
+		$(this).parent().addClass("radio-bg");
+	}
+})
+var data2 =[
+    {hander:"125",starttime:"20150714",sex:"man",Mstatus:"ok",endtime:"20170254","time":"2017-05-19","productid":"FI-SW-01","productname":"Koi","unitcost":10.00,"status":"P","listprice":36.50,"attr1":"Large","itemid":"EST-1"},
+    {hander:"125",starttime:"20150714",sex:"man",Mstatus:"ok",endtime:"20170254","time":"2017-05-19","productid":"K9-DL-01","productname":"Dalmation","unitcost":12.00,"status":"P","listprice":18.50,"attr1":"Spotted Adult Female","itemid":"EST-10"},
+    {hander:"125",starttime:"20150714",sex:"man",Mstatus:"ok",endtime:"20170254","time":"2017-05-19","productid":"RP-SN-01","productname":"Rattlesnake","unitcost":12.00,"status":"P","listprice":38.50,"attr1":"Venomless","itemid":"EST-11"},
+    {hander:"125",starttime:"20150714",sex:"man",Mstatus:"ok",endtime:"20170254","time":"2017-05-19","productid":"RP-SN-01","productname":"Rattlesnake","unitcost":12.00,"status":"P","listprice":26.50,"attr1":"Rattleless","itemid":"EST-12"},
+    {hander:"125",starttime:"20150714",sex:"man",Mstatus:"ok",endtime:"20170254","time":"2017-05-19","productid":"RP-LI-02","productname":"Iguana","unitcost":12.00,"status":"P","listprice":35.50,"attr1":"Green Adult","itemid":"EST-13"},
+
+];
+
+
+
+//格式化时间
+$("#startTime").datebox({
+    value : '2017-05-22',
+    editable : false,
+    onSelect : function(beginDate){
+        $('.datebox-2').datebox('calendar').calendar({
+            validator: function(date){
+                return beginDate<=date;//<=
+            }
+        });
+    }
+});
+$("#endTime").datebox({
+    value : '2017-05-22',
+    editable : false,
+    onSelect : function(endDate){
+        $('.datebox-1').datebox('calendar').calendar({
+            validator: function(date){
+                return endDate>=date;
+            }
+        });
+    }
+});
+
+/**
+*表格
+*/
+$('#dg').datagrid({    
+    data:data2.slice(0,10),
+    fitColumns :true,
+    scrollbarSize:0, 
+    onLoadSuccess:function(){
+        $(".datagrid-cell-check").addClass('dataCheck');
+        $(".datagrid-header-check").addClass('dataCheck');
+    },
+    columns:[[ 
+         {
+            field:'ck',
+            title:'',
+            checkbox:true,
+            width:50,
+        },   
+        {
+            field:'hander',
+            title:'代码',
+            width:100
+        },    
+        {
+            field:'starttime',
+            title:'名称',
+            width:100
+        },    
+        {
+            field:'time',
+            title:'价格',
+            width:100
+        }    
+    ]]    
+});
+
+
+/**
+*表格中复选框样式
+*/
+function inputStyle(){
+    $(".datagrid-cell-check,.datagrid-header-check").each(function(){
+        if($(this).find("input").is(':checked')){
+            $(this).addClass('dataChecked');
+        }else{
+            $(this).removeClass("dataChecked");
+        }
+    });
+}
+$(".datagrid-row input").click(function(){
+    inputStyle();
+});
+$(".datagrid-header-check input").click(function(){
+    if($(this).is(":checked")){
+        $(this).parent().addClass("dataChecked");  
+    }else{
+        $(this).parent().removeClass("dataChecked");
+    }
+    setTimeout(function(){
+        inputStyle();
+    },100)
+});
+$(".datagrid-row").click(function(){
+    setTimeout(function(){
+        inputStyle();
+    },100)
+});
+
+
+/**
+*对话框
+*/
+function delayWorkOrder(){
+    wrapMaskShow();
+    $('#delayWorkOrder').dialog({
+        title: "延时处理",
+        width: 600,
+        height: 400,
+        closed: false,
+        modal: true,
+        buttons:[{
+            text:'不同意',
+            handler:function(){
+                $('#delayWorkOrder').dialog('close');
+                wrapMaskHide();
+            }
+        },{
+            text:'同意',
+            handler:function(){
+                $('#delayWorkOrder').dialog('close');
+                wrapMaskHide();
+            }
+        }]
+    });
+}
+
+
+/**
+*提示框封装
+*/
+function messagerConfirm(title,messager,callBack){
+    wrapMaskShow();
+    $.messager.confirm(title,messager,function(r){    
+        if (r){    
+            callBack(); //执行操作
+            wrapMaskHide();    
+        }else{
+            wrapMaskHide();
+        }    
+    });
+}
+//提示框调用
+function tip(){
+    messagerConfirm("是否要删除","您确认想要删除记录吗？",function(){
+        alert('确认删除') //执行操作
+    });
+}
+
+
+$.messager.alert('我的消息','这是一个提示信息！','info');
+

@@ -1,0 +1,962 @@
+var pageNoAll = '1';
+var pageSizeAll = '10';
+var userType = $('#userType').val();
+var mapButton = {};
+mapButton['search'] = 1;
+mapButton['batchUpload'] = 1;
+mapButton['batchCommit'] = 1;
+mapButton['batchCancel'] = 1;
+mapButton['uploadAttachment'] = 1;
+mapButton['downloadAttachment'] = 1;
+mapButton['deleteAttachment'] = 1;
+mapButton['commit'] = 1;
+mapButton['cancel'] = 1;
+mapButton['handle'] = 1;
+mapButton['handleCancel'] = 1;
+mapButton['viewProject'] = 1;
+$(function() {
+	configMenuItem("结案管理", "结案列表");
+	initButton();
+	findMenu('', '');
+	if(userType == "0" || userType == "1"){
+		$('#batch').hide();
+	}
+});
+
+function selectAll() {
+	pageNoAll = '1';
+	$('#pp').pagination({
+		pageNumber : 1
+	});
+	findMenu('', '');
+}
+
+// 时间格式化函数
+Date.prototype.format = function (format) {  
+    var o = {  
+        "M+": this.getMonth() + 1, // month  
+        "d+": this.getDate(), // day  
+        "h+": this.getHours(), // hour  
+        "m+": this.getMinutes(), // minute  
+        "s+": this.getSeconds(), // second  
+        "q+": Math.floor((this.getMonth() + 3) / 3), // quarter  
+        "S": this.getMilliseconds()// millisecond  
+    }  
+    if (/(y+)/.test(format)) {
+    	format = format.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));  
+    } 
+    for (var k in o){
+    	if (new RegExp("(" + k + ")").test(format)){
+    		format = format.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k] : ("00" + o[k]).substr(("" + o[k]).length));  
+    	}
+    }
+    return format;  
+}
+
+function formatDatebox(value) {  
+    if (value == null || value == '') {  
+        return '';  
+    }  
+    var dt;  
+    if (value instanceof Date) {  
+        dt = value;  
+    } else {  
+        dt = new Date(value);  
+    }  
+  
+    return dt.format("yyyy-MM-dd"); //扩展的Date的format方法(上述插件实现)  
+}  
+
+function initButton(){
+	var menuUrl="/grms/closeCase/list.html";
+    $.ajax({  
+        type : "POST",  //提交方式  
+        url : "/grms/initButtonController/getButttonList",//路径  
+        data : {"menuUrl":menuUrl},
+        dataType : "json",//数据，这里使用的是Json格式进行传输  
+        async : false,
+        success : function(result) {//返回数据根据结果进行相应的处理  
+            if ( result.success) {
+            	//比较需要隐藏的按钮
+            	var buttonObject = result.button;
+            	var admin = result.admin;
+            	//如果是管理员
+            	if(admin){
+            		return;
+            	}
+            	var temp=1;
+            	for(var prop in mapButton){
+            		temp=1;
+            		for(var j=0;j<buttonObject.length;j++){
+            			if(prop==buttonObject[j].resourceCode){
+            				temp=0;
+            				break;
+        				}
+        			}
+        			if(temp==1){
+        				mapButton[prop]=0;
+        			}
+        		}
+            	if(mapButton['search']==0){
+            	  $("#search").hide();
+              	}
+              	if(mapButton['batchUpload']==0){
+              		$("#batchUpload").hide();
+              	}
+              	if(mapButton['batchCommit']==0){
+            	  	$("#batchCommit").hide();
+              	}
+              	if(mapButton['batchCancel']==0){
+            	  	$("#batchCancel").hide();
+              	}
+            }
+        }  
+    }); 
+}
+
+// 查询
+function findMenu(pageSize, pageNo) {
+	var name = $('#keyword').val();
+	var createTimeStart = $('#createTimeStart').val();
+	var createTimeEnd = $('#createTimeEnd').val();
+	var actionTimeStart = $('#actionTimeStart').val();
+	var actionTimeEnd = $('#actionTimeEnd').val();
+	var type = $('#type').val();
+	var status = $('#status').val();
+	var userType = $('#userType').val();
+	pageNo = pageNoAll;
+	pageSize = pageSizeAll;
+	$.ajax({
+		type : "GET", // 提交方式
+		url : "/grms/closeCase",// 路径
+		dataType : "json",// 数据，这里使用的是Json格式进行传输
+		data : {
+			keyword:name,
+			createTimeStart:createTimeStart,
+			createTimeEnd:createTimeEnd,
+			actionTimeStart:actionTimeStart,
+			actionTimeEnd:actionTimeEnd,
+			type:type,
+			status:status,
+			pageNumber:pageNo,
+			pageSize:pageSize,
+		},
+		success : function(result) {// 返回数据根据结果进行相应的处理
+			if (result.code == 0) {
+				var data = result.data;
+				var total = result.total;
+				refresh(data,userType);
+				paginationpage(total);
+			} else {
+				infoMask('加载列表失败');
+			}
+		}
+	});
+}
+var resizeFlg = false;
+function refresh(data,userType) {
+	// 表格数据渲染
+	$('#dg').datagrid({
+		border : true,
+		scrollbarSize : 0,
+		nowrap : false,// 允许换行
+		data : data,
+		//fitColumns : false,// 宽度自适应
+		emptyMsg : '<span>无记录</span>',
+		onLoadSuccess : function() { // dom操作
+			$('#dg').datagrid('resize');
+			if(resizeFlg){
+				var dataHeight = $(".datagrid-view").height() - 19;
+				$(".datagrid-view").css("height", dataHeight);
+				
+				
+			}
+			resizeFlg = true;
+		},
+		columns : [ 
+				[{
+	                field:'ck',
+	                title:'',
+	                checkbox:true,
+	                width:100,
+	                align:'left'
+	            },
+				{
+					field : 'closeCaseCode',
+					title : '结案编号',
+					width : 150,
+					align : 'center'
+				},
+				{
+					field : 'projectName',
+					title : '项目名称',
+					width : 150,
+					align : 'center',
+					formatter : function(value, row, index) {
+						var url = '<a href="javascript:;" onclick="projectDetail(\'' + index + '\')">' + value + '</a>';
+						return url;
+					}
+				},
+				{
+					field : 'contractName',
+					title : '合同名称',
+					width : 120,
+					align : 'center'
+				},
+				{
+					field : 'backMoneyPlanCode',
+					title : '收款计划编号',
+					width : 120,
+					align : 'center'
+				},
+				{
+					field : 'type',
+					title : '结案类型',
+					width : 150,
+					align : 'center',
+	                formatter: function(value){
+	                	if(value == 0){
+	                		return "异常结案";
+	                	}else if(value == 1){
+	                		return "正常结案";
+	                	}
+	                }
+				},
+				{
+					field : 'actionTime',
+					title : '执行日期',
+					width : 150,
+					align : 'center',
+					formatter : formatDatebox
+				},
+				{
+					field : 'actionArea',
+					title : '执行小区',
+					width : 150,
+					align : 'center',
+					formatter : function(value, row, index) {
+						var area = '';
+						if(value && value != ''){
+							var areas = [];
+							var areaArray = value.split(',');
+							//去重
+							if(areaArray.length > 0){
+								areas = areaArray.filter(function(element,index,self){
+											return self.indexOf(element) === index;
+										});
+							}
+							if(areas.length > 1){
+								area = "共" + areas.length + "个小区";
+							}else{
+								area = value;
+							}
+						}
+						return area;
+					}
+				},
+				{
+					field : 'attachments',
+					title : '结案附件',
+					width : 180,
+					align : 'center',
+					formatter : function(value, row, index) {
+						var url = "";
+						if(value && value.length){
+							for(var i = 0; i < value.length; i++){
+								if(i == 0){
+									url = '<div href="javascript:;" style="color: #51d2b6" onclick="downloadAttach(\'' + value[i].id + '\')">' + 
+									value[i].fileName + '</div>';
+								}else {
+									url += '<div href="javascript:;" style="color: #51d2b6" onclick="downloadAttach(\'' + value[i].id + '\')">' + 
+									value[i].fileName + '</div>';
+								}
+							}
+						}
+						return url;
+					}
+				},
+				{
+					field : 'createTime',
+					title : '创建日期',
+					width : 150,
+					align : 'center',
+					formatter : formatDatebox
+				},
+				{
+					field : 'status',
+					title : '结案状态',
+					width : 100,
+					align : 'center',
+	                formatter: function(value){
+	                	if(value == 1){
+	                		return "待提交-社区运营";
+	                	}else if(value == 2){
+	                		return "待提交-用户运营";
+	                	}else if(value == 3){
+	                		return "待提交-电商运营";
+	                	}else if(value == 4){
+	                		return "待提交-媒管";
+	                	}else if(value == 5){
+	                		return "已提交";
+	                	}else if(value == 6){
+	                		return "待处理";
+	                	}else if(value == 7){
+	                		return "待结案";
+	                	}else if(value == 8){
+	                		return "已结案";
+	                	}
+	                }
+				},
+				{
+					field : 'id',
+					title : '操作',
+					width : 300,
+					align : 'center',
+					formatter : function(value, row, index) {
+						var upload = "";
+						var commit = "";
+						var del = "";
+						var commitType = 0;
+						var handleType = 0;
+						//执行人员
+						if(userType == "2"){
+							upload = '<a class="file-a" href="javascript:;">' + 
+								'<input class="file-ipt" type="file" id="file' + index + '" ' + 
+								'onchange="uploadAttach(\'' + index + '\',0)"/>上传附件</a>';
+							if(row.attachments && row.attachments.length > 0){
+								del = '<a href="javascript:;" onclick="deleteAttach(\'' + index + '\')">删除附件</a>';
+							}
+							//待提交状态
+							if(row.status <= 4){
+								commit = '<a href="javascript:;" onclick="updateForAction(\'' + index + '\',1)">提交</a>';
+								commitType = 1;
+							}else if(row.status == 5 || row.status == 6){
+								commit = '<a href="javascript:;" onclick="updateForAction(\'' + index + '\',0)">撤回</a>';
+								commitType = 2;
+							}else if(row.status == 7){
+								upload = '<a class="file-a" href="javascript:;">' + 
+								'<input class="file-ipt" type="file" id="file' + index + '" ' + 
+								'onchange="uploadAttach(\'' + index + '\',1)"/>上传附件</a>';
+							}else if(row.status == 8){
+								upload = "";
+								del = "";
+							}
+						}
+						//业务人员
+						if(userType == "0"){
+							if(row.status == 6){
+								commit = '<a href="javascript:;" onclick="updateForBusiness(\'' + index + '\',1)">处理</a>';
+								handleType = 1;
+							}else if(row.status == 7){
+								commit = '<a href="javascript:;" onclick="updateForBusiness(\'' + index + '\',0)">撤回</a>';
+								handleType = 2;
+							}
+						}
+						//管理员
+						if(userType == "-1"){
+							upload = '<a class="file-a" href="javascript:;">' + 
+								'<input class="file-ipt" type="file" id="file' + index + '" ' + 
+								'onchange="uploadAttach(\'' + index + '\',0)"/>上传附件</a>';
+							if(row.attachments && row.attachments.length > 0){
+								del = '<a href="javascript:;" onclick="deleteAttach(\'' + index + '\')">删除附件</a>';
+							}
+							//待提交状态
+							if(row.status <= 4){
+								commit = '<a href="javascript:;" onclick="updateForAdmin(\'' + index + '\',1)">提交</a>';
+								commitType = 1;
+							}else if(row.status == 6){
+								//待处理状态时角色为业务员才有处理按钮，不能上传、删除附件
+								if(row.roleType == 0){
+									commit = '<a href="javascript:;" onclick="updateForAdmin(\'' + index + '\',1)">处理</a>';
+									handleType = 1;
+									upload = "";
+									del = "";
+								}
+							}else if(row.status == 7){
+								//待结案状态时角色为业务员才有撤回按钮，不能上传、删除附件
+								if(row.roleType == 0){
+									commit = '<a href="javascript:;" onclick="updateForAdmin(\'' + index + '\',0)">撤回</a>';
+									handleType = 2;
+									upload = "";
+									del = "";
+								}else{
+									upload = '<a class="file-a" href="javascript:;">' + 
+										'<input class="file-ipt" type="file" id="file' + index + '" ' + 
+										'onchange="uploadAttach(\'' + index + '\',1)"/>上传附件</a>';
+								}
+							}else if(row.status == 8){
+								upload = "";
+								del = "";
+							}
+						}
+						//按钮权限控制
+						if(mapButton['uploadAttachment'] == 0){
+							upload = "";
+						}
+						if(mapButton['deleteAttachment'] == 0){
+							del = "";
+						}
+						if(commitType == 1 && mapButton['commit'] == 0){
+							commit = "";
+						}
+						if(commitType == 2 && mapButton['cancel'] == 0){
+							commit = "";
+						}
+						if(handleType == 1 && mapButton['handle'] == 0){
+							commit = "";
+						}
+						if(handleType == 2 && mapButton['handleCancel'] == 0){
+							commit = "";
+						}
+						return commit + upload + del;
+					}
+			}] 
+		]
+	});
+	
+	
+}
+
+function paginationpage(total) {
+	// 分页
+	$('#pp').pagination({
+		total : total,
+		layout : [ 'list', 'first', 'prev', 'links', 'next', 'last', 'manual' ],
+		emptyMsg : '<span>无记录</span>',
+		showRefresh : true,
+		displayMsg : ' ',
+		onSelectPage : function(pageNo, pageSize) {
+			if(pageNo == 0 || pageNo == '0'){
+				pageNo = '1';
+			}
+			pageNoAll = pageNo;
+			pageSizeAll = pageSize;
+			findMenu('', '')
+		}
+	});
+	$(".pagination-page-list").parent().append("10条");
+	$(".pagination-page-list").parent().prepend("共计" + total + "条,每页显示： ");
+}
+
+function uploadAttach(index,isExtra) {
+	loadingShow("正在上传中，请勿进行其他操作");
+	var attachArray = [];
+	var file = "";
+	if(index && index != null){
+		var checkedItem = $('#dg').datagrid('getData').rows[index];
+		var obj = new Object();
+		obj.correlationId = checkedItem.id;
+		obj.isExtra = isExtra;
+		attachArray[0] = obj;
+		file = $("#file" + index);
+	}else{
+		file = $("#file");
+		var checkedItems = $('#dg').datagrid('getChecked');
+		var itemStatus = "";
+		var isExtraBatch;
+		if(checkedItems.length){
+			for(var i = 0; i < checkedItems.length; i++){
+				itemStatus = checkedItems[i].status;
+				isExtraBatch = 0;
+				if(itemStatus > 7){
+					infoMask("存在不符合上传附件条件的结案，无法上传");
+					file.val('');
+					loadingShow(false);
+					return;
+				}
+				//额外附件
+				if(itemStatus == 7){
+					isExtraBatch = 1;
+				}
+				var obj = new Object();
+				obj.correlationId = checkedItems[i].id;
+				obj.isExtra = isExtraBatch;
+				attachArray[i] = obj;
+			}
+		}else{
+			infoMask("请选择要上传附件的结案");
+			loadingShow(false);
+			file.val('');
+			return;
+		}
+	}
+	var formData = new FormData();
+	formData.append("file", file[0].files[0]); 
+	formData.append("attachments",JSON.stringify(attachArray));
+    $.ajax({
+        url: "../closeCase/upload",
+        type: "POST",
+        data: formData,
+        contentType: false,
+        processData: false,
+        success: function (data) {
+        	var code = data.code;
+            if(code == 0){
+                infoMask('上传成功');
+                findMenu('','');
+            }else if(code == 1){
+            	infoMask('上传失败:请求参数异常');
+            	file.val('');
+            }else{
+            	infoMask('上传失败:服务器响应异常');
+            	file.val('');
+            }
+        },
+        error: function () {
+        	infoMask('网络异常，请稍后重试！');
+        	file.val('');
+        },
+        complete : function (XHR, TS){
+        	loadingShow(false);
+        }
+    });
+}
+
+function downloadAttach(id) {
+	if(mapButton['downloadAttachment'] == 0){
+		infoMask('您无权访问该附件');
+		return;
+	}
+	var url = "/grms/closeCase/download?id=" + id;
+	newConfirm("消息确认", "确定要下载吗？", true, false, "确定", "取消", toDown, url, null);
+}
+
+function toDown(url){
+	window.location.href = url;
+}
+
+function addbutton(){
+    $('#content-box').append('<div id="button" class="the-bottom clearfix" ><span class="quxiao fl" >取消</span><span class="comfirm fl" >确定</span></div>');
+}
+
+function deleteAttach(index){
+	var title = '删除结案附件';
+	$dom = $('#roleWin_change');
+	var item = $('#dg').datagrid('getData').rows[index];
+	var attachArray = item.attachments;
+	var itemStatus = item.status;
+	if(attachArray && attachArray.length > 0){
+		var content = "";
+		for(var i = 0; i < attachArray.length; i++){
+			if(itemStatus == 7 && attachArray[i].isExtra != 1){
+				continue;
+			}else{
+				content += '<div><label class="checkbox-icon">' + 
+				'<input type="checkbox" name="attachBox" value="' + attachArray[i].id + '"/>' + 
+				'<span>' + attachArray[i].fileName + '</span>' + 
+				'</label></div>';
+			}
+		}
+		if(content == ""){
+			infoMask('没有可删除附件');
+			return;
+		}
+		$('#attach').html(content);
+	}else{
+		infoMask('没有可删除附件');
+		return;
+	}
+	
+	clickCheckBox();
+	
+	addbutton();
+    wrapMaskShow();//父级遮罩显示
+    $('body').css('overflow','hidden');//禁止滚动
+    $dom.window({
+        width:500,
+        height:500,
+        modal:true,
+        collapsible:false,
+        minimizable:false,
+        maximizable:false,
+        closable:true,
+        draggable:false,
+        resizable:false,
+        inline:false,
+        title:title,
+        onClose : function(){
+            wrapMaskHide();//父级遮罩隐藏
+            $('body').css('overflow','auto');//恢复滚动
+        }
+    });
+    winHiSelfAdaptation($dom);//弹窗定位
+    $('.quxiao').click(function(){
+    	$('#roleWin_change').window('close');
+    });
+    $('.comfirm').click(function(){
+    	var ids = '';
+    	$('input[name="attachBox"]').each(function(){
+    		if($(this).is(':checked')){
+    			var id = $(this).val();
+    			if(ids == ''){
+    				ids = id;
+    			}else {
+    				ids = ids + "," + id;
+    			}
+    		}
+    	});
+    	if(ids != ''){
+    		var tip = "确定删除附件？";
+			newConfirm("消息确认", tip, true, false, "确定", "取消", dropAttach, ids, null);
+    	}
+    	$dom.window('close');
+    });
+    
+}
+
+function clickCheckBox(){
+	$("input[type='radio']").click(function(){
+	    if($(this).attr("checked") == "checked") $(this).attr("checked",false)
+	    $("input[type='radio']").each(function(index,ele){ 
+	        if($(ele).is(":checked") == true) $(ele).attr("checked","checked");
+	        else $(this).attr("checked",false); 
+	    });
+		$("input[name='"+ $(this).attr('name') +"']").parent().removeClass("radio-bg");
+		if($(this).is(':checked')){
+			$(this).parent().addClass("radio-bg");
+		}
+	});
+	$("input[type='checkbox']").click(function(){
+		if($(this).parent().hasClass("hascheckbox")){
+			return false;
+		}
+		if($(this).is(':checked')){
+			$(this).parent().addClass("checkbox-bg");
+		}else{
+			$(this).parent().removeClass("checkbox-bg");
+		}
+	});
+}
+
+function dropAttach(ids){
+	$.ajax({  
+	    type : "POST",    
+	    url : "../closeCase/deleteAttachment",  
+	    dataType : "json",  
+	    data:  {ids:ids},
+	    success : function(result) {  
+	        if (result.code == 0) { 
+	        	infoMask("删除成功");
+	        	findMenu('','');
+	        	return;
+	        } else if(result.code == 1){
+	        	infoMask("删除失败:请求参数异常");
+	        } else {
+	        	infoMask("删除失败:服务器响应异常");
+	        }
+	    },
+        error: function () {
+        	infoMask("网络异常，请稍后重试！");
+        },
+	});
+}
+
+function projectDetail(index){
+	if(mapButton['viewProject'] == 0){
+		infoMask("您无权访问该页面");
+		return;
+	}
+	var checkedItem = $('#dg').datagrid('getData').rows[index];
+	var url = "/grms/project/viewProject?projectCode=" + checkedItem.projectCode;
+	window.location.href = url;
+}
+
+function batchUpdate(status){
+	var userType = $('#userType').val();
+	//执行人员
+	if(userType == "2"){
+		updateForAction(null,status);
+	//admin
+	}else if(userType == "-1"){
+		updateForAdmin(null,status);
+	}
+}
+
+function updateForAdmin(index,status){
+	var tip = "确定操作结案？";
+	var checkedItems;
+	//如果index为空则为单个操作，不为空则为批量
+	if(index != null){
+		checkedItems = $('#dg').datagrid('getData').rows[index];
+	}else{
+		checkedItems = $('#dg').datagrid('getChecked');
+		if(!checkedItems.length){
+			infoMask("请选择要操作的结案");
+			return;
+		}
+	}
+	newConfirm("消息确认", tip, true, false, "确定", "取消", 
+			updateStatusForAdmin, checkedItems, status);
+}
+
+function updateStatusForAdmin(checkedItems,status) {
+	var attach = null;
+	var itemStatus = "";
+	var commitIds = "";
+	var handleIds = "";
+	if(checkedItems instanceof Array){
+		for(var i = 0;i < checkedItems.length; i++){
+			url = checkedItems[i].url;
+			itemStatus = checkedItems[i].status;
+			attach = checkedItems[i].attachments;
+			if(status == 1){
+				if(!attach || !attach.length){
+					infoMask("存在没有附件的结案，无法提交");
+					return;
+				}
+				if(itemStatus <= 4){
+					if(commitIds == ""){
+						commitIds = checkedItems[i].id;
+					}else {
+						commitIds = commitIds + "," + checkedItems[i].id;
+					}
+				}else if(itemStatus == 6){
+					if(handleIds == ""){
+						handleIds = checkedItems[i].id;
+					}else {
+						handleIds = handleIds + "," + checkedItems[i].id;
+					}
+				}else {
+					infoMask("只能操作未提交以及待处理状态的结案，请重新选择");
+					return;
+				}
+			}else if(status == 0){
+				if(itemStatus == 7){
+					if(handleIds == ""){
+						handleIds = checkedItems[i].id;
+					}else {
+						handleIds = handleIds + "," + checkedItems[i].id;
+					}
+				}else{
+					infoMask("只能撤回待结案状态的结案，请重新选择");
+					return;
+				}
+			}
+		}
+	}else{
+		attach = checkedItems.attachments;
+		itemStatus = checkedItems.status;
+		if(status == 1){
+			if(!attach || !attach.length){
+				infoMask("结案附件为空，无法提交");
+				return;
+			}
+			if(itemStatus && itemStatus <= 4){
+				commitIds = checkedItems.id;
+			}else if(itemStatus == 6){
+				handleIds = checkedItems.id;
+			}
+		}else if(status == 0){
+			handleIds = checkedItems.id;
+		}
+	}
+	var tip = "操作成功";
+	if(handleIds != ""){
+		var data = {ids:handleIds,handleStatus:status};
+		handle(data,tip);
+	}
+	if(commitIds != ""){
+		var data = {ids:commitIds,commitStatus:status};
+		commit(data,tip);
+	}
+}
+
+function updateForAction(index,status) {
+	var tip = "";
+	if(status == 1){
+		tip = "确定提交执行数据？";
+	}else if(status == 0){
+		tip = "确定撤回操作？";
+	}else {
+		return;
+	}
+	var checkedItems;
+	//如果index为空则为单个操作，不为空则为批量
+	if(index != null){
+		checkedItems = $('#dg').datagrid('getData').rows[index];
+	}else{
+		checkedItems = $('#dg').datagrid('getChecked');
+		if(!checkedItems.length){
+			infoMask("请选择要操作的结案");
+			return;
+		}
+	}
+	newConfirm("消息确认", tip, true, false, "确定", "取消", 
+			updateStatusForAction, checkedItems, status);
+}
+
+function updateForBusiness(index,status) {
+	var tip = "";
+	if(status == 1){
+		tip = "确定处理结案？";
+	}else if(status == 0){
+		tip = "确定撤回处理？";
+	}else {
+		return;
+	}
+	var checkedItems;
+	//如果index为空则为单个操作，不为空则为批量
+	if(index != null){
+		checkedItems = $('#dg').datagrid('getData').rows[index];
+	}else{
+		checkedItems = $('#dg').datagrid('getChecked');
+		if(!checkedItems.length){
+			infoMask("请选择要操作的结案");
+			return;
+		}
+	}
+	newConfirm("消息确认", tip, true, false, "确定", "取消", 
+			updateStatusForBusiness, checkedItems, status);
+}
+
+function updateStatusForAction(checkedItems,status){
+	var tip = "";
+	if(status == 1){
+		tip = "提交成功";
+	}else if(status == 0){
+		tip = "撤回成功";
+	}else {
+		return;
+	}
+	var ids = "";
+	var attach = null;
+	var itemStatus = "";
+	if(checkedItems instanceof Array){
+		for(var i = 0;i < checkedItems.length; i++){
+			url = checkedItems[i].url;
+			itemStatus = checkedItems[i].status;
+			attach = checkedItems[i].attachments;
+			if(status == 1){
+				if(!attach || !attach.length){
+					infoMask("存在没有附件的结案，无法提交");
+					return;
+				}
+				if(itemStatus > 4){
+					infoMask("存在不符合提交条件的结案，无法提交");
+					return;
+				}
+			}else if(status == 0){
+				if(itemStatus >= 7 || itemStatus <= 4){
+					infoMask("存在不符合撤回条件的结案，无法撤回");
+					return;
+				}
+			}
+			if(i == 0){
+				ids = checkedItems[i].id;
+			}else{
+				ids = ids + "," + checkedItems[i].id;
+			}
+		}
+	}else{
+		attach = checkedItems.attachments;
+		if(!attach || !attach.length && status == 1){
+			infoMask("结案附件为空，无法提交");
+			return;
+		}
+		ids = checkedItems.id;
+	}
+	var data = {ids:ids,commitStatus:status};
+	commit(data,tip);
+}
+
+function updateStatusForBusiness(checkedItems,status){
+	var tip = "";
+	if(status == 1){
+		tip = "处理成功";
+	}else if(status == 0){
+		tip = "撤回成功";
+	}else {
+		return;
+	}
+	var ids = "";
+	var itemStatus = "";
+	if(checkedItems instanceof Array){
+		for(var i = 0;i < checkedItems.length; i++){
+			itemStatus = checkedItems[i].status;
+			if(status == 1){
+				if(itemStatus != 5 || itemStatus != 6){
+					infoMask("存在不符合处理条件的结案，无法处理");
+					return;
+				}
+			}else if(status == 0){
+				if(itemStatus != 7){
+					infoMask("存在不符合撤回条件的结案，无法撤回");
+					return;
+				}
+			}
+			if(i == 0){
+				ids = checkedItems[i].id;
+			}else{
+				ids = ids + "," + checkedItems[i].id;
+			}
+		}
+	}else{
+		ids = checkedItems.id;
+	}
+	var data = {ids:ids,handleStatus:status};
+	handle(data,tip);
+}
+
+function commit(data,tip){
+	$.ajax({  
+	    type : "POST",    
+	    url : "../closeCase/commit",  
+	    dataType : "json",  
+	    data: data,  
+	    success : function(result) {  
+	        if (result.code == 0) { 
+	        	infoMask(tip);
+	        	findMenu('','');
+	        	return;
+	        } else {  
+	        	infoMask("操作失败：服务器响应异常");
+	        }
+	    }  
+	}); 
+}
+
+function handle(data,tip){
+	$.ajax({  
+	    type : "POST",    
+	    url : "../closeCase/handle",  
+	    dataType : "json",  
+	    data: data,  
+	    success : function(result) {  
+	        if (result.code == 0) { 
+	        	infoMask(tip);
+	        	findMenu('','');
+	        	return;
+	        } else {  
+	        	infoMask("操作失败：服务器响应异常");
+	        }
+	    }  
+	}); 
+}
+
+function newConfirm(title,msg,closable,draggable,okButton,cancelButton,okCallbakFunciton,arg1,arg2){
+	parent.$.messager.confirm({
+	    "title":title,
+	    "msg":msg,
+	    "closable":closable,
+	    "draggable":draggable,
+	    "ok":cancelButton,
+	    "cancel":okButton,
+	    "fn":function(boolean){
+	        if(!boolean){//确定操作
+	        	if(okCallbakFunciton){
+	                if(arg1){
+	                    if(arg2 != null){
+	                    	okCallbakFunciton(arg1,arg2);
+	                    }else{
+	                    	okCallbakFunciton(arg1);
+	                    }
+	                }else {
+	                    okCallbakFunciton('','');
+	                }
+	        	}
+	        }else{//取消操作
+	
+	        }
+	    }
+	});
+}

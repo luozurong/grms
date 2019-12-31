@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+	http://cxf.apache.org/jaxws  
+	http://cxf.apache.org/schemas/jaxws.xsd">
+
+	
+	<!-- 同步对讲的小区信息 -->
+    <bean id="synchronizCommunityTask" class="com.hori.jobtask.SynchronizCommunityTask" /> 
+    
+	
+  	 <!-- 同步对讲的终端信息  -->
+    <bean id="synchronizTerminalTask" class="com.hori.jobtask.SynchronizTerminalTask" />
+    
+	
+	<!-- 删除超30天未匹配的合同编号  -->
+    <bean id="delContractNumberTask" class="com.hori.jobtask.DelContractNumberTask" />
+    
+    
+	<!-- 同步开门次数  -->
+    <bean id="synchronizedOpenTimes" class="com.hori.jobtask.DelContractNumberTask" />
+    
+</beans>

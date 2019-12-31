@@ -1,0 +1,29 @@
+package com.hori.grms.dao;
+
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
+import com.hori.grms.model.BackMoneyPlan;
+import com.hori.grms.model.BackMoneyPlanPeriods;
+import com.hori.grms.vo.BackMoneyPlanVo;
+import com.hori.grms.vo.ContractVo;
+
+
+
+public interface BackMoneyPlanMapper {
+
+	List<BackMoneyPlanVo> getBackMoneyPlanList(@Param("selectCondition")String selectCondition, @Param("condition")String condition, 
+			@Param("backMoneyStatus")String backMoneyStatus, @Param("startTime")String startTime, @Param("endTime")String endTime);
+
+	void insertSelective(BackMoneyPlan backMoneyPlan);
+
+	List<ContractVo> getContractList(@Param("condition")String condition);
+
+	ContractVo getContractDetail(@Param("contractCode")String contractCode);
+
+	BackMoneyPlan getBackMoneyPlanByCode(@Param("backMoneyPlanCode")String backMoneyPlanCode);
+	
+	void updateByPrimaryKeySelective(BackMoneyPlan backMoneyPlan);
+
+}

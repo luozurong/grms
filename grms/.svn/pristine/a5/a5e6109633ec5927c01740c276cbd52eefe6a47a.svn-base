@@ -1,0 +1,42 @@
+package com.hori.grms.dao;
+
+import java.util.List;
+
+import com.hori.grms.model.PendingEvent;
+import com.hori.grms.queryBean.PendingEventQueryBean;
+
+public interface PendingEventMapper {
+    int deleteByPrimaryKey(String id);
+
+    int insert(PendingEvent record);
+
+    int insertSelective(PendingEvent record);
+
+    PendingEvent selectByPrimaryKey(String id);
+
+    int updateByPrimaryKeySelective(PendingEvent record);
+
+    int updateByPrimaryKey(PendingEvent record);
+    
+    
+    /**
+     * 查询待办事项列表
+     * @param projectQueryBean
+     * @return
+     */
+	List<PendingEvent> list(PendingEventQueryBean pendingEventQueryBean);
+	
+	/**
+	 * 通过模块编号查询待办事项
+	 * @param modelCode
+	 * @return
+	 */
+	PendingEvent selectByModelCode(String modelCode);
+	
+	/**
+	 * 通过模块编号修改对应的待办事件对象
+	 * @param pendingEvent
+	 * @return
+	 */
+	int updateByModelCode(PendingEvent pendingEvent);
+}

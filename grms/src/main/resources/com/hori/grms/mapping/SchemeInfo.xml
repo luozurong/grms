@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.hori.grms.dao.SchemeInfoMapper" >
+
+	<resultMap id="schemeInfoMap" type="com.hori.grms.model.SchemeInfo" >
+    	<id column="id"  property="id" />
+	    <result column="name" property="name" />
+	    <result column="url" property="url" />
+	    <result column="url_name" property="urlName" />
+	    <result column="creater_account" property="createrAccount" />
+	    <result column="create_time" property="createTime" />
+	</resultMap>
+  
+	<select id="getSchemeInfos" resultMap="schemeInfoMap">
+		SELECT id,name,create_time FROM scheme_info WHERE 1=1
+		<if test="keyword != null and keyword != ''">
+			and name like #{keyword}
+		</if>
+		ORDER BY create_time DESC LIMIT #{pageIndex},#{pageSize} 
+	</select>
+	
+	<select id="getSchemeInfoCount" resultType="int">
+		SELECT COUNT(*) FROM scheme_info WHERE 1=1
+		<if test="keyword != null and keyword != ''">
+			and name like #{keyword}
+		</if>
+	</select>
+	
+	<select id="getSchemeInfoByName" resultType="string">
+		SELECT id FROM scheme_info WHERE `name`=#{name}
+	</select>
+	
+	<select id="getSchemeInfoById" resultMap="schemeInfoMap">
+		SELECT * FROM scheme_info WHERE id=#{id}
+	</select>
+	
+	<insert id="save" parameterType="schemeInfo">
+		insert into scheme_info(id,name,url,url_name,creater_account,create_time)
+		values(#{id},#{name},#{url},#{urlName},#{createrAccount},NOW())
+	</insert>
+	
+	<delete id="delete" parameterType="string">
+		delete from scheme_info where id=#{id}
+	</delete>
+</mapper>

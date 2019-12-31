@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hori.grms.dao.ProjectMapper" >
+    <resultMap id="BaseResultMap" type="com.hori.grms.model.Project" >
+        <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="product_code" property="productCode" jdbcType="VARCHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="customer_id" property="customerId" jdbcType="VARCHAR" />
+        <result column="customer_name" property="customerName" jdbcType="VARCHAR" />
+        <result column="description" property="description" jdbcType="LONGVARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="creater_account" property="createrAccount" jdbcType="VARCHAR" />
+        <result column="creater_name" property="createrName" jdbcType="VARCHAR" />
+        <result column="creater_level" property="createrLevel" jdbcType="VARCHAR" />
+        <result column="creater_dedpartment_id" property="createrDedpartmentId" jdbcType="VARCHAR" />
+        <result column="contract_code" property="contractCode" jdbcType="VARCHAR" />
+        <result column="status" property="status" jdbcType="INTEGER" />
+    </resultMap>
+
+    <sql id="Example_Where_Clause" >
+        <where >
+            <foreach collection="oredCriteria" item="criteria" separator="or" >
+                <if test="criteria.valid" >
+                    <trim prefix="(" suffix=")" prefixOverrides="and" >
+                        <foreach collection="criteria.criteria" item="criterion" >
+                            <choose >
+                                <when test="criterion.noValue" >
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue" >
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue" >
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue" >
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+
+    <sql id="Update_By_Example_Where_Clause" >
+        <where >
+            <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+                <if test="criteria.valid" >
+                    <trim prefix="(" suffix=")" prefixOverrides="and" >
+                        <foreach collection="criteria.criteria" item="criterion" >
+                            <choose >
+                                <when test="criterion.noValue" >
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue" >
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue" >
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue" >
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+
+    <sql id="Base_Column_List" >
+        id, product_code, name, customer_id, customer_name, description, create_time, update_time, 
+        creater_account, creater_name, creater_level, creater_dedpartment_id, contract_code, 
+        status
+    </sql>
+
+    <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.hori.grms.model.ProjectExample" >
+        select
+        <if test="distinct" >
+            distinct
+        </if>
+        'true' as QUERYID,
+        <include refid="Base_Column_List" />
+        from project
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+        <if test="orderByClause != null" >
+            order by ${orderByClause}
+        </if>
+    </select>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+        select 
+        <include refid="Base_Column_List" />
+        from project
+        where id = #{id,jdbcType=VARCHAR}
+    </select>
+
+    <insert id="insert" parameterType="com.hori.grms.model.Project" >
+        insert into project (id, product_code, name, 
+            customer_id, customer_name, description, 
+            create_time, update_time, creater_account, 
+            creater_name, creater_level, creater_dedpartment_id, 
+            contract_code, status)
+        values (#{id,jdbcType=VARCHAR}, #{productCode,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
+            #{customerId,jdbcType=VARCHAR}, #{customerName,jdbcType=VARCHAR}, #{description,jdbcType=LONGVARCHAR}, 
+            #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{createrAccount,jdbcType=VARCHAR}, 
+            #{createrName,jdbcType=VARCHAR}, #{createrLevel,jdbcType=VARCHAR}, #{createrDedpartmentId,jdbcType=VARCHAR}, 
+            #{contractCode,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER})
+    </insert>
+
+    <select id="countByExample" parameterType="com.hori.grms.model.ProjectExample" resultType="java.lang.Integer" >
+        select count(*) from project
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+    </select>
+
+    <update id="updateByExampleSelective" parameterType="map" >
+        update project
+        <set >
+            <if test="record.id != null" >
+                id = #{record.id,jdbcType=VARCHAR},
+            </if>
+            <if test="record.productCode != null" >
+                product_code = #{record.productCode,jdbcType=VARCHAR},
+            </if>
+            <if test="record.name != null" >
+                name = #{record.name,jdbcType=VARCHAR},
+            </if>
+            <if test="record.customerId != null" >
+                customer_id = #{record.customerId,jdbcType=VARCHAR},
+            </if>
+            <if test="record.customerName != null" >
+                customer_name = #{record.customerName,jdbcType=VARCHAR},
+            </if>
+            <if test="record.description != null" >
+                description = #{record.description,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="record.createTime != null" >
+                create_time = #{record.createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.updateTime != null" >
+                update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.createrAccount != null" >
+                creater_account = #{record.createrAccount,jdbcType=VARCHAR},
+            </if>
+            <if test="record.createrName != null" >
+                creater_name = #{record.createrName,jdbcType=VARCHAR},
+            </if>
+            <if test="record.createrLevel != null" >
+                creater_level = #{record.createrLevel,jdbcType=VARCHAR},
+            </if>
+            <if test="record.createrDedpartmentId != null" >
+                creater_dedpartment_id = #{record.createrDedpartmentId,jdbcType=VARCHAR},
+            </if>
+            <if test="record.contractCode != null" >
+                contract_code = #{record.contractCode,jdbcType=VARCHAR},
+            </if>
+            <if test="record.status != null" >
+                status = #{record.status,jdbcType=INTEGER},
+            </if>
+        </set>
+        <if test="_parameter != null" >
+            <include refid="Update_By_Example_Where_Clause" />
+        </if>
+    </update>
+
+    <update id="updateByExample" parameterType="map" >
+        update project
+        set id = #{record.id,jdbcType=VARCHAR},
+            product_code = #{record.productCode,jdbcType=VARCHAR},
+            name = #{record.name,jdbcType=VARCHAR},
+            customer_id = #{record.customerId,jdbcType=VARCHAR},
+            customer_name = #{record.customerName,jdbcType=VARCHAR},
+            description = #{record.description,jdbcType=LONGVARCHAR},
+            create_time = #{record.createTime,jdbcType=TIMESTAMP},
+            update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+            creater_account = #{record.createrAccount,jdbcType=VARCHAR},
+            creater_name = #{record.createrName,jdbcType=VARCHAR},
+            creater_level = #{record.createrLevel,jdbcType=VARCHAR},
+            creater_dedpartment_id = #{record.createrDedpartmentId,jdbcType=VARCHAR},
+            contract_code = #{record.contractCode,jdbcType=VARCHAR},
+            status = #{record.status,jdbcType=INTEGER}
+        <if test="_parameter != null" >
+            <include refid="Update_By_Example_Where_Clause" />
+        </if>
+    </update>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.hori.grms.model.Project" >
+        update project
+        <set >
+            <if test="productCode != null" >
+                product_code = #{productCode,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null" >
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="customerId != null" >
+                customer_id = #{customerId,jdbcType=VARCHAR},
+            </if>
+            <if test="customerName != null" >
+                customer_name = #{customerName,jdbcType=VARCHAR},
+            </if>
+            <if test="description != null" >
+                description = #{description,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="createTime != null" >
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createrAccount != null" >
+                creater_account = #{createrAccount,jdbcType=VARCHAR},
+            </if>
+            <if test="createrName != null" >
+                creater_name = #{createrName,jdbcType=VARCHAR},
+            </if>
+            <if test="createrLevel != null" >
+                creater_level = #{createrLevel,jdbcType=VARCHAR},
+            </if>
+            <if test="createrDedpartmentId != null" >
+                creater_dedpartment_id = #{createrDedpartmentId,jdbcType=VARCHAR},
+            </if>
+            <if test="contractCode != null" >
+                contract_code = #{contractCode,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null" >
+                status = #{status,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+        delete from project
+        where id = #{id,jdbcType=VARCHAR}
+    </delete>
+
+    <delete id="deleteByExample" parameterType="com.hori.grms.model.ProjectExample" >
+        delete from project
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+    </delete>
+
+</mapper>

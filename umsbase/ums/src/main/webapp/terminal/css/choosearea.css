@@ -1,0 +1,76 @@
+.header {
+    position: relative;
+    margin-left: 30px;
+    height: 54px;
+    border-bottom: 1px solid #eeeeee;
+}
+.goback {
+    position: absolute;
+    left: 0;
+    top: 12px;
+    padding-left: 20px;
+    padding-right: 20px;
+    /*width: 86px;*/
+    height: 30px;
+    line-height: 30px;
+    font-size: 16px;
+    color: #fc883b;
+    text-align: left;
+    background: url(../../common/images/ic_back.png) left center no-repeat;
+    cursor: pointer;
+}
+.goback-a {
+    display: block;
+    width: 86px;
+    height: 30px;
+    line-height: 30px;
+    font-size: 16px;
+    color: #fc883b;
+}
+.header-edit {
+    position: absolute;
+    left: 76px;
+    top: 17px;
+    padding-left: 20px;
+    /*width: 56px;*/
+    /*height: 30px;*/
+    /*line-height: 30px;*/
+    font-size: 16px;
+    color: #222222;
+    text-align: left;
+    border-left: 1px solid #CCCCCC;
+}
+
+.tipsP{
+	padding: 20px 0 15px 30px;
+}
+/*按钮*/
+.btnBox{
+	padding: 0 0 20px 24px;
+}
+.saveCancel{
+	display: none;
+}
+.editBtn,.saveBtn,.cancelBtn{
+	display: inline-block;
+	width: 80px;
+	height: 32px;
+	text-align: center;
+	line-height: 32px;
+	color: #FF8C40;
+	border: 1px solid #FF8C40;
+	border-radius: 4px;
+	cursor: pointer;
+}
+.cancelBtn{
+	color: #6A6A6A;
+	border: 1px solid #A6A6A6;
+	margin-left: 30px;
+}
+/*主区域*/
+.wrap{
+    min-height: calc(100% - 213px);
+}
+.datagrid-header-check .checkBorder{
+	display: none;
+}

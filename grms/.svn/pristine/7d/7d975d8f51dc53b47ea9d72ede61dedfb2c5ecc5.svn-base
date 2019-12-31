@@ -1,0 +1,288 @@
+
+var userType;
+var ums_server_url = "http://127.0.0.1:8090/ums";
+var pageNum='1';
+var pageSize='10';
+
+$(function () {
+    $.ajax({  
+        type : "POST",  //提交方式  
+        url : ums_server_url+"/organizationAction!getSystemOrganization.html",//路径  
+        dataType : "json",//数据，这里使用的是Json格式进行传输  
+        success : function(result) {//返回数据根据结果进行相应的处理  
+            if ( result.success) {  
+            	var treejson;
+            	treejson=result.obj;
+            	append(treejson);
+            } else {  
+            	
+            }  
+        }  
+    }); 
+    
+    findMenu(pageSize,pageNum);
+});
+
+//查询数据
+function findMenu(pageSize,pageNum){
+	var condition =$('#condition').val();
+	
+    $.ajax({  
+        type : "POST",  //提交方式  
+        url : "/grms/departmentBusiness/getBusinessTypeList",//路径  
+        dataType : "json",//数据，这里使用的是Json格式进行传输  
+        data:  {"condition":condition},  
+        success : function(result) {//返回数据根据结果进行相应的处理  
+            if ( result.success) {  
+            	var data2=result.rows;
+            	var total=result.total;
+            	refreshFunc(data2);
+            	paginationpage(total,data2);
+            } else {  
+            	console.log(4655465)
+            }  
+        }  
+    }); 
+}
+
+//刷新表格数据
+function refreshFunc(data){
+//	表格数据渲染
+    $('#dg').datagrid({
+        border:true,
+        scrollbarSize:0,
+        nowrap:false,//允许换行
+        data:data,
+        emptyMsg:'<span>无记录</span>',
+        onLoadSuccess:function(){ //dom操作
+            $('#dg').datagrid('resize');
+        },
+        columns:[[
+			{
+			    field:'ck',
+			    title:'',
+			    checkbox:true,
+			    width:50,
+			    align:'center'
+			},
+            {
+                field:'id',
+                title:'产品资源id',
+                width:50,
+                align:'left',
+                hidden:true
+            },
+            {
+                field:'departmentName',
+                title:'执行部门',
+                width:100,
+                align:'left'
+            },
+            {
+                field:'businessType',
+                title:'执行业务类型',
+                width:100,
+                align:'left'
+            },
+            {
+                field:'businessArea',
+                title:'执行区域',
+                width:100,
+                align:'left'
+            },
+            {
+                field:'handle',
+                title:'操作',
+                width:100,
+                align:'left',
+                formatter: function(value,row,index){
+                	//处理操作得按钮（根据用户的类型）
+                	//var status = row.status
+                	var detailWorkOrder = '<a href="javascript:;" onclick="edit(\''+row.id+'\')">修改</a>';
+                	var revokeWorkOrder = '<a href="javascript:;" onclick="deleteData(\''+row.id+'\')">删除</a> ';
+                	workOrder = detailWorkOrder+revokeWorkOrder;
+                    return workOrder;
+                }
+            }
+        ]]
+    });
+}
+
+function paginationpage(total,data2){
+//  分页
+    $('#pp').pagination({
+        total:total,
+        layout:['list','first','prev','links','next','last','manual'],
+        emptyMsg: '<span>无记录</span>',
+        showRefresh:true,
+        displayMsg:' ',
+        pageList:[10,20,30],
+        onSelectPage:function (pageNo, pageSize) {
+        	pageNoAll=pageNo;
+        	pageSizeAll=pageSize;
+        	findMenu('','')
+        }
+    });
+    $(".pagination-page-list").parent().append("条");
+    $(".pagination-page-list").parent().prepend("共计"+total+"条,每页显示： ");
+
+}
+
+//跳转创建页面
+function jumpToAddPage(){
+	var node = $("#box").tree("getSelected");
+	if(node){
+		var departmentId = node.id;
+		var departmentName = node.text;
+		window.location.href='/grms/departmentBusiness/jumpToAddPage?departmentName='+departmentName+"&departmentId="+departmentId;
+	}else{
+		infoMask('创建失败，请选择需要创建的组织机构');
+	}
+}
+
+//跳转编辑页面
+function jumpToEditPage(id){
+	window.location.href='/grms/departmentBusiness/jumpToEditPage?id='+id;
+}
+
+//删除
+function deleteData(id){
+	$('#delStatistics').dialog({
+	    title: "消息确认",
+	    width: 380,
+	    height: 290,
+	    draggable:false,
+	    closed: false,
+	    modal: true,
+	    onClose:function(){
+	    	wrapMaskHide();
+	    },
+	    buttons:[{
+	        text:'取消',
+	        handler:function(){
+	            $('#delStatistics').dialog('close');
+	            wrapMaskHide();
+	        }
+	    },{
+	        text:'确认',
+	        handler:function(){
+	        	$.ajax({  
+	                type : "POST",  //提交方式  
+	                url : "/grms/departmentBusiness/delDepartmentBusiness",//路径  
+	                dataType : "json",//数据，这里使用的是Json格式进行传输  
+	                data:  {"ids":id},  
+	                success : function(result) {//返回数据根据结果进行相应的处理  
+	                    if ( result.success) { 
+	                    	alert("删除成功");
+	                    	$('#delStatistics').dialog('close');
+	        	            wrapMaskHide();
+	                    	window.location.reload();
+	                    } else {  
+	                    	$('#delStatistics').dialog('close');
+	        	            wrapMaskHide();
+	                    	alert("删除失败");
+	                    }  
+	                }  
+	            }); 
+	        }
+	    }]
+	});
+}
+
+//批量删除
+function batchDel(){
+	var hasDataValue = $("#dg").datagrid("getChecked");
+	var orderNumArr = new Array();
+	for(var i=0;i<hasDataValue.length;i++){
+		var orderNum = hasDataValue[i].id;
+		orderNumArr[i]=orderNum;
+	}
+	if(hasDataValue.length<=0){
+		$('#hintStatistics').dialog({
+		    title: "消息确认",
+		    draggable:false,
+		    width: 520,
+		    height: 360,
+		    closed: false,
+		    modal: true
+		});
+    }else{
+    	$('#delStatistics').dialog({
+    	    title: "消息确认",
+    	    width: 380,
+    	    height: 290,
+    	    draggable:false,
+    	    closed: false,
+    	    modal: true,
+    	    onClose:function(){
+    	    	wrapMaskHide();
+    	    },
+    	    buttons:[{
+    	        text:'取消',
+    	        handler:function(){
+    	            $('#delStatistics').dialog('close');
+    	            wrapMaskHide();
+    	        }
+    	    },{
+    	        text:'确认',
+    	        handler:function(){
+    	        	$.ajax({  
+    	                type : "POST",  //提交方式  
+    	                url : "/grms/departmentBusiness/delDepartmentBusiness?ids="+orderNumArr,//路径  
+    	                dataType : "json",//数据，这里使用的是Json格式进行传输  
+    	                //data:  {"ids":orderNumArr},  
+    	                success : function(result) {//返回数据根据结果进行相应的处理  
+    	                    if ( result.success) { 
+    	                    	$('#delStatistics').dialog('close');
+    	        	            wrapMaskHide();
+    	                    	alert("删除成功");
+    	                    	window.location.reload();
+    	                    } else {  
+    	                    	$('#delStatistics').dialog('close');
+    	        	            wrapMaskHide();
+    	                    	alert("删除失败");
+    	                    }  
+    	                }  
+    	            });
+    	            
+    	        }
+    	    }]
+    	});
+    }
+}
+
+//组织架构JS
+function refresh(){
+    $.ajax({  
+        type : "POST",  //提交方式  
+        url : ums_server_url+"organizationAction!getSystemOrganization.html",//路径  
+        dataType : "json",//数据，这里使用的是Json格式进行传输  
+        success : function(result) {//返回数据根据结果进行相应的处理  
+            if ( result.success) {  
+            	var treejson;
+            	treejson=result.obj;
+            	append(treejson);
+            } else {  
+            	
+            }  
+        }  
+    }); 
+}
+
+function append( treejson){
+
+    $('#box').tree({
+        data : treejson,
+        animate : false,
+        checkbox : false,
+        cascadeCheck : false,
+        onlyLeafCheck : true,
+        lines : false,
+        dnd : false,
+        onLoadSuccess:function(node,data){
+        }
+    });
+
+}
+
+

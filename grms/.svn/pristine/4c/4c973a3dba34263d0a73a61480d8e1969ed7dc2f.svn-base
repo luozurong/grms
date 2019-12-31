@@ -1,0 +1,174 @@
+package com.hori.grms.vo;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+/**
+ * 小区数据查询请求数据
+ * @author laizs
+ * @time 2018年8月15日下午7:32:47
+ */
+public class AreaDataReqVo implements Serializable{
+	/**
+	 * 页码
+	 */
+	private int pageNum=1;
+	/**
+	 * 分页大小
+	 */
+	private int pageSize=10;
+	/**
+	 * 省编码
+	 */
+	private String province="";
+	/**
+	 * 市编码
+	 */
+	private String city="";	
+	/**
+	 * 区编码
+	 */
+	private String country="";	
+	/**
+	 * 小区名称
+	 */
+	private String areaName="";
+	/**
+	 * 实际户数符号  1大于  2小于
+	 */
+	private String householdNumSign="";	
+	/**
+	 * 住房总数
+	 */
+	private String householdNum="";	
+	/**
+	 * 终端机数符号  1大于  2小于
+	 */
+	private String advertisingTerminalNumSign="";
+	/**
+	 * 终端机数
+	 */
+	private String advertisingTerminalNum="";
+	/**
+	 * 小区类型，0：测试小区，1：云对讲项目  2：工程项目  3：样板演示小区  4：销售小区
+	 */
+	private String areaCategory="";	
+	/**
+	 * 转化状态: 0: 未转化 ， 1: 已完成转化  ,2 部分转化(试点转化)
+	 */
+	private String translateStatus="";
+	/**
+	 * 指定查询的小区机构编号列表
+	 */
+	private Set<String> list=new TreeSet<String>();
+	/**
+	 * 用于过滤不显示的小区(小区机构编号)集合
+	 */
+	private List<String> filterList = new ArrayList<>();
+	public AreaDataReqVo(){
+		
+	}
+	public AreaDataReqVo(int pageNum,int pageSize){
+		this.pageNum=pageNum;
+		this.pageSize=pageSize;
+	}
+	
+	public int getPageNum() {
+		return pageNum;
+	}
+	public void setPageNum(int pageNum) {
+		this.pageNum = pageNum;
+	}
+	public int getPageSize() {
+		return pageSize;
+	}
+	public void setPageSize(int pageSize) {
+		this.pageSize = pageSize;
+	}
+	public String getProvince() {
+		return province;
+	}
+	public void setProvince(String province) {
+		this.province = province;
+	}
+	public String getCity() {
+		return city;
+	}
+	public void setCity(String city) {
+		this.city = city;
+	}
+	public String getCountry() {
+		return country;
+	}
+	public void setCountry(String country) {
+		this.country = country;
+	}
+	
+	public String getAreaName() {
+		return areaName;
+	}
+	public void setAreaName(String areaName) {
+		this.areaName = areaName;
+	}
+	public String getHouseholdNumSign() {
+		return householdNumSign;
+	}
+	public void setHouseholdNumSign(String householdNumSign) {
+		this.householdNumSign = householdNumSign;
+	}
+	public String getHouseholdNum() {
+		return householdNum;
+	}
+	public void setHouseholdNum(String householdNum) {
+		this.householdNum = householdNum;
+	}
+	public String getAdvertisingTerminalNumSign() {
+		return advertisingTerminalNumSign;
+	}
+	public void setAdvertisingTerminalNumSign(String advertisingTerminalNumSign) {
+		this.advertisingTerminalNumSign = advertisingTerminalNumSign;
+	}
+	public String getAdvertisingTerminalNum() {
+		return advertisingTerminalNum;
+	}
+	public void setAdvertisingTerminalNum(String advertisingTerminalNum) {
+		this.advertisingTerminalNum = advertisingTerminalNum;
+	}
+	public String getAreaCategory() {
+		return areaCategory;
+	}
+	public void setAreaCategory(String areaCategory) {
+		this.areaCategory = areaCategory;
+	}
+	public String getTranslateStatus() {
+		return translateStatus;
+	}
+	public void setTranslateStatus(String translateStatus) {
+		this.translateStatus = translateStatus;
+	}
+	
+	public Set<String> getList() {
+		return list;
+	}
+	public void setList(Set<String> list) {
+		this.list = list;
+	}
+	public List<String> getFilterList() {
+		return filterList;
+	}
+	public void setFilterList(List<String> filterList) {
+		this.filterList = filterList;
+	}
+	@Override
+	public String toString() {
+		return "AreaDataReqVo [pageNum=" + pageNum + ", pageSize=" + pageSize + ", province=" + province + ", city="
+				+ city + ", country=" + country + ", areaName=" + areaName + ", householdNumSign=" + householdNumSign
+				+ ", householdNum=" + householdNum + ", advertisingTerminalNumSign=" + advertisingTerminalNumSign
+				+ ", advertisingTerminalNum=" + advertisingTerminalNum + ", areaCategory=" + areaCategory
+				+ ", translateStatus=" + translateStatus + ", list=" + list + ", filterList=" + filterList + "]";
+	}
+	
+
+}

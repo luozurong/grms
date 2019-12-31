@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html >
+<head>
+    <meta charset="utf-8">
+    <title>留存用户</title>
+	<link href="../easyui/themes/default/easyui.css" rel="stylesheet" type="text/css" />
+	<link href="../easyui/themes/icon.css" rel="stylesheet" type="text/css" />
+	<link href="../css/reset.css" rel="stylesheet" type="text/css" />
+	<link rel="stylesheet" type="text/css" href="../css/component.css"/>
+	<link rel="stylesheet" type="text/css" href="../dialog/css/addArea.css"/>
+</head>
+
+<body style="min-width:1000px;height: 100%;background-color: #F8F8F8;padding: 14px 24px;">
+	<div class="tipsBox">
+		<div class="tipsP clearfix">
+            <span class="fl">统计字段说明</span>
+            <span class="fl illPic"></span>
+        </div>
+		<div class="tips">
+		    <h2>留存用户</h2>
+			1.数据来源：app埋点数据采集<br/>
+			2.新用户数：所选时段的启动用户中，历史上第一次启动App的用户<br/>
+            3.存留用户只是：次日存留用户，就是当天新用户第二天存留下来的用户<br/>
+            4.留存率：用户留存率=留存用户数/新增用户数*100%
+		</div>
+	</div>
+	<!-- 查询栏 -->
+	<div class="myPanel" style="padding: 14px 0;">
+        <div class="dimension"><!--维度-->
+            <span class="tlt">选择统计维度:</span>
+            <label class="typeLabel1">
+                <input type="radio" name="selType" value="selectDay" checked="checked">
+                <span>日</span>
+            </label>
+            <!-- <label class="typeLabel1">
+                <input type="radio" name="selType" value="selectWeek">
+                <span>周</span>
+            </label>
+            <label class="typeLabel1">
+                <input type="radio" name="selType" value="selectMonth">
+                <span>月</span>
+            </label> -->
+        </div>
+        <!--日期范围-->
+        <div class="daterange clearfix">
+            <span class="tlt fl">选择日期范围:</span>
+            <span class="fl" id="dateFrame"></span>
+        </div>
+		<div class="areaslt">
+	    	<span class="tlt">区域:
+	    		<span class="addareaBtn" onclick="bd.areaWindow()">添加区域</span>
+	    	</span>
+	    	<ul class="arealist clearfix">
+	    	</ul>
+	    </div>
+	    <div class="communityslt">
+	    	<span class="tlt">小区:
+	    		<span class="addareaBtn" onclick="bd.communityWindow()">添加小区</span>
+	    	</span>
+	    	<ul class="communitylist clearfix">
+	    		<li></li>
+	    	</ul>
+	    </div>
+	    <div class="panelBtn">
+	        <a id="query_ticket" class="searchBtn" shape="rect"  onclick="find()">查询</a>
+	        <a id="query_ticket" class="exportBtn" shape="rect" onclick="doExportPoi()">导出</a>
+	    </div>
+    </div>
+           
+	<div class="myPanel" style="margin-top: 20px;background-color:#FFFFFF;">
+     <!-- 统计图 -->  
+		<div id="graphic" class="col-md-8" style="padding-top: 20px;">
+	        <div id="main" class="main" style="height: 330px;"></div>             
+	    </div>
+		<div class="dataTable" style="height:315px;margin-top: 30px;">
+		     <!-- 数据表 -->
+		    <table class="easyui-datagrid" data-options="fit:true,fitColumns:true,scrollbarSize:0,singleSelect:true" style="width: 100%; height:auto">
+				<thead>
+					<tr>
+						<th data-options="field:'createDay',width:250,sortable:true">日期</th>
+						<th data-options="field:'retainTotal',width:250,sortable:true">留存用户</th>
+						<th data-options="field:'newTotal',width:250,sortable:true">新用户</th>
+						<th data-options="field:'retainPercent',width:250,sortable:true">留存率</th>
+					</tr>
+				</thead>
+		    </table>
+		</div>
+	</div>
+
+	<!--选择区域、小区弹窗-->
+	<div id="areaWindow"></div>
+	<div id="communityWindow"></div>
+
+    <script src="../js/jquery.min.js" type="text/javascript"></script>
+	<script src="../easyui/jquery.easyui.min.js" type="text/javascript"></script>
+    <script src="../easyui/jquery.tree.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../echarts/echarts.js"></script>
+	<script src="../easyui/easyloader.js" type="text/javascript"></script>
+	<script src="../common/common.js" type="text/javascript"></script>
+	<script src="../js/component/component.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" src="js/retainedUser.js"></script>
+   
+</body>
+</html>

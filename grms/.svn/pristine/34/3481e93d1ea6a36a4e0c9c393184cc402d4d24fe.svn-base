@@ -1,0 +1,29 @@
+package com.hori.grms.service;
+
+
+import java.util.List;
+import java.util.Map;
+import com.hori.grms.model.CustomerType;
+import com.hori.grms.model.ProjectRole;
+
+/** 
+ * @ClassName: ProjectRoleService 
+ * @Description: 项目角色
+ * @author zhuqiang
+ * @date 2018年8月8日 下午7:17:16 
+ */
+
+public interface ProjectRoleService {
+	
+	public List<ProjectRole> getProjectRole();
+	
+	public void delAll();
+	
+	public void insert(ProjectRole projectRole);
+	/**
+	 * 查询所有项目角色
+	 * @return
+	 */
+	List<Map<String, Object>> findProjectRoleList();
+
+}

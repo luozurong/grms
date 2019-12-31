@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hori.grms.dao.ProductMenuMapper" >
+    <resultMap id="BaseResultMap" type="com.hori.grms.model.ProductMenu" >
+        <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="business_type" property="businessType" jdbcType="VARCHAR" />
+        <result column="product_type" property="productType" jdbcType="VARCHAR" />
+        <result column="product_menu" property="productMenu" jdbcType="VARCHAR" />
+        <result column="product_spec" property="productSpec" jdbcType="VARCHAR" />
+        <result column="num_limit" property="numLimit" jdbcType="INTEGER" />
+        <result column="num_limit_type" property="numLimitType" jdbcType="SMALLINT" />
+    </resultMap>
+
+    <sql id="Example_Where_Clause" >
+        <where >
+            <foreach collection="oredCriteria" item="criteria" separator="or" >
+                <if test="criteria.valid" >
+                    <trim prefix="(" suffix=")" prefixOverrides="and" >
+                        <foreach collection="criteria.criteria" item="criterion" >
+                            <choose >
+                                <when test="criterion.noValue" >
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue" >
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue" >
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue" >
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+
+    <sql id="Update_By_Example_Where_Clause" >
+        <where >
+            <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+                <if test="criteria.valid" >
+                    <trim prefix="(" suffix=")" prefixOverrides="and" >
+                        <foreach collection="criteria.criteria" item="criterion" >
+                            <choose >
+                                <when test="criterion.noValue" >
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue" >
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue" >
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue" >
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+
+    <sql id="Base_Column_List" >
+        id, business_type, product_type, product_menu, product_spec, num_limit, num_limit_type
+    </sql>
+
+    <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.hori.grms.model.ProductMenuExample" >
+        select
+        <if test="distinct" >
+            distinct
+        </if>
+        'true' as QUERYID,
+        <include refid="Base_Column_List" />
+        from product_menu
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+        <if test="orderByClause != null" >
+            order by ${orderByClause}
+        </if>
+    </select>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+        select 
+        <include refid="Base_Column_List" />
+        from product_menu
+        where id = #{id,jdbcType=VARCHAR}
+    </select>
+
+    <insert id="insert" parameterType="com.hori.grms.model.ProductMenu" >
+        insert into product_menu (id, business_type, product_type, 
+            product_menu, product_spec, num_limit, 
+            num_limit_type)
+        values (#{id,jdbcType=VARCHAR}, #{businessType,jdbcType=VARCHAR}, #{productType,jdbcType=VARCHAR}, 
+            #{productMenu,jdbcType=VARCHAR}, #{productSpec,jdbcType=VARCHAR}, #{numLimit,jdbcType=INTEGER}, 
+            #{numLimitType,jdbcType=SMALLINT})
+    </insert>
+
+    <select id="countByExample" parameterType="com.hori.grms.model.ProductMenuExample" resultType="java.lang.Integer" >
+        select count(*) from product_menu
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+    </select>
+
+    <update id="updateByExampleSelective" parameterType="map" >
+        update product_menu
+        <set >
+            <if test="record.id != null" >
+                id = #{record.id,jdbcType=VARCHAR},
+            </if>
+            <if test="record.businessType != null" >
+                business_type = #{record.businessType,jdbcType=VARCHAR},
+            </if>
+            <if test="record.productType != null" >
+                product_type = #{record.productType,jdbcType=VARCHAR},
+            </if>
+            <if test="record.productMenu != null" >
+                product_menu = #{record.productMenu,jdbcType=VARCHAR},
+            </if>
+            <if test="record.productSpec != null" >
+                product_spec = #{record.productSpec,jdbcType=VARCHAR},
+            </if>
+            <if test="record.numLimit != null" >
+                num_limit = #{record.numLimit,jdbcType=INTEGER},
+            </if>
+            <if test="record.numLimitType != null" >
+                num_limit_type = #{record.numLimitType,jdbcType=SMALLINT},
+            </if>
+        </set>
+        <if test="_parameter != null" >
+            <include refid="Update_By_Example_Where_Clause" />
+        </if>
+    </update>
+
+    <update id="updateByExample" parameterType="map" >
+        update product_menu
+        set id = #{record.id,jdbcType=VARCHAR},
+            business_type = #{record.businessType,jdbcType=VARCHAR},
+            product_type = #{record.productType,jdbcType=VARCHAR},
+            product_menu = #{record.productMenu,jdbcType=VARCHAR},
+            product_spec = #{record.productSpec,jdbcType=VARCHAR},
+            num_limit = #{record.numLimit,jdbcType=INTEGER},
+            num_limit_type = #{record.numLimitType,jdbcType=SMALLINT}
+        <if test="_parameter != null" >
+            <include refid="Update_By_Example_Where_Clause" />
+        </if>
+    </update>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.hori.grms.model.ProductMenu" >
+        update product_menu
+        <set >
+            <if test="businessType != null" >
+                business_type = #{businessType,jdbcType=VARCHAR},
+            </if>
+            <if test="productType != null" >
+                product_type = #{productType,jdbcType=VARCHAR},
+            </if>
+            <if test="productMenu != null" >
+                product_menu = #{productMenu,jdbcType=VARCHAR},
+            </if>
+            <if test="productSpec != null" >
+                product_spec = #{productSpec,jdbcType=VARCHAR},
+            </if>
+            <if test="numLimit != null" >
+                num_limit = #{numLimit,jdbcType=INTEGER},
+            </if>
+            <if test="numLimitType != null" >
+                num_limit_type = #{numLimitType,jdbcType=SMALLINT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+        delete from product_menu
+        where id = #{id,jdbcType=VARCHAR}
+    </delete>
+
+    <delete id="deleteByExample" parameterType="com.hori.grms.model.ProductMenuExample" >
+        delete from product_menu
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+    </delete>
+    
+    <!-- 查看限制次数不为1 或者0 的指定类型 的清单表 -->
+    <select id="findProductMenuList" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from product_menu
+        where num_limit_type=#{numLimitType} 
+             and business_type=#{businessType}
+             and num_limit>=1
+    </select>
+	
+	<select id="findListByProductMenu" resultMap="BaseResultMap" parameterType="com.hori.grms.model.ProductMenu">
+	    select 
+            <include refid="Base_Column_List" />
+        from product_menu where 1=1
+          <if test="businessType != null" >
+                and business_type = #{businessType,jdbcType=VARCHAR}
+            </if>
+            <if test="productType != null" >
+                and product_type = #{productType,jdbcType=VARCHAR}
+            </if>
+            <if test="productMenu != null" >
+                and product_menu = #{productMenu,jdbcType=VARCHAR}
+            </if>
+            <if test="productSpec != null" >
+                and product_spec = #{productSpec,jdbcType=VARCHAR}
+            </if>
+            <if test="numLimit != null" >
+                and num_limit = #{numLimit,jdbcType=INTEGER}
+            </if>
+            <if test="numLimitType != null" >
+                and num_limit_type = #{numLimitType,jdbcType=SMALLINT}
+            </if>
+	</select>
+	
+	<!-- 根据组织机构编号，小区时间，结束时间获取煤管清单在该时间内被占用的小区数量 -->
+	<select id="filterMeauByorganizationSeqs" resultType="map">
+	   select 
+			product_menu_id menuId,
+			count(ppma.`organization_seq`)	count
+		from 
+		product_menu pm
+		inner join project_product_menu  ppm on pm.`id`=ppm.`product_menu_id`
+		inner join project_product_menu_area ppma
+		on ppm.id=ppma.project_product_menu_id
+		where ppm.product_menu_id
+		and pm.business_type='2'
+		and pm.`num_limit`>0
+		and pm.`num_limit_type`=1
+		and ppm.locked=1
+		and ppma.organization_seq in 
+		<foreach collection="oStrings" item="os" open="(" close=")" separator=",">
+		   #{os,jdbcType=INTEGER}
+		</foreach>
+		and 
+		(
+		<![CDATA[(ppm.`begin_time` >= DATE_FORMAT(#{beginTime},'%Y-%m-%d') AND ppm.`begin_time` <= DATE_FORMAT(#{endTime},'%Y-%m-%d')) OR ]]>			
+		<![CDATA[(ppm.`begin_time` <= DATE_FORMAT(#{beginTime},'%Y-%m-%d') AND ppm.`end_time` >= DATE_FORMAT(#{endTime},'%Y-%m-%d')) OR ]]>
+		<![CDATA[(ppm.`end_time` >= DATE_FORMAT(#{beginTime},'%Y-%m-%d') AND ppm.`end_time` <= DATE_FORMAT(#{endTime},'%Y-%m-%d')) ]]>
+		)
+		group by ppm.product_menu_id,ppma.organization_seq	
+	</select>
+	
+	<!-- 煤管： 查看指定清单 的小区 在 指定时间段是否可用 -->
+	<select id="findAreaByTimeMeanId" resultType="map">
+		select
+			 ppma.organization_seq organizationSeq,
+			 count(ppm.id) count
+		from project_product_menu ppm
+		inner join project_product_menu_area ppma
+		on ppm.id=ppma.id 
+		where ppm.product_menu_id=#{meauId}			
+			and
+			(
+				<![CDATA[(ppm.`begin_time` >= DATE_FORMAT(#{beginTime},'%Y-%m-%d') AND ppm.`begin_time` <= DATE_FORMAT(#{endTime},'%Y-%m-%d')) OR ]]>			
+				<![CDATA[(ppm.`begin_time` <= DATE_FORMAT(#{beginTime},'%Y-%m-%d') AND ppm.`end_time` >= DATE_FORMAT(#{endTime},'%Y-%m-%d')) OR ]]>
+				<![CDATA[(ppm.`end_time` >= DATE_FORMAT(#{beginTime},'%Y-%m-%d') AND ppm.`end_time` <= DATE_FORMAT(#{endTime},'%Y-%m-%d')) ]]>
+			)
+			and ppma.`organization_seq` in 
+			<foreach collection="orGList" item="os" open="(" close=")" separator=",">
+		       #{os,jdbcType=INTEGER}
+		   </foreach>
+		     
+			group by ppma.`organization_seq`
+	</select>
+	
+	<!-- 3,4:根据清单id,开始时间查看每月可创建活动的剩余次数 -->
+	<select id="findNumsByMeanIdAndBeginTime"  resultType="Integer">
+	   select
+		  ifnull(sum(ifnull(ppm.buy_num,0)),0) num  
+		from  project_product_menu ppm
+		where
+		    ppm.product_menu_id=#{meauId}
+		    and DATE_FORMAT(ppm.`begin_time`,'%Y%m')=DATE_FORMAT(#{beginTime} ,'%Y%m')
+		group by ppm.product_menu_id	   
+	</select>
+	
+	<!-- 查询所有  -->
+	<select id="findAllProductMenus" resultType="com.hori.grms.model.ProductMenu">
+	    select
+	    id id, business_type businessType,product_type productType,product_menu productMenu, product_spec productSpec, num_limit numLimit, num_limit_type numLimitType
+        from product_menu
+	</select>
+	
+</mapper>
