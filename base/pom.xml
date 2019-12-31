@@ -378,7 +378,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spring.version>4.3.3.RELEASE</spring.version>
 		<springmodules.validation.version>0.8</springmodules.validation.version>
-		<struts.version>2.5.8</struts.version>
+		<struts.version>2.5.22</struts.version>
 		<hibernate.version>5.2.3.Final</hibernate.version>
 		<jsp.version>2.1</jsp.version>
 		<displaytag.version>1.2</displaytag.version>
