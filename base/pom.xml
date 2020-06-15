@@ -389,7 +389,7 @@
 		<log4j.version>1.2.16</log4j.version>
 		<mysql.version>5.1.31</mysql.version>
 		<junit.version>4.8.1</junit.version>
-		<commons.collections.version>3.2</commons.collections.version>
+		<commons.collections.version>3.2.2</commons.collections.version>
 		<redis.version>2.8.0</redis.version>
 		<spring.redis.version>1.6.4.RELEASE</spring.redis.version>
 		<spring.session.version>1.2.2.RELEASE</spring.session.version>
