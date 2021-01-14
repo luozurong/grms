@@ -32,7 +32,7 @@
 		<dependency>
 		  <groupId>org.apache.poi</groupId>
 		  <artifactId>poi-ooxml</artifactId>
-		  <version>3.6</version>
+		  <version>4.1.2</version>
 		</dependency>
 		<!-- apache poi 读取excel文件jar包 end -->
 		<!-- oauth1.0 客户端开发包 -->
